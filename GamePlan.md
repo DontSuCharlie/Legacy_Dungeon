@@ -31,4 +31,4 @@ IV. Daily Log
 4/12: Charlie created the basic frame. The game officially exists.
 4/12: Charlie decided to get distracted and instead of actually making the game work, decided to make it so that the window now has its own custom icon.
 4/12: (technically 4/13 now because past midnight) Charlie continues to delve on useless functions - like making the window pop up in the MIDDLE of the user's screen. ANY user's screen.
-
+4/19: Anish is writing in third person.

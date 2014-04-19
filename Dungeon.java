@@ -3,13 +3,12 @@ class Dungeon
 <<<<<<< HEAD
 //Fields
 int numMonsters //How many monsters there are are
-//dungeonStats is (x length, y length, # floors, difficulty)
 //Each enemy has a difficulty rating. We randomly generate monsters to match this difficulty
 int currentFloor
 
 
 
-   public static void main(Theme theme, array dungeonStats, )
+   public static void main(Theme theme, int xLength, int yLength, int floorNum, int difficulty)
       {
          
 		}
