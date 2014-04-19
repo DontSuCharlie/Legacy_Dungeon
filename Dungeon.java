@@ -1,3 +1,6 @@
+class Dungeon
+{
+<<<<<<< HEAD
 //Fields
 int numMonsters //How many monsters there are are
 //dungeonStats is (x length, y length, # floors, difficulty)
@@ -5,13 +8,7 @@ int numMonsters //How many monsters there are are
 int currentFloor
 
 
-//
 
-
-
-class Dungeon
-{
-<<<<<<< HEAD
    public static void main(Theme theme, array dungeonStats, )
       {
          
@@ -19,15 +16,16 @@ class Dungeon
 =======
     public static void main(Theme theme, array dungeonStats, )
         {
-            generateFloor(dungeonStats.
+            generateFloor(dungeonStats[0], dungeonStats[1])
 		}
       
     public static void nextFloor()
         {
    
         }
-   
-    public static void generateFloor
+
+        //The generated floor will use x and y coordinates, number of monsters, and 
+    public static void generateFloor(
     {
     
     
