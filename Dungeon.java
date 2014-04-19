@@ -8,12 +8,12 @@ int currentFloor
 
 
 
-   public static void main(Theme theme, int xLength, int yLength, int floorNum, int difficulty)
+   public void main(Theme theme, int xLength, int yLength, int floorNum, int difficulty)
       {
          
 		}
 =======
-    public static void main(Theme theme, array dungeonStats, )
+    public void main(Theme theme, array dungeonStats, )
         {
             generateFloor(dungeonStats[0], dungeonStats[1])
 		}
