@@ -11,8 +11,28 @@ int currentFloor
 
 class Dungeon
 {
+<<<<<<< HEAD
    public static void main(Theme theme, array dungeonStats, )
       {
          
 		}
+=======
+    public static void main(Theme theme, array dungeonStats, )
+        {
+            generateFloor(dungeonStats.
+		}
+      
+    public static void nextFloor()
+        {
+   
+        }
+   
+    public static void generateFloor
+    {
+    
+    
+    }
+      
+      
+>>>>>>> 8705cc9f0f522554fa84054477e218d11f491631
 }
