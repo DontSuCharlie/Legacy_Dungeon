@@ -3,6 +3,10 @@ DungeonRunner.java is the file that generates the dungeon based on the informati
 DungeonRunner.java will tell LegacyDungeon.java (the main runner) what to display on the screen, so yeah.
 */
 
+//RANDOM NOTES
+//difficulty should also increase with skill level
+//skills level can increase by # of monsters
+
 public class DungeonRunner
 {
 	//Fields
@@ -17,9 +21,9 @@ public class DungeonRunner
 	{
 		this.theme = theme;
 		this.skillID = skillID;
-		this.difficulty = difficulty;
+		this.difficulty = difficulty;//insert random factor that will adjust difficulty
 		currentFloor = 1;
-		numFloor = (int) (Math.random()*50) + 1;
+		numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
 	}
 //////////////////////////////////METHODS HERE///////////////////////////////////////
 /*
@@ -43,20 +47,25 @@ Answer: Random position
 5] Where IS the stairs?
 Answer: Random position set as far from you as possible
 
-Method 0: .checkStairs()
-Method 1: .checkLastFloor()
+Method 0: .checkStairs()//if true everything runs from here except Method 3
+Method 1: .checkLastFloor()//first one to run
 Method 2: .monsterGenerator()
-Method 3: .loadTiles()
+Method 3: .checkSpace() //WILL ALWAYS RUN EVERY TIME THERE IS MOVEMENT
+Method 3: .loadFloor() //.loadFloor() should be the second one that gets run
 Method 4: .spawnPlayer()
 Method 5: .spawnStairs()
+Method 6: .loadLastFloor()
+Method 7: .checkAtBorder()//makes sure character doesn't run off map
 */
-	//Method 0: .checkStairs() checks whether or not the player reached the stairs
+	//Method 0: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
 	public static boolean checkStairs(boolean reachStairs)
 	{
 		if(reachStairs)
 		{
 			currentFloor++;
+			return true;
 		}
+		return false;
 	}
 	//Method 1: .checkLastFloor() checks whether or not the player will is at the last floor
 	public static boolean checkLastFloor(int currentFloor)
@@ -64,38 +73,21 @@ Method 5: .spawnStairs()
 		currentFloor = this.currentFloor;
 		if(currentFloor == numFloor)
 		{
-			
+			return true;
 		}
-	//Method 2: .monsterGenerator() generates monsters and gives them a position
-	//Method 3: .loadTiles() chooses the picture tile to load and draws out the map
-	//Method 4: .spawnPlayer() spawns the player at a random position
-	//Method 5: .spawnStairs() spawns stairs at a random position significantly far away from the player
-	
-//This is the method that checks whether or not you've entered another floor
-	public static boolean newFloor(boolean reachStairs)
-	{
-		if(reachStairs)
-		{
-			currentFloor++;
-			if(currentFloor = numFloor)
-			{
-				return true;//we have reached the end of the dungeon
-			}
-		}
-		//Generate a new map
-		numMonsters = (int)(Math.random());
-		return false;//we have not reached the end of the dungeon. LegacyDungeon will generate a new map with the current variables
+		return false;
 	}
-	//Generates monsters
-	public static void monsterGenerator(int numMonsters)
+	//Method 2: .monsterGenerator() generates monsters and gives them a position
+	public static void monsterGenerator()
 	{
-		Monster[] monsters = new Monster[numMonsters]; 
+		numMonsters = (int)(Math.random());
+		Monster[] monsters = new Monster[numMonsters];
 		for(int i = numMonsters; i > 0; i--)
 		{
-			monsters[i] = new Monster();//will insert parameters in here later
+			monsters[i] = new Monster();//will insert Monster parameter in here later
 		}
 	}
-	//Checks if Item and Character are in the same box
+	//Method 3a: .checkSpace() checks if Item and Character are in the same box
 	public static void onSameTile(Object firstObject, Object secondObject)
 	{
 		if(firstObject instanceof Character && secondObject instanceof Item)
@@ -108,6 +100,35 @@ Method 5: .spawnStairs()
 		}
 		return false;
 	}
-	//
-	
+	//Method 3b: .loadFloor() chooses the picture tile to load and draws out the actual map
+	public static void loadFloor()
+	{
+		//check if last floor
+		//determine
+	}
+	//Method 4: .spawnPlayer() spawns the player at a random position
+	public static void spawnPlayer()
+	{
+		//load sprite
+		//generate random coordinates
+		//check if random coordinates are valid (within bounds of loadFloor)
+		//if not regenerate
+		//if so generate
+	}
+	//Method 5: .spawnStairs() spawns stairs at a random position significantly far away from the player
+	public static void spawnStairs()
+	{
+		//check if last floor. If last floor, don't do anything
+		//load sprite
+		//generate random coordinates
+		//check if within bounds and not near player
+		//generate
+	}
+	//Method 6: .loadLastFloor() loads the last floor pre-determined map and an Item
+	public static void loadLastFloor()
+	{
+		//check if last floor. IF last floor
+		//load sprites for tile
+		//load 
+	}	
 }
