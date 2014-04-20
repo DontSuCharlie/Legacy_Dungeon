@@ -1,9 +1,10 @@
 //import Dungeon.java;
 import NodeWorld.java;
+import LegacyDungeon.java;
+import java.util.*;
 
 public class WorldMap extends JPanel
 {
-
 public static ArrayList<Integer> xOccupied = new ArrayList<Integer>();
 public static ArrayList<Integer> yOccupied = new ArrayList<Integer>();
 public static ArrayList<Integer> nodeIDList = new ArrayList<Integer>();
@@ -12,13 +13,13 @@ public ArrayList<NodeWorld> nodeWorldList = new ArrayList<NodeWorld>();
 
     public WorldMap(){
         
-        int numDungeons = (int) (Math.random() * 20) + 20
+        int numDungeons = (int) (Math.random() * 20) + 20;
         
         for (int i = 0; i < numDungeons ; i++)
         { 
             nodeWorldList.add(i) = new NodeWorld();
-            nodeWorldList.i.GenerateNodeWorld;
-            system.out.println(nodeWorldList.i.xPos
+            nodeWorldList.get(i).GenerateNodeWorld(xOccupied,yOccupied);
+            System.out.println(nodeWorldList.get(i).xPos);
         }
         
         
@@ -26,7 +27,7 @@ public ArrayList<NodeWorld> nodeWorldList = new ArrayList<NodeWorld>();
         
     }
     //Fields
-    int turnNumber
+    int turnNumber;
     BufferedImage image;
     /*
   
@@ -40,7 +41,8 @@ public ArrayList<NodeWorld> nodeWorldList = new ArrayList<NodeWorld>();
   
     load dungeon
     */
-    public void Run(){
+    /*public void Run()
+    {
     
         frame = new JFrame("Legacy Dungeon: World Map");
         
@@ -52,15 +54,16 @@ public ArrayList<NodeWorld> nodeWorldList = new ArrayList<NodeWorld>();
     }
     
 
-    Dungeon.main(
+    //Dungeon.main(
     //Constructor
     //Methods
 
-    public class Movement(){
+    public class Movement()
+    {
         
-        turnNumber += 1
+        turnNumber += 1;
     
     
     }
-    
+    */
 }

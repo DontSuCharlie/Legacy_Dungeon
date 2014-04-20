@@ -1,42 +1,49 @@
+import java.awt.*;//not sure
+import java.awt.event.*;//Why do we need to import java.awt.event when java.awt.* already imports everything after that????
+//I think it's because .* does not include other files (it only includes stuff directly in the file, but not subfolders)
+import java.awt.image.*;//image class allows for storage of image files
+import javax.swing.*;//part of UI
+import javax.imageio.*;//handles the input/output of IMAGE files
+import java.io.*;//handles input/output of files (ie: reads files)
+import java.util.*;
+
 public class NodeWorld{
     //Fields
+    
     int xPos;
     int yPos;
-
     int skillID; //See list of IDs in Skills.java
     int nodeID; //0 == Dungeon, 1 == Captured node, 2 == Contested node, 3 == Lost node
     int theme; // 0 == Ice, 1 == Cave, 2 == Castle, 3 == Jungle, 4 == Ocean
     int difficulty; // Linear increase in dungeon
     
     
-    public Nodeworld{
+    public NodeWorld(){
     
     nodeID = 0;
     theme = 0;
     skillID = 0;
-    int xPos = 0;
-    int xPos = 0;
-    int difficulty = 0;
-    
+    xPos = 0;
+    xPos = 0;
+    difficulty = 0;
     
     }
     
     
 
-    if nodeID == 0 
+ /*   if nodeID == 0 
     {
     
 
     }
-
+*/
     public void GenerateNodeWorld(ArrayList xOccupied, ArrayList yOccupied)
     {
-        int xPos
         boolean goodPlacement = false;
         while (!goodPlacement)
         {
-            xPos = (int) (Math.random() * windowX);
-            yPos = (int) (Math.random() * windowY);
+            xPos = (int) (Math.random() * 2000);
+            yPos = (int) (Math.random() * 1500);
             
             int xListSize = xOccupied.size();
             int yListSize = yOccupied.size();
@@ -53,9 +60,7 @@ public class NodeWorld{
                     goodPlacement = true;
                 }
 
- }
+            }
         }
-        
-        return x
     }
 }

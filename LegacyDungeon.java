@@ -32,13 +32,8 @@ public class LegacyDungeon
     JFrame window = new JFrame("Legacy Dungeon");//Creates a JFrame Object and titles it "Legacy Dungeons"
     Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
     window.setSize(500,500);//Sets size in pixels
-<<<<<<< HEAD
 	int windowX = (int) (window.getWidth());
 	int windowY = (int) (window.getHeight());
-=======
-    int windowX = (int) (window.getWidth());
-    int windowY = (int) (window.getWidth());
->>>>>>> af808055283e3d5b6eb13c89da448662d7f10494
     int x = (int) (screenRes.getWidth() - windowX)/2;//obtains width of user screen, divides by two, then subtracts by size of window
     int y = (int) (screenRes.getHeight() - windowY)/2;//same as above except with height
     //Creating the frame
