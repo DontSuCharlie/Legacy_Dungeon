@@ -37,18 +37,23 @@ public class NodeWorld{
 
     }
 */
-    public void GenerateNodeWorld(ArrayList xOccupied, ArrayList yOccupied)
+    public void GenerateNodeWorld(ArrayList<Integer> xOccupied, ArrayList<Integer> yOccupied)
     {
         boolean goodPlacement = false;
         while (!goodPlacement)
         {
             xPos = (int) (Math.random() * 2000);
             yPos = (int) (Math.random() * 1500);
-            
             int xListSize = xOccupied.size();
             int yListSize = yOccupied.size();
-            int xSpacing = 20;
-            int ySpacing = 20;
+            int xSpacing = 5;
+            int ySpacing = 5;
+            if (xListSize == 0);
+            {
+                xOccupied.add(1000 /*Width/2*/);
+                yOccupied.add(750 /*Height/2*/);
+            }
+            
             for (int i = 0; i < xListSize; i++)
             {
                 // Checking a range if far enough from other nodes. Basically, the range from (xPos - 20) to (xPos + 20) must be both less or both greater than the other nodes available.
