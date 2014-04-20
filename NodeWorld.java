@@ -10,15 +10,16 @@ import java.util.*;
 public class NodeWorld{
     //Fields
     
-    int xPos;
-    int yPos;
+    int x;//x position on World Map
+    int y;//y positon on World Map
     int skillID; //See list of IDs in Skills.java
     int nodeID; //0 == Dungeon, 1 == Captured node, 2 == Contested node, 3 == Lost node
     int theme; // 0 == Ice, 1 == Cave, 2 == Castle, 3 == Jungle, 4 == Ocean
-    int difficulty; // Linear increase in dungeon
-    
-    
-    public NodeWorld(){
+    static int difficulty; // Linear increase in dungeon. Is static because difficulty increases as game progresses
+    public NodeWorld(int xPos, int yPos)
+	{
+		x = xPos;
+		y = yPos;
     
     nodeID = 0;
     theme = 0;
@@ -53,10 +54,8 @@ public class NodeWorld{
                 xOccupied.add(1000 /*Width/2*/);
                 yOccupied.add(750 /*Height/2*/);
             }
-            
             for (int i = 0; i < xListSize; i++)
             {
-                // Checking a range if far enough from other nodes. Basically, the range from (xPos - 20) to (xPos + 20) must be both less or both greater than the other nodes available.
                 if (((xPos + xSpacing) < xOccupied.get(i) && (xPos - xSpacing) < xOccupied.get(i)) || ((xPos + xSpacing) > xOccupied.get(i) && (xPos - xSpacing) > xOccupied.get(i)) || 
                     ((yPos + ySpacing) < yOccupied.get(i) && (yPos - ySpacing) < yOccupied.get(i)) || ((yPos + ySpacing) > yOccupied.get(i) && (yPos - ySpacing) > yOccupied.get(i)))
                 {

@@ -1,12 +1,11 @@
 /*
+Progress Bar: [||        ]
 DungeonRunner.java is the file that generates the dungeon based on the information included in NodeWorld.java
 DungeonRunner.java will tell LegacyDungeon.java (the main runner) what to display on the screen, so yeah.
 */
-
 //RANDOM NOTES
 //difficulty should also increase with skill level
 //skills level can increase by # of monsters
-
 public class DungeonRunner
 {
 	//Fields
@@ -24,40 +23,21 @@ public class DungeonRunner
 		this.difficulty = difficulty;//insert random factor that will adjust difficulty
 		currentFloor = 1;
 		numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
+		//Number of floors is based on the difficulty level
 	}
 //////////////////////////////////METHODS HERE///////////////////////////////////////
-/*
-List of methods:
-1] What happens when I reach the stairs?
-Answer: You will move to a new map
-	a] What happens when I reach the last floor?
-Answer: A unique map will be generated
-
-2] How many monsters will be spawned and where will they be?
-Answer: Random # of monsters and random positions
-
-3] What tiles should be loaded?
-Answer: Depends on the theme based on the node's data.
-	How many tiles should be loaded?
-Answer: Random #
-
-4] Where will I be spawned?
-Answer: Random position
-
-5] Where IS the stairs?
-Answer: Random position set as far from you as possible
-
-Method 0: .checkStairs()//if true everything runs from here except Method 3
-Method 1: .checkLastFloor()//first one to run
-Method 2: .monsterGenerator()
-Method 3: .checkSpace() //WILL ALWAYS RUN EVERY TIME THERE IS MOVEMENT
-Method 3: .loadFloor() //.loadFloor() should be the second one that gets run
-Method 4: .spawnPlayer()
-Method 5: .spawnStairs()
-Method 6: .loadLastFloor()
-Method 7: .checkAtBorder()//makes sure character doesn't run off map
+/* List of Methods:
+Method 0: .checkSpace() runs every time the character moves. It makes sure the player doesn't sit on the same tile as a monster.
+Method 1: .checkStairs() runs every time the character interacts with an Item. It starts off a chain of functions that generates a new map.
+Method 2: .checkLastFloor() runs to make sure it's not the last floor
+Method 3: .loadFloor() generates the walkable map itself.
+Method 4: .monsterGenerator() uses data from NodeWorld.java to generate monsters that fill the new map.
+Method 5: .spawnPlayer() spawns the player at a random coordinate point
+Method 6: .spawnStairs() spawns the stairs. It will be located as far from the player as possible
+Method 7: .loadLastFloor() creates the last floor
+Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
-	//Method 0: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
+	//Method 1: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
 	public static boolean checkStairs(boolean reachStairs)
 	{
 		if(reachStairs)
@@ -67,7 +47,7 @@ Method 7: .checkAtBorder()//makes sure character doesn't run off map
 		}
 		return false;
 	}
-	//Method 1: .checkLastFloor() checks whether or not the player will is at the last floor
+	//Method 2: .checkLastFloor() checks whether or not the player will is at the last floor
 	public static boolean checkLastFloor(int currentFloor)
 	{
 		currentFloor = this.currentFloor;
@@ -77,14 +57,16 @@ Method 7: .checkAtBorder()//makes sure character doesn't run off map
 		}
 		return false;
 	}
-	//Method 2: .monsterGenerator() generates monsters and gives them a position
+	//Method 4: .monsterGenerator() generates monsters and gives them a position
 	public static void monsterGenerator()
 	{
-		numMonsters = (int)(Math.random());
-		Monster[] monsters = new Monster[numMonsters];
+		numMonsters = (int)(Math.random()*difficulty);//generates a random number of monsters based on difficulty
+		Monster[] monsters = new Monster[numMonsters];//creates an array of monsters, and initializes each monster.
 		for(int i = numMonsters; i > 0; i--)
 		{
 			monsters[i] = new Monster();//will insert Monster parameter in here later
+			monsters[i].xPos =;
+			monsters[i].yPos =;
 		}
 	}
 	//Method 3a: .checkSpace() checks if Item and Character are in the same box
@@ -103,8 +85,12 @@ Method 7: .checkAtBorder()//makes sure character doesn't run off map
 	//Method 3b: .loadFloor() chooses the picture tile to load and draws out the actual map
 	public static void loadFloor()
 	{
-		//check if last floor
-		//determine
+		//check if last floor, if not, continue
+		if(currentFloor == numFloor)
+		{
+			return;
+		}
+		//determine 
 	}
 	//Method 4: .spawnPlayer() spawns the player at a random position
 	public static void spawnPlayer()
