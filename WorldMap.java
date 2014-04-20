@@ -1,10 +1,11 @@
 import Dungeon.java;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class WorldMap extends JPanel
 {
+
+public static ArrayList<Int> xOccupied = new ArrayList<Int>
+
+
     public WorldMap(){
         
         int numDungeons = (math.random() * 20) + 20
