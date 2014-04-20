@@ -1,14 +1,26 @@
-import Dungeon.java;
+//import Dungeon.java;
+import NodeWorld.java;
 
 public class WorldMap extends JPanel
 {
 
-public static ArrayList<Int> xOccupied = new ArrayList<Int>
+public static ArrayList<Integer> xOccupied = new ArrayList<Integer>();
+public static ArrayList<Integer> yOccupied = new ArrayList<Integer>();
+public static ArrayList<Integer> nodeIDList = new ArrayList<Integer>();
+public ArrayList<NodeWorld> nodeWorldList = new ArrayList<NodeWorld>();
 
 
     public WorldMap(){
         
-        int numDungeons = (math.random() * 20) + 20
+        int numDungeons = (int) (Math.random() * 20) + 20
+        
+        for (int i = 0; i < numDungeons ; i++)
+        { 
+            nodeWorldList.add(i) = new NodeWorld();
+            nodeWorldList.i.GenerateNodeWorld;
+            system.out.println(nodeWorldList.i.xPos
+        }
+        
         
         
         
