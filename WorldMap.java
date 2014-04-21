@@ -67,7 +67,7 @@ Method 0: .map() loads an image used as the World Background (world map animatio
 Method 1: .assignNodePos() creates a random amount of nodes and assigns them positions
 //You've got to load the images (will be part of NodeWorld.java)
 //
-Method 2: .playerPiece() loads player sprite, positions the player based on previous dungeon (if no previous then starts at Heart), makes sure the player CAN ONLY BE ON NODES. Will also make sure turn++;
+Method 2: .playerMove() loads player sprite, positions the player based on previous dungeon (if no previous then starts at Heart), makes sure the player CAN ONLY BE ON NODES. Will also make sure turn++;
 Method 3: .keyListener() - obtains keyboard input. Allows for player movement based on lowest distance in terms of x/y based on position
 Method 4: .lineMaker() - makes it so your character sprite moves towards the node in a linear line
 Method 5: .polygonDetector() creates polygons based on Safe Nodes
@@ -166,7 +166,10 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		//repeat until polygon is formed
 		//NOTE MIGHT WANT TO CHANGE TO FIND POLYGON WITH MAXIMUM AREA
 	}
-	public static boolean playerPiece()
+				//If input = Enter, then check availability of dungeon
+				//If available, enter dungeon
+				//Turn screen to black
+	public static boolean playerMove()
 	{
 		//Load Image
 		
@@ -186,10 +189,10 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		}
 		return false;
 	}
-	//Method 3: Detects closest nodes. Will be called by .playerPiece() so dwai
+	//Method 3: Detects closest nodes. Will be called by .playerMove() so dwai
 	public static void nodeDetector(int playerX, int playerY)
 	{
-		//Grab current location of playerpiece
+		//Grab current location of playerMove
 		//Creates a circle around the character. Looks for nodes
 		int searchRadius = 1;
 		int originX = playerX;
