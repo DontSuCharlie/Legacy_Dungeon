@@ -11,8 +11,15 @@ public class DungeonTile{
         tileID = 0;
     }
 
-    public 
-
+    public void draw(Graphics g)
+    {
+        g.drawImage(image, XPos, YPos, XSpriteSize, YSpriteSize, null);
+    }
+   
+    public void paint(Graphics g)
+    {
+       ObjectProperites.super.paint(g);
+    }
 
 
 

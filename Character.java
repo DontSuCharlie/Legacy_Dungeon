@@ -32,11 +32,18 @@ public class Character extends JFrame
 	}
 	//Superclass's Methods
     
-    //Used to see if tile Character is attempting to go to will do something, nothing, or not allow movement.
-    public int CheckTile(
+    //Used to see if the tile the Character is attempting to go to will do something, nothing, or not allow movement.
+    public int CheckTile(int numTiles)
+    {
     
-        
-    
+        for (int i = 0; i < numTiles; i++)
+        {
+            //Will use the static ArrayList<DungeonTile> tileList from DungeonRunner.java
+            if ((tileList.get(i).x == attemptedX) && (tileList.get(i).y ==attemptedY))
+            {
+                return tileList.get(i).tileID
+            }
+        } 
     }
     
     

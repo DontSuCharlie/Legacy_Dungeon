@@ -40,7 +40,11 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
 */
 
     public static void assignTilePos(){
-        for (int i; i < 
+        for (int i; i < numTiles; i++
+            {
+                
+            
+            }
         
     
     
