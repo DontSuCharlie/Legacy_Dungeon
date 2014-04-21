@@ -86,7 +86,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 	public static void paintComponent(Graphics graphic)
 	{
 			super.paintComponent();
-			boolean drawImage(icon, 0, 0, null);
+			drawImage(icon, 0, 0, null);
 	}
 //Method 2:
 /////////////////////////////////////////Method 3: Creating and loading the World Map
