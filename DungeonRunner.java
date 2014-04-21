@@ -39,7 +39,7 @@ Method 6: .spawnStairs() spawns the stairs. It will be located as far from the p
 Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
-    //Charlie, please make this less ugly. 
+    //Charlie, please make this less ugly. This generates the floor tiles of the dungeon.
     public static void assignTilePos(int xLength, int yLength, int numTiles)
     {
         //The first seed tile.
