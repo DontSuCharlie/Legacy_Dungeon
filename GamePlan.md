@@ -52,3 +52,6 @@ IV. Daily Log
 //Also needs safe file (save will be in a different file)
 //package LegacyDungeon;//a package ensures that upon mixing it with other people's codes, names won't confuse the compiler
 */
+
+//Why do we need to import java.awt.event when java.awt.* already imports everything after that????
+//I think it's because .* does not include other files (it only includes stuff directly in the file, but not subfolders)
