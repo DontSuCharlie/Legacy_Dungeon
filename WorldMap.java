@@ -17,6 +17,7 @@ import java.util.*;
 import java.awt.image.*;
 import java.imageio.*;
 import java.io.*;
+import java.awt.Polygon;//for polygon construction
 public class WorldMap
 {
 	//Fields
@@ -107,7 +108,6 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 					}
 				*/
 	//Method 1: Creates nodes and assigns different positions
-
 	public static void assignNodePos(){
 		for(int i = 0; i < numNodes; i++){
 			nodeList.add(i, new NodeWorld(Math.random()*screenResX, Math.random()*screenResY), 0, 0);//will change the skillID/theme parameter inputs later
@@ -136,6 +136,30 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 	public static void polygonDetector()//This method creates polygons
 	{
 		//Creates an arraylist of nodes with Sanctuary status
+		ArrayList<NodeWorld> vertexList = new ArrayList<NodeWorld>();
+		for(int i = 0; i < nodeList.size(); i++)
+		{
+			if (nodeList.get(i).nodeStatus == 2)
+			{
+				vertexList.add(nodeList.get(i));
+			}
+		}
+		if(nodeList.size() > 2)
+		{
+			int[] xCoord = new int[nodeList.size()];
+			for(int i = 0; i < xCoord.length; i++)
+			{
+				xCoord[i] = nodeList.get(i).x;
+			}
+			int[] yCoord = new int[nodeList.size()];
+			for(int i = 0; i < yCoord.length; i++)
+			{
+				yCoord[i] = nodeList.get(i).y;
+			}
+			Polygon safeZone = new Polygon(xCoord,yCoord,nodeList.size());
+			//will add maximum area later
+		}
+	}
 		//Scan each node and identify the one with lowest distance from each other starting from arraylist.get(0)
 		//With lowest distance, use java.paint to draw a line using the two points as vertices
 		//change status of node to taken. If it is taken, then it cannot be used to form new line
@@ -204,7 +228,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 			//WELL, BC IT IS A CIRCULAR RADIUS, AND BC THE CIRCLE INCREASES BY 5 (LESS THAN 20), THEN IT IS UNLIKELY, IF AT ALL POSSIBLE, FOR TWO NODES TO HAVE EQUAL LEFT/RIGHT/TOP/BOTTOM
 		//Detect input
 		//Find difference in x and y
-		//VECTORS
+		//VECTORS?!
 		//Move the character at a rate of y/x until it reaches the point. Then stop
 	}
 }
