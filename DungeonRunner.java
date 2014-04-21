@@ -15,6 +15,7 @@ public class DungeonRunner
 	int theme;//theme of the dungeon
 	int skillID;//skill reward at bottom of dungeon
 	int difficulty;//difficulty of dungeon
+    public static ArrayList<DungeonTile> tileList = new ArrayList<DungeonTile>();
 	//Constructor
 	public DungeonRunner(int theme, int skillID, int difficulty)//Takes in the following parameters from NodeWorld.java
 	{
@@ -37,6 +38,14 @@ Method 6: .spawnStairs() spawns the stairs. It will be located as far from the p
 Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
+
+    public static void assignTilePos(){
+        for (int i; i < 
+        
+    
+    
+    }
+
 	//Method 1: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
 	public static boolean checkStairs(boolean reachStairs)
 	{

@@ -66,13 +66,24 @@ public class WorldMap
 Method 0: .map() loads an image used as the World Background (world map animation will be added later!)
 Method 1: .assignNodePos() creates a random amount of nodes and assigns them positions
 //You've got to load the images (will be part of NodeWorld.java)
-//
 Method 2: .playerPiece() loads player sprite, positions the player based on previous dungeon (if no previous then starts at Heart), makes sure the player CAN ONLY BE ON NODES. Will also make sure turn++;
+
+Looping portion
 Method 3: .keyListener() - obtains keyboard input. Allows for player movement based on lowest distance in terms of x/y based on position
 Method 4: .lineMaker() - makes it so your character sprite moves towards the node in a linear line
 Method 5: .polygonDetector() creates polygons based on Safe Nodes
 Method 6: .enemyMovement() - will implement later, AI so scarrr
 */
+
+    public static void main(String[] args)
+    {
+        WorldMap gameMap = new WorldMap();
+        //gameMap.map()
+        gameMap.assignNodePos();
+        
+        
+    }
+
 	public static Image map()//This method is used to prevent the game from crashing if it can't locate the image
 	{
 		BufferedImage map = null;
@@ -127,7 +138,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 					if(counter > 0)//should check if need brackets here......
 						check = true;
 					else
-						check = false
+						check = false;
 				}
 			}
 		}
