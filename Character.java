@@ -20,20 +20,35 @@ public class Character extends JFrame
 	Skill[] skill = new Skill[20];//maximum number of skills you can hold is 20.
 	public int spriteHeight;//height of image, so rescaling is possible
 	public int spriteWidth;//width of image, so rescaling is possible
+    public int attemptedX;// These are the coordinates of a tile the character tries to go to. 
+    public int attemptedY;
+    
 	//Constructor
+    
+
 	public Character(int maxHealth)
 	{
 		this.maxHealth = maxHealth;
 	}
 	//Superclass's Methods
-   public void draw(Graphics g)
-   {
-      g.drawImage(image, XPos, YPos, XSpriteSize, YSpriteSize, null);
-   }
+    
+    //Used to see if tile Character is attempting to go to will do something, nothing, or not allow movement.
+    public int CheckTile(
+    
+        
+    
+    }
+    
+    
+    
+    public void draw(Graphics g)
+    {
+        g.drawImage(image, XPos, YPos, XSpriteSize, YSpriteSize, null);
+    }
    
-   public void paint(Graphics g)
-   {
-      ObjectProperites.super.paint(g);
-   }
-   //Methods unique to Character.java
+    public void paint(Graphics g)
+    {
+       ObjectProperites.super.paint(g);
+    }
+    //Methods unique to Character.java
 }

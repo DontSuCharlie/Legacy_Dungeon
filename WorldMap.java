@@ -73,6 +73,16 @@ Method 4: .lineMaker() - makes it so your character sprite moves towards the nod
 Method 5: .polygonDetector() creates polygons based on Safe Nodes
 Method 6: .enemyMovement() - will implement later, AI so scarrr
 */
+
+    public static void main(String[] args)
+    {
+        WorldMap gameMap = new WorldMap();
+        //gameMap.map()
+        gameMap.assignNodePos();
+        
+        
+    }
+
 	public static Image map()//This method is used to prevent the game from crashing if it can't locate the image
 	{
 		BufferedImage map = null;
@@ -127,7 +137,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 					if(counter > 0)//should check if need brackets here......
 						check = true;
 					else
-						check = false
+						check = false;
 				}
 			}
 		}

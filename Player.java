@@ -2,6 +2,10 @@
 
 public class Player extends GeneralCharacterProperties{
 
-   static public main
+   static public main{
+   
+   }
 
+   public checkTile
+   
 }
