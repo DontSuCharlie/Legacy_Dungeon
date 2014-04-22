@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.awt.*;//includes Color, Dimension, Graphics, etc.
 import java.awt.event.*;
 import java.awt.image.*;//image class allows for storage of image files
@@ -7,21 +8,22 @@ public class LegacyDungeon extends JPanel
 {
 	//Fields
 	WorldMap world;
-	JFrame window;
+	static JFrame window = new JFrame("Legacy Dungeon");
+	ArrayList<NodeWorld> nodeList = new ArrayList<NodeWorld>();
 	//Character player;
 	//read save file. turnCounter should be 0 if save file not found or save file corrupt. Otherwise turnCounter should equal the value in the save file.
-	int turnCounter = 0;
+	static int turnCounter = 0;
 	//Constructor is necessary for adding this onto the frame
 	public LegacyDungeon()
 	{
 		WorldMap world = new WorldMap();
-		JFrame window = new JFrame("LegacyDungeon");
+		//JFrame window = new JFrame("LegacyDungeon");
 		//Character player = new Character();
 	}
 	//Main Method
 	public static void main(String[] args)
 	{
-		ArrayList<Object> inGameObjects = new ArrayList<Object>();//
+		//ArrayList<Object> inGameObjects = new ArrayList<Object>();//
 		boolean running = true;
 		LegacyDungeon game = new LegacyDungeon();
 		createWindow();//creates window
@@ -32,7 +34,7 @@ public class LegacyDungeon extends JPanel
 			boolean inGame = true;
 			while(inGame)
 			{
-				createWorld(turnCounter);
+				game.createWorld(turnCounter);
 				//loadDungeon(createWorld(turnCounter));
 			}
 		}
@@ -88,17 +90,21 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 //Calling game.repaint() will update what's in here.
 //Testing if
 	@Override
-	public static void paintComponent(Graphics graphic)
+	public void paintComponent(Graphics g)
 	{
-			super.paintComponent();//we have to do super because magic
+			super.paintComponent(g);//we have to do super because magic
 			if(true)
 			{
-				drawImage(world.map, 0, 0, null);
+				g.drawImage(world.map, 0, 0, null);
+			}
+			for(int i = 0; i < nodeList.size(); i++)
+			{
+				g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,null);
 			}
 	}
 //Method 2:
 /////////////////////////////////////////Method 3: Creating and loading the World Map
-	public static boolean createWorld(int turnCounter)
+	public boolean createWorld(int turnCounter)
 	{
 		boolean inWorldMap = true;//when this turns false, createWorld stops running
 		//Always loads map image
@@ -107,6 +113,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		if(turnCounter == 0)//if this is the beginning, then we have to generate nodes and set character to heart node
 		{
 			world.assignNodePos();
+			nodeList = world.getNodeList();
 			//loads character sprite and sets them to the Heart Node as a starting position
 			//world.startCharacter(); NOT YET
 		}
