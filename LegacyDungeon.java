@@ -6,24 +6,21 @@ import javax.swing.*;//part of UI, includes JPanel
 
 public class LegacyDungeon extends JPanel
 {
-	//Fields
+	//Global Variables here
+	ArrayList<NodeWorld> nodeList;
+	static JFrame window;
 	WorldMap world;
-	static JFrame window = new JFrame("Legacy Dungeon");
-	ArrayList<NodeWorld> nodeList = new ArrayList<NodeWorld>();
-	//Character player;
-	//read save file. turnCounter should be 0 if save file not found or save file corrupt. Otherwise turnCounter should equal the value in the save file.
-	static int turnCounter = 0;
-	//Constructor is necessary for adding this onto the frame
+	static int turnCounter = 0;//will read safe file. turn should be 0 if save file not found or corrupt
+	//what happens when we load LegacyDungeon
 	public LegacyDungeon()
 	{
-		WorldMap world = new WorldMap();
-		//JFrame window = new JFrame("LegacyDungeon");
-		//Character player = new Character();
+		window = new JFrame("Legacy Dungeon");
+		world = new WorldMap();
+		nodeList = world.getNodeList();
 	}
 	//Main Method
 	public static void main(String[] args)
 	{
-		//ArrayList<Object> inGameObjects = new ArrayList<Object>();//
 		boolean running = true;
 		LegacyDungeon game = new LegacyDungeon();
 		createWindow();//creates window

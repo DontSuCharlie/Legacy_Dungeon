@@ -1,9 +1,9 @@
 import java.awt.*;//not sure
 import java.awt.event.*;//Why do we need to import java.awt.event when java.awt.* already imports everything after that????
 //I think it's because .* does not include other files (it only includes stuff directly in the file, but not subfolders)
-import java.awt.image.*;//image class allows for storage of image files
+import java.awt.image.*;//image class allows for storage of BufferedImage files
 import javax.swing.*;//part of UI
-import javax.imageio.*;//handles the input/output of IMAGE files
+import javax.imageio.*;//handles the input/output of BufferedImage files
 import java.io.*;//handles input/output of files (ie: reads files)
 import java.util.*;
 public class NodeWorld
@@ -14,7 +14,7 @@ public class NodeWorld
 	int nodeStatus;//0 = uncleared; 1 = skill obtained; 2 = protective; 3 = battlefield; 4 = enemy's
 	int theme;
 	static int difficulty; //linear increase in dungeon. Is static bc difficulty increases as game progresses
-	Image nodeImage; //image of node
+	BufferedImage nodeImage; //image of node
 	//Constructor
     public NodeWorld(int xPos, int yPos, int skill, int theme)
 	{
@@ -24,15 +24,14 @@ public class NodeWorld
 		this.theme = theme;
 		difficulty = 1;//defaults to 1, the starting difficulty
 		nodeStatus = (int)(Math.random()*5);//defaults to 0 bc all nodes start out as dungeons
-		nodeImage = nodeImage(nodeStatus);
 	}
 //////////////////////////////////////Methods Galore Here////////////////////////////
 /*
-Method 0: .nodeImage loads image of Node, depending on nodeStatus
+Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 */
-	public Image nodeImage(int nodeStatus)
+	public BufferedImage nodeImage(int nodeStatus)
 	{
-		Image node = null;
+		BufferedImage node = null;
 		if(nodeStatus == 0)//Uncleared dungeon. This is the default
 		{
 			node = loadDungeonImage();
@@ -55,19 +54,19 @@ Method 0: .nodeImage loads image of Node, depending on nodeStatus
 		}
 		return node;
 	}
-	public Image loadDungeonImage()
+	public BufferedImage loadDungeonImage()
 	{
 		BufferedImage dungeon = null;
 		try
 		{
-			dungeon = ImageIO.read(new File("/Images/Node_Concept.jpg"));
+			dungeon = ImageIO.read(new File("Node_Concept.jpg"));
 		}
 		catch(IOException e)
 		{
 		}
 		return dungeon;
 	}
-	public Image loadClearedImage()
+	public BufferedImage loadClearedImage()
 	{
 		BufferedImage clearedDungeon = null;
 		try
@@ -79,36 +78,36 @@ Method 0: .nodeImage loads image of Node, depending on nodeStatus
 		}
 		return clearedDungeon;
 	}
-	public Image loadProtectiveNodeImage()
+	public BufferedImage loadProtectiveNodeImage()
 	{
 		BufferedImage sanctuary = null;
 		try
 		{
-			sanctuary = ImageIO.read(new File("/Images/icon.png"));
+			sanctuary = ImageIO.read(new File("icon.png"));
 		}
 		catch(IOException e)
 		{
 		}
 		return sanctuary;
 	}
-	public Image loadBattlefieldImage()
+	public BufferedImage loadBattlefieldImage()
 	{
 		BufferedImage battlefield = null;
 		try
 		{
-			battlefield = ImageIO.read(new File("/Images/Node_Under_Attack_Concept.jpg"));
+			battlefield = ImageIO.read(new File("Node_Under_Attack_Concept.jpg"));
 		}
 		catch(IOException e)
 		{
 		}
 		return battlefield;
 	}
-	public Image loadEnemyNodeImage()
+	public BufferedImage loadEnemyNodeImage()
 	{
-		BufferedImage enemyNode = null;
+		BufferedImage  enemyNode = null;
 		try
 		{
-			enemyNode = ImageIO.read(new File("/Images/Lost_Node_Concept.jpg"));
+			enemyNode = ImageIO.read(new File("Lost_Node_Concept.jpg"));
 		}
 		catch(IOException e)
 		{
