@@ -281,7 +281,4 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		//VECTORS?!
 		//Move the character at a rate of y/x until it reaches the point. Then stop
 	}
-
-	
-*/
 }

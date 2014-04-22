@@ -25,7 +25,7 @@ public class LegacyDungeon extends JPanel
 		LegacyDungeon game = new LegacyDungeon();
 		createWindow();//creates window
 		window.add(game);//adds JPanel to window
-		while(running)
+		while(running)//new problem: nodes don't appear unless you repaint, might need to force repaint
 		{
 			//loadMenu();
 			boolean inGame = true;
@@ -78,6 +78,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		JFrame.setDefaultLookAndFeelDecorated(true);//allows for customization of icons/windows/etc.
 		Toolkit toolkit = Toolkit.getDefaultToolkit();//uses the toolkit, which allows for reading of image file
 		Image icon = toolkit.getImage("icon.png");
+		window.setResizable(false);
 		window.setIconImage(icon); //Sets icon image
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//Makes it so the program stops running when the "X" button is pressed
 		window.setLocation(windowPosX, windowPosY);//sets location to center
