@@ -16,7 +16,8 @@ TO-DO LIST:
 import java.util.*;
 import java.awt.image.*;
 import java.imageio.*;
-import java.io.*;
+import javax.io.*;
+import java.awt.*;
 import java.awt.Polygon;//for polygon construction
 public class WorldMap
 {
@@ -30,8 +31,8 @@ public class WorldMap
 	int outerNodes;//to the heart, and a lower node concentration outside
 	int nodesLeft;
 	private Dimension screenRes;//dimension of screen
-	int screenResX;//width of screen
-	int screenResY;//height of screen
+	static int screenResX;//width of screen
+	static int screenResY;//height of screen
 	
 	//Constructor
 	public WorldMap()
@@ -120,7 +121,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 	//Method 1: Creates nodes and assigns different positions
 	public static void assignNodePos(){
 		for(int i = 0; i < numNodes; i++){
-			nodeList.add(i, new NodeWorld(Math.random()*screenResX, Math.random()*screenResY), 0, 0);//will change the skillID/theme parameter inputs later
+			nodeList.add(i, new NodeWorld((int)Math.random()*screenResX, Math.random()*screenResY), 0, 0);//will change the skillID/theme parameter inputs later
 			boolean check = true; //for checking purposes
 			while(check){
 				for(int j = 0; j < i; j++){
@@ -130,8 +131,8 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 					// Checking a range if far enough from other nodes. Basically, the range from (xPos - 20) to (xPos + 20) must be both less or both greater than the other nodes available.
 					if(dontWantX <= 20 && dontWantY <= 20)
 					{
-						nodeList.get(i).x = Math.random()*screenResX;
-						nodeList.get(i).y = Math.random()*screenResY;
+						nodeList.get(i).x = (int) Math.random()*screenResX;
+						nodeList.get(i).y = (int) Math.random()*screenResY;
 						counter++;
 					}
 					if(counter > 0)//should check if need brackets here......
@@ -175,11 +176,12 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		//change status of node to taken. If it is taken, then it cannot be used to form new line
 		//repeat until polygon is formed
 		//NOTE MIGHT WANT TO CHANGE TO FIND POLYGON WITH MAXIMUM AREA
-	}
+        
 				//If input = Enter, then check availability of dungeon
 				//If available, enter dungeon
 				//Turn screen to black
-	public static boolean playerMove()
+
+/*    public static boolean playerMove()
 	{
 		//Load Image
 		
@@ -199,6 +201,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		}
 		return false;
 	}
+*/
 	//Method 3: Detects closest nodes. Will be called by .playerMove() so dwai
 	public static void nodeDetector(int playerX, int playerY)
 	{
