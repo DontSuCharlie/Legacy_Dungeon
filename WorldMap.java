@@ -15,24 +15,25 @@ TO-DO LIST:
 */
 import java.util.*;
 import java.awt.image.*;
-import java.imageio.*;
+import javax.imageio.*;
 import java.io.*;
 import java.awt.Polygon;//for polygon construction
-public class WorldMap
+import javax.swing.*;
+import java.awt.*;
+public class WorldMap extends JPanel
 {
 	//Fields
 	Image map;//background image of map
 	int turn;//current turn
 	public static ArrayList<NodeWorld> nodeList = new ArrayList<NodeWorld>();//array list of nodes
 	int numNodes;//number of nodes to be made
-	int innerNodes;//splitting the number of nodes into 3 zones
-	int midNodes;
-	int outerNodes;//to the heart, and a lower node concentration outside
+	//int innerNodes;//splitting the number of nodes into 3 zones
+	//int midNodes;
+	//int outerNodes;//to the heart, and a lower node concentration outside
 	int nodesLeft;
-	private Dimension screenRes;//dimension of screen
-	int screenResX;//width of screen
-	int screenResY;//height of screen
-	
+	Dimension screenRes1;//dimension of screen
+	int screenRes1X1;//width of screen
+	int screenRes1Y1;//height of screen
 	//Constructor
 	public WorldMap()
 	{
@@ -57,10 +58,42 @@ public class WorldMap
 		}
 		*/
 		map = map();
-		screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
-		screenResX = (int) (screenRes.getWidth());
-		screenResY = (int) (screenRes.getHeight());
+		screenRes1 = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
+		screenRes1X1 = (int) (screenRes1.getWidth());
+		screenRes1Y1 = (int) (screenRes1.getHeight());
 	}
+	
+	public static void main(String[] args)
+	{
+		WorldMap world = new WorldMap();
+		System.out.println("1");
+		world.assignNodePos();
+		System.out.println("2");
+		ArrayList<NodeWorld> nodeList = world.getNodeList();
+		System.out.println("NODE LIST");
+		for(int i = 0; i < nodeList.size(); i++)
+		{
+			System.out.println(i + "X: " + nodeList.get(i).x + " Y: " + nodeList.get(i).y);
+		}
+		System.out.println("3");
+		JFrame window = new JFrame("Does it work?");
+		System.out.println("4");
+		window.setSize(500,500);
+		window.setLocation(500,500);
+		window.add(world);
+		window.setVisible(true);
+		
+	}
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		for(int i = 0; i < nodeList.size(); i++)
+		{
+			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,null);
+		}
+	}
+	
 //////////////////////////////////Methods here///////////////////////////////////////
 /*
 Method 0: .map() loads an image used as the World Background (world map animation will be added later!)
@@ -73,16 +106,6 @@ Method 4: .lineMaker() - makes it so your character sprite moves towards the nod
 Method 5: .polygonDetector() creates polygons based on Safe Nodes
 Method 6: .enemyMovement() - will implement later, AI so scarrr
 */
-
-    public static void main(String[] args)
-    {
-        WorldMap gameMap = new WorldMap();
-        //gameMap.map()
-        gameMap.assignNodePos();
-        
-        
-    }
-
 	public static Image map()//This method is used to prevent the game from crashing if it can't locate the image
 	{
 		BufferedImage map = null;
@@ -101,7 +124,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 	{
 		for(int i = 0; i < innerNodes; i++)
 		{
-			nodeList.add(i, new NodeWorld(Math.random()*screenResX, Math.random() * screenResY));
+			nodeList.add(i, new NodeWorld(Math.random()*screenRes1X1, Math.random() * screenRes1Y1));
 			boolean check = true;
 			while(check)
 			{
@@ -112,37 +135,48 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 					int counter = 0;
 					if(dontWantX <= 20 && dontWantY <= 20)
 					{
-						nodeList.get(i).x = Math.random()*screenResX;
-						nodeList.get(i).y = Math.random()*screenResY;
+						nodeList.get(i).x = Math.random()*screenRes1X1;
+						nodeList.get(i).y = Math.random()*screenRes1Y1;
 						counter++;
 					}
 				*/
 	//Method 1: Creates nodes and assigns different positions
-	public static void assignNodePos(){
+	public void assignNodePos(){
 		for(int i = 0; i < numNodes; i++){
-			nodeList.add(i, new NodeWorld(Math.random()*screenResX, Math.random()*screenResY), 0, 0);//will change the skillID/theme parameter inputs later
+			nodeList.add(i, new NodeWorld((int)(Math.random()*screenRes1X1), (int)(Math.random()*screenRes1Y1), 0, 0));//will change the skillID/theme parameter inputs later
 			boolean check = true; //for checking purposes
-			while(check){
-				for(int j = 0; j < i; j++){
+			for(int j = 0; j < i; j++){
+				int counter = 0;
+				while(check){
 					int dontWantX = Math.abs(nodeList.get(i).x - nodeList.get(j).x);
 					int dontWantY = Math.abs(nodeList.get(i).y - nodeList.get(j).y);
-					int counter = 0;
 					// Checking a range if far enough from other nodes. Basically, the range from (xPos - 20) to (xPos + 20) must be both less or both greater than the other nodes available.
 					if(dontWantX <= 20 && dontWantY <= 20)
 					{
-						nodeList.get(i).x = Math.random()*screenResX;
-						nodeList.get(i).y = Math.random()*screenResY;
+						nodeList.get(i).x = (int)(Math.random()*screenRes1X1);
+						nodeList.get(i).y = (int)(Math.random()*screenRes1Y1);
 						counter++;
 					}
 					if(counter > 0)//should check if need brackets here......
+					{
 						check = true;
+					}
 					else
+					{
 						check = false;
+					}
 				}
 			}
 		}
 	}
+	public ArrayList<NodeWorld> getNodeList()
+	{
+		return nodeList;
+	}
 	//Method 5: PolygonDetector
+/*
+
+
 	public static void polygonDetector()//This method creates polygons
 	{
 		//Creates an arraylist of nodes with Sanctuary status
@@ -244,4 +278,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		//VECTORS?!
 		//Move the character at a rate of y/x until it reaches the point. Then stop
 	}
+
+	
+*/
 }
