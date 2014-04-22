@@ -171,6 +171,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 					{
 						check = false;
 					}
+				System.out.println("Node " + i + ": " + nodeList.get(i).x + ", " + nodeList.get(i).y);
 				}
 			}
 		}

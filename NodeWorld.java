@@ -59,7 +59,7 @@ Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 		BufferedImage dungeon = null;
 		try
 		{
-			dungeon = ImageIO.read(new File("Node_Concept.jpg"));
+			dungeon = ImageIO.read(new File("Node.jpg"));
 		}
 		catch(IOException e)
 		{
@@ -71,7 +71,7 @@ Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 		BufferedImage clearedDungeon = null;
 		try
 		{
-			clearedDungeon = ImageIO.read(new File("/Images/Captured_Node_Concept.jpg"));
+			clearedDungeon = ImageIO.read(new File("CapturedNode.jpg"));
 		}
 		catch(IOException e)
 		{
@@ -95,7 +95,7 @@ Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 		BufferedImage battlefield = null;
 		try
 		{
-			battlefield = ImageIO.read(new File("Node_Under_Attack_Concept.jpg"));
+			battlefield = ImageIO.read(new File("BattlefieldNode.jpg"));
 		}
 		catch(IOException e)
 		{
@@ -107,7 +107,7 @@ Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 		BufferedImage  enemyNode = null;
 		try
 		{
-			enemyNode = ImageIO.read(new File("Lost_Node_Concept.jpg"));
+			enemyNode = ImageIO.read(new File("LostNode.jpg"));
 		}
 		catch(IOException e)
 		{

@@ -25,6 +25,7 @@ public class LegacyDungeon extends JPanel
 		LegacyDungeon game = new LegacyDungeon();
 		createWindow();//creates window
 		window.add(game);//adds JPanel to window
+		game.createWorld(turnCounter);
 		while(running)//new problem: nodes don't appear unless you repaint, might need to force repaint
 		{
 			//loadMenu();
@@ -69,7 +70,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 	public static void createWindow()
 	{
 		Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
-		window.setSize(500,500);//Sets size in pixels
+		window.setSize(1000,1000);//Sets size in pixels
 		int windowX = (int) (window.getWidth());//grabs the width of window made
 		int windowY = (int) (window.getHeight());//grabs the height of window made
 		int windowPosX = (int) (screenRes.getWidth() - windowX)/2;//obtains width of user screen, divides by two, then subtracts by size of window
@@ -78,7 +79,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		JFrame.setDefaultLookAndFeelDecorated(true);//allows for customization of icons/windows/etc.
 		Toolkit toolkit = Toolkit.getDefaultToolkit();//uses the toolkit, which allows for reading of image file
 		Image icon = toolkit.getImage("icon.png");
-		window.setResizable(false);
+		window.setResizable(true);
 		window.setIconImage(icon); //Sets icon image
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//Makes it so the program stops running when the "X" button is pressed
 		window.setLocation(windowPosX, windowPosY);//sets location to center
@@ -129,6 +130,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 			//SOMETHING HERE. I MIGHT BE MISSING SOMETHING. I FEEL LIKE I'M MISSING SOMETHING. THIS NOTE SHOULD BE KEPT UNTIL WE FIND THE MISSING COMPONENT.
 		}
 		*/
+		this.turnCounter++;
 		return false;
 	}
 //Method 4: Entering dungeon;; not yet...
