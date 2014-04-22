@@ -17,8 +17,9 @@ public class DungeonRunner
 	int theme;//theme of the dungeon
 	int skillID;//skill reward at bottom of dungeon
 	int difficulty;//difficulty of dungeon
-    int xLengthInput;
-    int yLengthInput;
+    static int xLengthInput;
+    static int yLengthInput;
+    static int numTiles;
     public static ArrayList<DungeonTile> tileList = new ArrayList<DungeonTile>();
     public static ArrayList<DungeonTile> connectorList = new ArrayList<DungeonTile>();
 	//Constructor
@@ -29,7 +30,10 @@ public class DungeonRunner
 		this.difficulty = difficulty;//insert random factor that will adjust difficulty
 		currentFloor = 1;
 		numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
-        int xLengthInput;
+        //Remove this stuff later. Just for testing.
+        xLengthInput = 50;
+        yLengthInput = 50;
+        numTiles = 50;
 		//Number of floors is based on the difficulty level
 	}
 //////////////////////////////////METHODS HERE///////////////////////////////////////
@@ -44,18 +48,21 @@ Method 6: .spawnStairs() spawns the stairs. It will be located as far from the p
 Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
-/*
+
     public static void main(String[] args)
     {
-        assignTilePos(xLengthInput, yLengthInput, numTiles);
-        generateItems();
+        //Remove when done testing.
+        DungeonRunner dungeon = new DungeonRunner(1,1,1);
+        
+        dungeon.assignTilePos(xLengthInput, yLengthInput, numTiles);
+        //generateItems();
     
     
     }
-*/
 
 
-    //Charlie, please make this less ugly. This generates the floor tiles of the dungeon.
+
+    //Charlie, please make this less ugly. This generates the floor tiles of the dungeon. REMOVE STATIC WHEN WORKING.
     public void assignTilePos(int xLength, int yLength, int numTiles)
     {
         //The first seed tile.
@@ -68,12 +75,14 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
             boolean boolGoodTile = false;
             int connectionCap = 2;
+            int pickedTileNumber = 0;
+            DungeonTile possibleTile = new DungeonTile(0,0,0);
             while (boolGoodTile)
             {
+            pickedTileNumber = pickConnectorTile();
             //Gets the index of a random connector from the connectorList.
-            int pickedTileNumber = pickConnectorTile(); 
             //Gets a random tile adjacent to picked connector.
-            DungeonTile possibleTile = getAdjacentTile(pickedTileNumber);
+            possibleTile = getAdjacentTile(pickedTileNumber);
             //If picked tile is invalid, then restart with another connector.
             boolGoodTile = checkTileSpace(possibleTile, xLength, yLength);            
             }
@@ -86,6 +95,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             {
                 connectorList.remove(pickedTileNumber);
             }
+            
         }    
     }
     
@@ -124,7 +134,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         }
         
         
-        DungeonTile newTile = DungeonTile(x, y, 0);
+        DungeonTile newTile = new DungeonTile(x, y, 0);
         return newTile;
     }
     
@@ -155,7 +165,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             return true;  
         }
     }
-    
+    /*
     private void generateItems()
     {
         for (int i = 0; i < tileList.size(); i++)
@@ -211,7 +221,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             }
         }
     }
-    
+    */
 /*
 	//Method 1: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
 	public static boolean checkStairs(boolean reachStairs)
