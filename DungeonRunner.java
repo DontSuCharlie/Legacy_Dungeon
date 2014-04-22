@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*
 Progress Bar: [||        ]
 DungeonRunner.java is the file that generates the dungeon based on the information included in NodeWorld.java
@@ -15,6 +17,8 @@ public class DungeonRunner
 	int theme;//theme of the dungeon
 	int skillID;//skill reward at bottom of dungeon
 	int difficulty;//difficulty of dungeon
+    int xLengthInput;
+    int yLengthInput;
     public static ArrayList<DungeonTile> tileList = new ArrayList<DungeonTile>();
     public static ArrayList<DungeonTile> connectorList = new ArrayList<DungeonTile>();
 	//Constructor
@@ -25,6 +29,7 @@ public class DungeonRunner
 		this.difficulty = difficulty;//insert random factor that will adjust difficulty
 		currentFloor = 1;
 		numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
+        int xLengthInput;
 		//Number of floors is based on the difficulty level
 	}
 //////////////////////////////////METHODS HERE///////////////////////////////////////
@@ -39,7 +44,7 @@ Method 6: .spawnStairs() spawns the stairs. It will be located as far from the p
 Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
-
+/*
     public static void main(String[] args)
     {
         assignTilePos(xLengthInput, yLengthInput, numTiles);
@@ -47,11 +52,11 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     
     
     }
-
+*/
 
 
     //Charlie, please make this less ugly. This generates the floor tiles of the dungeon.
-    public static void assignTilePos(int xLength, int yLength, int numTiles)
+    public void assignTilePos(int xLength, int yLength, int numTiles)
     {
         //The first seed tile.
         tileList.add(0, new DungeonTile(xLength/2, yLength/2, 1));
@@ -62,6 +67,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         {
             //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
             boolean boolGoodTile = false;
+            int connectionCap = 2;
             while (boolGoodTile)
             {
             //Gets the index of a random connector from the connectorList.
@@ -69,7 +75,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             //Gets a random tile adjacent to picked connector.
             DungeonTile possibleTile = getAdjacentTile(pickedTileNumber);
             //If picked tile is invalid, then restart with another connector.
-            boolGoodTile = checkTileSpace(possibleTile);            
+            boolGoodTile = checkTileSpace(possibleTile, xLength, yLength);            
             }
             //Add a connection to the picked tile.
             connectorList.get(pickedTileNumber).numConnections += 1;
@@ -94,38 +100,42 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     //Pick a tile adjacent to given tile.    
     private DungeonTile getAdjacentTile(int tileChooser)
     {
+        int x;
+        int y;
+        
         if (Math.random() >= .5)
         {
-            int x = (connectorList.get(tileChooser).x + 1);
+            x = (connectorList.get(tileChooser).x + 1);
         }
         
         else
         {
-            int x = (connectorList.get(tileChooser).x - 1);
+            x = (connectorList.get(tileChooser).x - 1);
         }
         
         if (Math.random() >= .5)
         {
-            int y = (connectorList.get(tileChooser).y + 1);
+            y = (connectorList.get(tileChooser).y + 1);
         }
         
         else
         {
-            int x = (connectorList.get(tileChooser).y - 1);
+            y = (connectorList.get(tileChooser).y - 1);
         }
         
         
-        DungeonTile newTile = DungeonTile(x, y);
+        DungeonTile newTile = DungeonTile(x, y, 0);
         return newTile;
     }
     
     
-    private boolean checkTileSpace(DungeonTile tile)
+    private boolean checkTileSpace(DungeonTile tile, int xLength, int yLength)
     {
     //If on same space as another tile or in contact with the edges, then return false.
     //Note that if the only available spaces are out of bounds, this program will crash.
         for (int i = 0; i < tileList.size(); i++)
             {
+            
                 int DiffX = Math.abs(tile.x - tileList.get(i).x);
                 int DiffY = Math.abs(tile.y - tileList.get(i).y);
                 
@@ -135,7 +145,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 }                            
             }            
         
-        if (tile.x = 0 || tile.x = xLength || tile.y = 0 || tile.y = yLength)
+        if (tile.x == 0 || tile.x == xLength || tile.y == 0 || tile.y == yLength)
         {
             return false;
         }
@@ -173,36 +183,36 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 
                 if (chooser < goldChance)
                 {
-                    tileList.set(i).itemID = 1;
+                    tileList.get(i).itemID = 1;
                     //Need to decide how to do this.
-                    //tileList.set(i).goldAmount =                 
+                    //tileList.get(i).goldAmount =                 
                 }
                 
                 else if (chooser < commonChance)
                 {
-                    tileList.set(i).itemID = ((Math.random() * (highCommon - lowCommon)) + lowCommon);                                
+                    tileList.get(i).itemID = (int)((Math.random() * (highCommon - lowCommon)) + lowCommon);                                
                 }
             
                 else if (chooser < uncommonChance)
                 {
-                    tileList.set(i).itemID = ((Math.random() * (highUncommon - lowUncommon)) + lowUncommon);
+                    tileList.get(i).itemID = (int)((Math.random() * (highUncommon - lowUncommon)) + lowUncommon);
                 }
             
                 else if (chooser < rareChance)
                 {
-                    tileList.set(i).itemID = ((Math.random() * (highRare - lowRare)) + lowRare);
+                    tileList.get(i).itemID = (int)((Math.random() * (highRare - lowRare)) + lowRare);
                 }
             
                 else if (chooser < superChance)
                 {
-                    tileList.set(i).itemID = ((Math.random() * (highSuper - lowSuper)) + lowSuper);
+                    tileList.get(i).itemID = (int)((Math.random() * (highSuper - lowSuper)) + lowSuper);
                 }
             
             }
         }
     }
     
-
+/*
 	//Method 1: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
 	public static boolean checkStairs(boolean reachStairs)
 	{
@@ -282,5 +292,5 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
 		//check if last floor. IF last floor
 		//load sprites for tile
 		//load 
-	}	
+	}	*/
 }

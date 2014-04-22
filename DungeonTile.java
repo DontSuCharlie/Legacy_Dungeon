@@ -9,18 +9,18 @@ public class DungeonTile{
     int goldAmount;
     int characterID;
     
-    public DungeonTile(int xPos, int yPos)
+    public DungeonTile(int xPos, int yPos, int Connections)
     {
         x = xPos;
         y = yPos;
         tileID = 0;
         connectionCap = 2;
-        numConnections = 0;
+        numConnections = Connections;
         itemID = 0;
-        characterId = 0;
+        characterID = 0;
         
     }
-
+/*
     public void draw(Graphics g)
     {
         g.drawImage(image, XPos, YPos, XSpriteSize, YSpriteSize, null);
@@ -31,7 +31,7 @@ public class DungeonTile{
        ObjectProperites.super.paint(g);
     }
 
-
+*/
 
 
 
