@@ -1,28 +1,31 @@
-import java.awt.*;//includes Color, Dimension, and Graphics, etc.
-import java.awt.event.*;//Why do we need to import java.awt.event when java.awt.* already imports everything after that????
-//I think it's because .* does not include other files (it only includes stuff directly in the file, but not subfolders)
+import java.awt.*;//includes Color, Dimension, Graphics, etc.
+import java.awt.event.*;
 import java.awt.image.*;//image class allows for storage of image files
 import javax.swing.*;//part of UI, includes JPanel
-//import javax.imageio.*;//handles the input/output of IMAGE files
-//import java.io.*;//handles input/output of files (ie: reads files)
+
 public class LegacyDungeon extends JPanel
 {
 	//Fields
-	WorldMap world = new WorldMap();
-	JFrame window = new JFrame("Legacy Dungeon");//Creates a JFrame Object and titles it "Legacy Dungeon"
+	WorldMap world;
+	JFrame window;
+	//Character player;
 	//read save file. turnCounter should be 0 if save file not found or save file corrupt. Otherwise turnCounter should equal the value in the save file.
 	int turnCounter = 0;
 	//Constructor is necessary for adding this onto the frame
 	public LegacyDungeon()
 	{
-		
+		WorldMap world = new WorldMap();
+		JFrame window = new JFrame("LegacyDungeon");
+		//Character player = new Character();
 	}
+	//Main Method
 	public static void main(String[] args)
 	{
+		ArrayList<Object> inGameObjects = new ArrayList<Object>();//
 		boolean running = true;
 		LegacyDungeon game = new LegacyDungeon();
 		createWindow();//creates window
-		window.add(game);
+		window.add(game);//adds JPanel to window
 		while(running)
 		{
 			//loadMenu();
@@ -81,12 +84,17 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		window.setLocation(windowPosX, windowPosY);//sets location to center
 		window.setVisible(true);//Makes it visible...
 }
-//Method 1: 
+//Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
+//Calling game.repaint() will update what's in here.
+//Testing if
 	@Override
 	public static void paintComponent(Graphics graphic)
 	{
-			super.paintComponent();
-			drawImage(icon, 0, 0, null);
+			super.paintComponent();//we have to do super because magic
+			if(true)
+			{
+				drawImage(world.map, 0, 0, null);
+			}
 	}
 //Method 2:
 /////////////////////////////////////////Method 3: Creating and loading the World Map
@@ -94,14 +102,16 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 	{
 		boolean inWorldMap = true;//when this turns false, createWorld stops running
 		//Always loads map image
-		world.map;
+		//Since paintComponent requires everything to be in it, this might just turn world.map's boolean to true
+		//but i need to test whether or not if functions work in here
 		if(turnCounter == 0)//if this is the beginning, then we have to generate nodes and set character to heart node
 		{
 			world.assignNodePos();
 			//loads character sprite and sets them to the Heart Node as a starting position
-			world.startCharacter();
+			//world.startCharacter(); NOT YET
 		}
 		//Continue on normally
+		/*
 		while(inWorldMap)//continues this loop until player chooses to enter dungeon OR exit map
 		{
 			//Takes input, updates character sprite/movement depending on what they player pressed. Will confirm player movement and then run enemyMove() to update. If the player chooses to enter the dungeon, the method returns true, else it would just keep running. If the player chooses to leave the game, the method would return false
@@ -113,6 +123,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 			inWorldMap = false;
 			//SOMETHING HERE. I MIGHT BE MISSING SOMETHING. I FEEL LIKE I'M MISSING SOMETHING. THIS NOTE SHOULD BE KEPT UNTIL WE FIND THE MISSING COMPONENT.
 		}
+		*/
 		return false;
 	}
 //Method 4: Entering dungeon;; not yet...
