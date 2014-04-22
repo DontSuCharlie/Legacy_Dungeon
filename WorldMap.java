@@ -63,28 +63,26 @@ public class WorldMap extends JPanel
 		screenRes1X1 = (int) (screenRes1.getWidth());
 		screenRes1Y1 = (int) (screenRes1.getHeight());
 	}
-	
+	/*
 	public static void main(String[] args)
 	{
 		WorldMap world = new WorldMap();
-		System.out.println("1");
 		world.assignNodePos();
-		System.out.println("2");
 		ArrayList<NodeWorld> nodeList = world.getNodeList();
 		System.out.println("NODE LIST");
 		for(int i = 0; i < nodeList.size(); i++)
 		{
 			System.out.println(i + "X: " + nodeList.get(i).x + " Y: " + nodeList.get(i).y);
 		}
-		System.out.println("3");
 		JFrame window = new JFrame("Does it work?");
-		System.out.println("4");
 		window.setSize(500,500);
 		window.setLocation(500,500);
 		window.add(world);
-		window.setVisible(true);
-		
+		window.setVisible(true);		
 	}
+
+	
+	
 	@Override
 	public void paintComponent(Graphics g)
 	{
@@ -94,6 +92,7 @@ public class WorldMap extends JPanel
 			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,null);
 		}
 	}
+	*/
 	
 //////////////////////////////////Methods here///////////////////////////////////////
 /*
@@ -145,6 +144,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 	public void assignNodePos(){
 		for(int i = 0; i < numNodes; i++){
 			nodeList.add(i, new NodeWorld((int)(Math.random()*screenRes1X1), (int)(Math.random()*screenRes1Y1), 0, 0));//will change the skillID/theme parameter inputs later
+			nodeList.get(i).nodeImage = nodeList.get(i).nodeImage(nodeList.get(i).nodeStatus);
 			boolean check = true; //for checking purposes
 			for(int j = 0; j < i; j++){
 				int counter = 0;
