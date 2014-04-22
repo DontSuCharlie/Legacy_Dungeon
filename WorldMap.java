@@ -75,7 +75,8 @@ public class WorldMap extends JPanel
 		for(int i = 0; i < nodeList.size(); i++)
 		{
 			System.out.println(i + "X: " + nodeList.get(i).x + " Y: " + nodeList.get(i).y);
-		}
+            System.out.println(i + "nodeStatus: " + nodeList.get(i).nodeStatus); 
+        }
 		System.out.println("3");
 		JFrame window = new JFrame("Does it work?");
 		System.out.println("4");
@@ -89,7 +90,11 @@ public class WorldMap extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		for(int i = 0; i < nodeList.size(); i++)
+        BufferedImage img = null;
+        img = ImageIO.read(new File("icon.png"));
+        g.drawImage(img, 0,0, 500, 500, null);
+        
+        for(int i = 0; i < nodeList.size(); i++)
 		{
 			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,null);
 		}
@@ -112,7 +117,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		BufferedImage map = null;
 		try
 		{
-			map = ImageIO.read(new File("TempWorldMap.jpg"));
+			map = ImageIO.read(new File("/Images/TempWorldMap.jpg"));
 		}
 		catch (IOException e)
 		{
@@ -281,7 +286,4 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		//VECTORS?!
 		//Move the character at a rate of y/x until it reaches the point. Then stop
 	}
-
-	
-*/
 }
