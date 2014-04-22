@@ -74,6 +74,7 @@ public class WorldMap extends JPanel
 		{
 			System.out.println(i + "X: " + nodeList.get(i).x + " Y: " + nodeList.get(i).y);
 		}
+        
 		JFrame window = new JFrame("Does it work?");
 		window.setSize(500,500);
 		window.setLocation(500,500);
@@ -87,7 +88,11 @@ public class WorldMap extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		for(int i = 0; i < nodeList.size(); i++)
+        BufferedImage img = null;
+        img = ImageIO.read(new File("icon.png"));
+        g.drawImage(img, 0,0, 500, 500, null);
+        
+        for(int i = 0; i < nodeList.size(); i++)
 		{
 			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,null);
 		}
@@ -111,7 +116,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		BufferedImage map = null;
 		try
 		{
-			map = ImageIO.read(new File("TempWorldMap.jpg"));
+			map = ImageIO.read(new File("/Images/TempWorldMap.jpg"));
 		}
 		catch (IOException e)
 		{

@@ -39,6 +39,17 @@ Method 6: .spawnStairs() spawns the stairs. It will be located as far from the p
 Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
+
+    public static void main(String[] args)
+    {
+        assignTilePos(xLengthInput, yLengthInput, numTiles);
+        generateItems();
+    
+    
+    }
+
+
+
     //Charlie, please make this less ugly. This generates the floor tiles of the dungeon.
     public static void assignTilePos(int xLength, int yLength, int numTiles)
     {
@@ -134,6 +145,63 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             return true;  
         }
     }
+    
+    private void generateItems()
+    {
+        for (int i = 0; i < tileList.size(); i++)
+        {
+            //If the random double is less than itemChance, randomly pick the item that will be there.
+            double itemChance = .15;
+            if (Math.random() < .15)
+            {
+                //Note: these are placeholders for the actual way we do the item lists. (Maybe arraylists?)
+                int lowCommon;
+                int highCommon;
+                int lowUncommon;
+                int highUncommon;
+                int lowRare;
+                int highRare;
+                int lowSuper;
+                int highSuper;
+                
+                double chooser = Math.random();
+                double goldChance = .4;
+                double commonChance = .3;             
+                double uncommonChance = .19;
+                double rareChance = .1;
+                double superChance = .01;
+                
+                if (chooser < goldChance)
+                {
+                    tileList.set(i).itemID = 1;
+                    //Need to decide how to do this.
+                    //tileList.set(i).goldAmount =                 
+                }
+                
+                else if (chooser < commonChance)
+                {
+                    tileList.set(i).itemID = ((Math.random() * (highCommon - lowCommon)) + lowCommon);                                
+                }
+            
+                else if (chooser < uncommonChance)
+                {
+                    tileList.set(i).itemID = ((Math.random() * (highUncommon - lowUncommon)) + lowUncommon);
+                }
+            
+                else if (chooser < rareChance)
+                {
+                    tileList.set(i).itemID = ((Math.random() * (highRare - lowRare)) + lowRare);
+                }
+            
+                else if (chooser < superChance)
+                {
+                    tileList.set(i).itemID = ((Math.random() * (highSuper - lowSuper)) + lowSuper);
+                }
+            
+            }
+        }
+    }
+    
 
 	//Method 1: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
 	public static boolean checkStairs(boolean reachStairs)

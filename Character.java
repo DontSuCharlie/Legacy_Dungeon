@@ -39,8 +39,14 @@ public class Character extends JFrame
         for (int i = 0; i < numTiles; i++)
         {
             //Will use the static ArrayList<DungeonTile> tileList from DungeonRunner.java
-            if ((tileList.get(i).x == attemptedX) && (tileList.get(i).y ==attemptedY))
+            if ((tileList.get(i).x == attemptedX) && (tileList.get(i).y == attemptedY))
             {
+                // If another character is there, return the ID for a wall.
+                if (tileList.get(i).characterID != 0)
+                {
+                    return 0;               
+                }
+                
                 return tileList.get(i).tileID;
             }
         } 

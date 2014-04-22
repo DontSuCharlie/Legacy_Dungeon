@@ -1,5 +1,8 @@
 Legacy-Dungeon
 ==============
+Authors: Charlie Su, Anish Kannan, David Ma
+Musician(s) (possibly): Alex Wu, Daniel Do
+Storywriter(s) (possibly): 
 
 Needed components:
 1. World Map
