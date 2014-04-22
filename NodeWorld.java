@@ -58,7 +58,7 @@ Method 1:
 		BufferedImage dungeon = null;
 		try
 		{
-			dungeon = ImageIO.read(new File(".png"));
+			dungeon = ImageIO.read(new File("/Images/Node_Concept.jpg"));
 		}
 		catch(IOException e)
 		{
@@ -70,7 +70,8 @@ Method 1:
 		BufferedImage clearedDungeon = null;
 		try
 		{
-			clearedDungeon = ImageIO.read(new File(".png"));
+            // Note: add correct sprite later
+			clearedDungeon = ImageIO.read(new File("/Images/Captured_Node_Concept.png"));
 		}
 		catch(IOException e)
 		{
@@ -82,7 +83,7 @@ Method 1:
 		BufferedImage sanctuary = null;
 		try
 		{
-			sanctuary = ImageIO.read(new File(".png"));
+			sanctuary = ImageIO.read(new File("/Images/Captured_Node_Concept.jpg"));
 		}
 		catch(IOException e)
 		{
@@ -94,7 +95,7 @@ Method 1:
 		BufferedImage battlefield = null;
 		try
 		{
-			battlefield = ImageIO.read(new File(".png"));
+			battlefield = ImageIO.read(new File("/Images/Node_Under_Attack_Concept.jpg"));
 		}
 		catch(IOException e)
 		{
@@ -106,7 +107,7 @@ Method 1:
 		BufferedImage enemyNode = null;
 		try
 		{
-			enemyNode = ImageIO.read(new File(".png"));
+			enemyNode = ImageIO.read(new File("/Images/Lost_Node_Concept.jpg"));
 		}
 		catch(IOException e)
 		{
