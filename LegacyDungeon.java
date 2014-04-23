@@ -83,7 +83,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//Makes it so the program stops running when the "X" button is pressed
 		window.setLocation(windowPosX, windowPosY);//sets location to center
 		window.setVisible(true);//Makes it visible...
-}
+    }
 //Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
 //Calling game.repaint() will update what's in here.
 //Testing if

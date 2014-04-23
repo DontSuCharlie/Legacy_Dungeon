@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 /*
 Progress Bar: [||        ]
 DungeonRunner.java is the file that generates the dungeon based on the information included in NodeWorld.java
