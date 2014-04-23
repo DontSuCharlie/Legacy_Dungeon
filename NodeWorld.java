@@ -1,11 +1,4 @@
-import java.awt.*;//not sure
-import java.awt.event.*;//Why do we need to import java.awt.event when java.awt.* already imports everything after that????
-//I think it's because .* does not include other files (it only includes stuff directly in the file, but not subfolders)
 import java.awt.image.*;//image class allows for storage of BufferedImage files
-import javax.swing.*;//part of UI
-import javax.imageio.*;//handles the input/output of BufferedImage files
-import java.io.*;//handles input/output of files (ie: reads files)
-import java.util.*;
 public class NodeWorld
 {
 	int x;//x coordinate of node on world map
