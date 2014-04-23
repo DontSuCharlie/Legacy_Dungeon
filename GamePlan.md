@@ -1,3 +1,20 @@
+/* WorldMap.java tells LegacyDungeon.java exactly what to load, it will have the following attributes:
+TO-DO LIST:
+1] MIGHT NEED TO CONSIDER POINTS NOT TO BE TOO RANDOM
+2] 
+1] Background (image file) CHECK (just need LegacyDungeon to load this mofo)
+2] Creates nodes (uses NodeWorld.java) CHECK (got this down! fuck yeah! *note it is not very efficient)
+3] Does weird math to create polygons
+4] Has methods that updates the nodes (including enemy movement and player movement)
+5] Only allows player to move via the weird-math-polygon system
+6] Takes input (has a limited set of inputs)
+7] Loads game piece icon (statuses of the stuff)
+8] Music
+9] Movement sound
+//Might need to use threads for music...
+*/
+//nodeList.get(i).nodeImage = nodeList.get(i).loadNodeImage(nodeList.get(i).nodeStatus);
+//^Updates node image. Need to implement later
 Legacy-Dungeon Game Plan
 ===============
 

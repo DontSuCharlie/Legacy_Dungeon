@@ -1,130 +1,65 @@
-/* WorldMap.java tells LegacyDungeon.java exactly what to load, it will have the following attributes:
-TO-DO LIST:
-1] MIGHT NEED TO CONSIDER POINTS NOT TO BE TOO RANDOM
-2] 
-1] Background (image file) CHECK (just need LegacyDungeon to load this mofo)
-2] Creates nodes (uses NodeWorld.java) CHECK (got this down! fuck yeah! *note it is not very efficient)
-3] Does weird math to create polygons
-4] Has methods that updates the nodes (including enemy movement and player movement)
-5] Only allows player to move via the weird-math-polygon system
-6] Takes input (has a limited set of inputs)
-7] Loads game piece icon (statuses of the stuff)
-8] Music
-9] Movement sound
-//Might need to use threads for music...
-*/
-//nodeList.get(i).nodeImage = nodeList.get(i).loadNodeImage(nodeList.get(i).nodeStatus);
-//^Updates node image. Need to implement later
 import java.util.*;
 import java.awt.image.*;
-import javax.imageio.*;
-import java.io.*;
-import java.awt.Polygon;//for polygon construction
+import java.awt.Polygon;
 import javax.swing.*;
 import java.awt.*;
 public class WorldMap extends JPanel
 {
 	//Fields
-	Image map;//background image of map
-	int turn;//current turn
+	BufferedImage map;//background image of map
+	ImageLoader imageLoader;
 	public static ArrayList<NodeWorld> nodeList = new ArrayList<NodeWorld>();//array list of nodes
 	int numNodes;//number of nodes to be made
-	//int innerNodes;//splitting the number of nodes into 3 zones
-	//int midNodes;
-	//int outerNodes;//to the heart, and a lower node concentration outside
+	int innerNodes;//splitting the number of nodes into 3 zones
+	int midNodes;
+	int outerNodes;//to the heart, and a lower node concentration outside
 	int nodesLeft;
-    
+	boolean concentrateNodes;
 	Dimension screenRes1;//dimension of screen
 	int screenRes1X1;//width of screen
 	int screenRes1Y1;//height of screen
+	Polygon polygon;
 	//Constructor
 	public WorldMap()
 	{
 		numNodes = (int) (Math.random() * 20) + 20;//generates a random number of nodes
-		/*
-		nodesLeft = numNodes;
-		for(int i = 2; i < numNodes; i++)
+		imageLoader = new ImageLoader();
+		map = imageLoader.loadImage("TempWorldMap.jpg");
+		concentrateNodes = true;
+		if(concentrateNodes)//I can turn concentration of nodes at center on and off for testing purposes. See which one's more balanced/fun
 		{
-			if(numNodes%i == 0)
+			nodesLeft = numNodes;
+			for(int i = 2; i < numNodes; i++)
 			{
-				innerNodes = numNodes/i;
-				nodesLeft = numNodes - innerNodes;
+				if(numNodes%i == 0)
+				{
+					innerNodes = numNodes/i;
+					nodesLeft = numNodes - innerNodes;
+				}
+			}
+			for(int i = 2; i < nodesLeft; i++)
+			{
+				if(numNodes%i == 0 && numNodes/i < nodesLeft)
+				{
+					midNodes = numNodes/i;
+					outerNodes = nodesLeft - midNodes;
+				}
 			}
 		}
-		for(int i = 2; i < nodesLeft; i++)
-		{
-			if(numNodes%i == 0 && numNodes/i < nodesLeft)
-			{
-				midNodes = numNodes/i;
-				outerNodes = nodesLeft - midNodes;
-			}
-		}
-		*/
-		map = map();
+		//polygon = polygonDetector();
 		screenRes1 = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
-		screenRes1X1 = (int) (screenRes1.getWidth());
-		screenRes1Y1 = (int) (screenRes1.getHeight());
+		screenRes1X1 = (int) (screenRes1.getWidth()/2) - 100;
+		screenRes1Y1 = (int) (screenRes1.getHeight()/2.2) - 100;
 	}
-	/*
-	public static void main(String[] args)
-	{
-		WorldMap world = new WorldMap();
-		world.assignNodePos();
-		ArrayList<NodeWorld> nodeList = world.getNodeList();
-		System.out.println("NODE LIST");
-		for(int i = 0; i < nodeList.size(); i++)
-		{
-			System.out.println(i + "X: " + nodeList.get(i).x + " Y: " + nodeList.get(i).y);
-		}
-        
-		JFrame window = new JFrame("Does it work?");
-		window.setSize(500,500);
-		window.setLocation(500,500);
-		window.add(world);
-		window.setVisible(true);		
-	}
-
-	
-	
-	@Override
-	public void paintComponent(Graphics g)
-	{
-		super.paintComponent(g);
-        BufferedImage img = null;
-        img = ImageIO.read(new File("icon.png"));
-        g.drawImage(img, 0,0, 500, 500, null);
-        
-        for(int i = 0; i < nodeList.size(); i++)
-		{
-			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,null);
-		}
-	}
-	*/
-	
 //////////////////////////////////Methods here///////////////////////////////////////
 /*
-Method 0: .map() loads an image used as the World Background (world map animation will be added later!)
-Method 1: .assignNodePos() creates a random amount of nodes and assigns them positions
-//You've got to load the images (will be part of NodeWorld.java)
-//
-Method 2: .playerMove() loads player sprite, positions the player based on previous dungeon (if no previous then starts at Heart), makes sure the player CAN ONLY BE ON NODES. Will also make sure turn++;
-Method 3: .keyListener() - obtains keyboard input. Allows for player movement based on lowest distance in terms of x/y based on position
-Method 4: .lineMaker() - makes it so your character sprite moves towards the node in a linear line
-Method 5: .polygonDetector() creates polygons based on Safe Nodes
-Method 6: .enemyMovement() - will implement later, AI so scarrr
+Method 0: .assignNodePos() creates a random amount of nodes and assigns them positions
+Method 1: .playerMove() loads player sprite, positions the player based on previous dungeon (if no previous then starts at Heart), makes sure the player CAN ONLY BE ON NODES. Will also make sure turn++;
+Method 2: .mouseListener() - obtains keyboard input from LegacyDungeon. Then translates input to allow for player movement based on lowest distance in terms of x/y based on position (will add keyListener later)
+Method 3: .lineMaker() - makes it so your character sprite moves towards the node in a linear line
+Method 4: .polygonDetector() creates polygons based on Safe Nodes
+Method 5: .enemyMovement() - will implement later, AI so scarrr
 */
-	public static Image map()//This method is used to prevent the game from crashing if it can't locate the image
-	{
-		BufferedImage map = null;
-		try
-		{
-			map = ImageIO.read(new File("/Images/TempWorldMap.jpg"));
-		}
-		catch (IOException e)
-		{
-		}
-		return map;
-	}
 /* WILL WORK ON DISTRIBUTION OF NODES _AFTER_ NORMAL DISTRIBUTION OF NODES WORKS
 	//Method 0: Creates nodes and assigns different positions for inner nodes
 	public static void assignInnerNodes()
@@ -182,21 +117,26 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		return nodeList;
 	}
 	//Method 5: PolygonDetector
-/*
-
-
-	public static void polygonDetector()//This method creates polygons
+	public static Polygon polygonDetector()//This method creates polygons
 	{
 		//Creates an arraylist of nodes with Sanctuary status
+		Polygon safeZone = null;
 		ArrayList<NodeWorld> vertexList = new ArrayList<NodeWorld>();
+		ArrayList<NodeWorld> polygonList = new ArrayList<NodeWorld>();
+		NodeWorld largestX = new NodeWorld(0,0,0,0);
+		NodeWorld largestY = new NodeWorld(0,0,0,0);
+		NodeWorld smallestX = new NodeWorld(10000,10000,0,0);
+		NodeWorld smallestY = new NodeWorld(10000,10000,0,0);
+		//NEED TO WATCH OUT FOR VERTICAL LINES BC DIVIDE BY 0
 		for(int i = 0; i < nodeList.size(); i++)
 		{
 			if (nodeList.get(i).nodeStatus == 2)
 			{
 				vertexList.add(nodeList.get(i));
+				System.out.println("Adding node: " + nodeList.get(i).x + ", " + nodeList.get(i).y);
 			}
 		}
-		if(nodeList.size() > 2)
+		if(vertexList.size() == 3)
 		{
 			int[] xCoord = new int[nodeList.size()];
 			for(int i = 0; i < xCoord.length; i++)
@@ -208,9 +148,101 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 			{
 				yCoord[i] = nodeList.get(i).y;
 			}
-			Polygon safeZone = new Polygon(xCoord,yCoord,nodeList.size());
+			safeZone = new Polygon(xCoord,yCoord,nodeList.size());
 			//will add maximum area later
 		}
+		if(vertexList.size() > 3)
+		{
+			for(int i = 0; i < vertexList.size(); i++)
+			{
+				//might implement binary search here, but not yet
+				if(vertexList.get(i).x > largestX.x)
+				{
+					largestX = vertexList.get(i);
+				}
+				if(vertexList.get(i).x < smallestX.x)
+				{
+					smallestX = vertexList.get(i);
+				}
+				if(vertexList.get(i).y > largestY.y)
+				{
+					largestY = vertexList.get(i);
+				}
+				if(vertexList.get(i).y < smallestY.y)
+				{
+					smallestY = vertexList.get(i);
+				}
+			}
+			vertexList.remove(smallestY);
+			vertexList.remove(largestY);
+			vertexList.remove(smallestX);
+			vertexList.remove(largestX);
+			//Now I have largest coordinates
+			//Should check if any are repeats. If there are, eliminate one
+			//Generate quadrilateral from these 4 points
+			polygonList.add(smallestX);
+			polygonList.add(largestY);
+			polygonList.add(largestX);
+			polygonList.add(smallestY);
+			//safeZone = new Polygon(listofXCoord, listofYCoord, 4);
+			/*
+			//Doesn't matter which slope is referred to AS LONG AS LARGEST(X/Y) DOES NOT COME IN CONTACT WITH SMALLEST(X/Y) AND IT DOESN'T REPEAT
+			double rightBottomSlope = (largestY.y-largestX.y)/(largestY.x-largestX.x);
+			double 
+			//is the lower bottom slope (remember origin is top left)
+			double leftTopSlope = (smallestX.y-smallestY.y)/(smallestX.x -smallestY.x);
+			//top left slope
+			double rightTopSlope = (largestX.y-smallestY.y)/(largestX.x - smallestY.x);
+			//top right slope
+			double leftBottomSlope = (smallestX.y-largestY.y)/(smallestX.x -largestY.x);
+			//bottom left slope
+			//Plugs in values. If values are outside of the boundary, append them to the polygon
+			*/
+		for(int i = 0; i < vertexList.size(); i++)
+		{
+			//Bottom Left Slope
+			if(linearEquationMaker(smallestX.x, smallestX.y, largestY.x, largestY.y, vertexList.get(i).x, vertexList.get(i).y) < 0)
+			{
+				polygonList.add(1,vertexList.get(i));//need to set index
+				System.out.println("Working on it.");
+			}
+		}
+		int[] listofXCoord = new int[polygonList.size()];
+		int[] listofYCoord = new int[polygonList.size()];
+		for(int i = 0; i < polygonList.size(); i++)
+		{
+			System.out.println(polygonList.get(i).x + ", " + polygonList.get(i).y);
+			listofXCoord[i] = polygonList.get(i).x;
+			listofYCoord[i] = polygonList.get(i).y;
+			
+		}
+		safeZone = new Polygon(listofXCoord, listofYCoord, polygonList.size());
+		}
+		return safeZone;
+	}
+	public static int linearEquationMaker(int x1, int y1, int x2, int y2, int x3, int y3)
+	{
+		//Finding the slope
+		double slope = (double)(y2-y1)/(double)(x2-x1);
+		System.out.println((y2-y1) + "/" + (x2-x1) + " = " + slope);
+		//Finding the translation
+		double translation = y1 - (slope*x1);
+		System.out.println(y1 + "-" + slope + "*" + x1 + " = " + translation);
+		//compare
+		int returnValue = 0;
+		if((slope*x3) + translation < y3)//below in terms of java's coord persp
+		{
+			returnValue =  -1;
+		}
+		if((slope*x3) + translation > y3)//above
+		{
+			returnValue = 1;
+		}
+		if(slope < 0)//if slope is opposite then it will change perspective
+		{
+			returnValue = - returnValue;
+		}
+		return returnValue;
 	}
 		//Scan each node and identify the one with lowest distance from each other starting from arraylist.get(0)
 		//With lowest distance, use java.paint to draw a line using the two points as vertices
@@ -243,6 +275,7 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		return false;
 	}
 */
+/*
 	//Method 3: Detects closest nodes. Will be called by .playerMove() so dwai
 	public static void nodeDetector(int playerX, int playerY)
 	{
@@ -288,4 +321,5 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 		//VECTORS?!
 		//Move the character at a rate of y/x until it reaches the point. Then stop
 	}
+*/
 }

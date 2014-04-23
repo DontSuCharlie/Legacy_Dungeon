@@ -8,7 +8,7 @@ public class NodeWorld
 	int theme;
 	static int difficulty; //linear increase in dungeon. Is static bc difficulty increases as game progresses
 	BufferedImage nodeImage; //image of node
-	ImageLoader imageLoader;
+	ImageLoader imageLoader;//need to initiate ImageLoader
 	//Constructor
     public NodeWorld(int xPos, int yPos, int skill, int theme)
 	{

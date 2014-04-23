@@ -25,10 +25,13 @@ public class LegacyDungeon extends JPanel
 		LegacyDungeon game = new LegacyDungeon();
 		createWindow();//creates window
 		window.add(game);//adds JPanel to window
+		//TESTING
+		game.createWorld(turnCounter);
+		game.repaint();
 		while(running)//new problem: nodes don't appear unless you repaint, might need to force repaint
 		{
 			//loadMenu();
-			boolean inGame = true;
+			boolean inGame = false;
 			while(inGame)
 			{
 				game.createWorld(turnCounter);
@@ -69,7 +72,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 	public static void createWindow()
 	{
 		Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
-		window.setSize(1000,1000);//Sets size in pixels
+		window.setSize((int)(screenRes.getWidth()/2),(int)(screenRes.getWidth()/2.2));//Sets size in pixels based on player's screen
 		int windowX = (int) (window.getWidth());//grabs the width of window made
 		int windowY = (int) (window.getHeight());//grabs the height of window made
 		int windowPosX = (int) (screenRes.getWidth() - windowX)/2;//obtains width of user screen, divides by two, then subtracts by size of window
@@ -90,15 +93,32 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 	@Override
 	public void paintComponent(Graphics g)
 	{
-			super.paintComponent(g);//we have to do super because magic
-			if(true)
+		Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+		super.paintComponent(g);//we have to do super because magic
+		//Graphics2D g2 = (Graphics2D) g;
+		//Border lineborder = 
+		//g.setStroke(new BasicStroke(10));
+		g.setColor(Color.red);
+		if(true)
+		{
+			g.drawImage(world.map, 0, 0, (int)(screenRes.getWidth()/2),(int)(screenRes.getWidth()/2.2),null);
+		}
+		for(int i = 0; i < nodeList.size(); i++)
+		{
+			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,20,20,null);
+		}
+		int vertexCounter = 0;
+		for(int i = 0; i < nodeList.size(); i++)
+		{
+			if(nodeList.get(i).nodeStatus == 2)
 			{
-				g.drawImage(world.map, 0, 0, null);
+				vertexCounter++;
 			}
-			for(int i = 0; i < nodeList.size(); i++)
-			{
-				g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,null);
-			}
+		}
+		if(vertexCounter >= 3)
+		{
+			g.drawPolygon(world.polygonDetector());
+		}
 	}
 //Method 2:
 /////////////////////////////////////////Method 3: Creating and loading the World Map
