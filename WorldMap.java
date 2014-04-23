@@ -13,6 +13,8 @@ TO-DO LIST:
 9] Movement sound
 //Might need to use threads for music...
 */
+//nodeList.get(i).nodeImage = nodeList.get(i).loadNodeImage(nodeList.get(i).nodeStatus);
+//^Updates node image. Need to implement later
 import java.util.*;
 import java.awt.image.*;
 import javax.imageio.*;
@@ -149,7 +151,6 @@ Method 6: .enemyMovement() - will implement later, AI so scarrr
 	public void assignNodePos(){
 		for(int i = 0; i < numNodes; i++){
 			nodeList.add(i, new NodeWorld((int)(Math.random()*screenRes1X1), (int)(Math.random()*screenRes1Y1), 0, 0));//will change the skillID/theme parameter inputs later
-			nodeList.get(i).nodeImage = nodeList.get(i).nodeImage(nodeList.get(i).nodeStatus);
 			boolean check = true; //for checking purposes
 			for(int j = 0; j < i; j++){
 				int counter = 0;

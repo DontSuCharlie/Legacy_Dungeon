@@ -25,7 +25,6 @@ public class LegacyDungeon extends JPanel
 		LegacyDungeon game = new LegacyDungeon();
 		createWindow();//creates window
 		window.add(game);//adds JPanel to window
-		game.createWorld(turnCounter);
 		while(running)//new problem: nodes don't appear unless you repaint, might need to force repaint
 		{
 			//loadMenu();
