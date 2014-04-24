@@ -1,10 +1,13 @@
 // Note, will be included in the save file.
 public class Config{
 
-String up = "w";
-String down = "s";
-String left = "a";
-String right = "r";
+String up = "W";
+String down = "S";
+String left = "A";
+String right = "D";
+String aimMode = "SPACE";
+String hotKeyHeal  = "H";
+
 String hotKeyOne = "1";
 String hotKeyTwo = "2";
 String hotKeyThree = "3";
@@ -15,7 +18,7 @@ String hotKeySeven = "7";
 String hotKeyEight = "8";
 String hotKeyNine = "9";
 String hotKeyTen = "10";
-String hotKeyHeal  = "h";
+
 
 
 

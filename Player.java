@@ -7,20 +7,31 @@ public class Player extends GeneralCharacterProperties{
 
     public Player()
     {
-        KeyListener listener = new MyKeyListener();
-        addKeyListener(listener);
-        set focusable
+        
+        
     }
 
-    public class movement
+    public int move()
+    {
+        
+    
+    }
+    
+    public void aimMode()
     {
         
     
     }
         
-   static public main
-   {
-   
-   }
+   static public void main
+    {
+        //This frame is for testing only. KeyListener will be in LegacyDungeon.
+        JFrame frame = new JFrame("Test");
+        KeyboardInput input = new KeyboardInput();
+        frame.add(input);
+		frame.setSize(200, 200);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
    
 }
