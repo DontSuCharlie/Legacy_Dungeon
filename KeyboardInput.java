@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 //Used to get keyboard input, similar in use to imageLoader
 public class KeyboardInput extends JPanel
 {
+
+    public String key;
     //Note: remove this main when done testing.
     
     public static void main(String[] args)
@@ -16,6 +18,8 @@ public class KeyboardInput extends JPanel
         frame.add(input);
 		frame.setSize(200, 200);
 		frame.setVisible(true);
+        String pressedKey = input.returnKey();
+        System.out.println(pressedKey);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     }
@@ -30,27 +34,33 @@ public class KeyboardInput extends JPanel
 
     public class KeyboardListener implements KeyListener
     {
-        //@Override
+    
         public void keyTyped(KeyEvent e)
         
         {
         }
         
-        //@Override
         public void keyPressed(KeyEvent e)
         {
             System.out.println("keyPressed: " + KeyEvent.getKeyText(e.getKeyCode()));
+            key = KeyEvent.getKeyText(e.getKeyCode());
         }
     
-        //@override
         public void keyReleased(KeyEvent e)
         {
             System.out.println("keyReleased: " + KeyEvent.getKeyText(e.getKeyCode()));
         }
+        
+
+        
     
     }
 
-
+    public String returnKey()
+    {
+        return key;        
+    
+    }
 
 
 }

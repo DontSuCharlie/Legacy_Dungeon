@@ -83,6 +83,8 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		Image icon = toolkit.getImage("icon.png");
 		window.setResizable(true);
 		window.setIconImage(icon); //Sets icon image
+        KeyboardInput input = new KeyboardInput(); //Used for keyboard input
+        window.add(input);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//Makes it so the program stops running when the "X" button is pressed
 		window.setLocation(windowPosX, windowPosY);//sets location to center
 		window.setVisible(true);//Makes it visible...

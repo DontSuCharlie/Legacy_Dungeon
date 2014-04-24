@@ -5,9 +5,9 @@ String up = "W";
 String down = "S";
 String left = "A";
 String right = "D";
-String aimMode = "SPACE";
+String aimMode = "Space";
 String hotKeyHeal  = "H";
-
+String inventory = "I";
 String hotKeyOne = "1";
 String hotKeyTwo = "2";
 String hotKeyThree = "3";

@@ -1,3 +1,5 @@
+import java.awt.image.*;
+
 public class DungeonTile
 {
     int x;
@@ -9,6 +11,7 @@ public class DungeonTile
     int goldAmount;
     int characterID;
     BufferedImage tileImage;
+    ImageLoader imageLoader;
     
     public DungeonTile(int xPos, int yPos, int Connections)
     {
@@ -21,17 +24,10 @@ public class DungeonTile
         characterID = 0;
     }
     
-    	public BufferedImage loadTileImage()
+    	public BufferedImage loadTileImage(int tileID)
 	{
-		BufferedImage tile = null;
-		try
-		{
-			tileImage = ImageIO.read(new File("SuperTile.png"));
-		}
-		catch(IOException e)
-		{
-		}
-		return clearedDungeon;
+        
+        return imageLoader.loadImage("DungeonTile" + tileID +".png");
 	}
 /*
     public void draw(Graphics g)
