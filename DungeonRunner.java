@@ -31,8 +31,8 @@ public class DungeonRunner
       currentFloor = 1;
       numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
         //Remove this stuff later. Just for testing.
-        xLengthInput = 50;
-        yLengthInput = 50;
+        xLengthInput = 100;
+        yLengthInput = 100;
         numTiles = 1000;
       //Number of floors is based on the difficulty level
    }
@@ -53,8 +53,8 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     {
         //Remove when done testing.
         DungeonRunner dungeon = new DungeonRunner(1,1,1);
-        
         dungeon.assignTilePos(xLengthInput, yLengthInput, numTiles);
+        dungeon.spawnPlayer();
         //generateItems();
     
     
@@ -71,7 +71,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         for (int i = 0; i < (xLength* yLength); i++)
         {
             
-            unusedTileList.add(new DungeonTile (x,y,0));
+            unusedTileList.add(new DungeonTile (x,y,0, 0));
             x++;
             
             if (x == xLength)
@@ -82,8 +82,8 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         
         }
         //The first seed tile. Currently uses the middle tile. Perhaps have a random seed tile?
-        tileList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1));
-        connectorList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1));
+        tileList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1, 0));
+        connectorList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1, 0));
         //Starting at 1 because seed is 0.
         for (int i = 1; i < numTiles; i++)
         {
@@ -91,11 +91,11 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             boolean boolBadTile = true;
             int connectionCap = 2;
             int pickedTileNumber = 0;
-            DungeonTile possibleTile = new DungeonTile(0,1,0);
+            DungeonTile possibleTile = new DungeonTile(0,0,0,0);
             
             while (boolBadTile)
             {
-                pickedTileNumber = pickConnectorTile();
+                pickedTileNumber = pickTile(connectorList);
                 //Gets the index of a random connector from the connectorList.
                 //Gets a random tile adjacent to picked connector.
                 possibleTile = getAdjacentTile(pickedTileNumber);
@@ -137,40 +137,45 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     }
     
     //Returns the index of a selected connector.
-    private int pickConnectorTile()
+    private int pickTile(ArrayList<DungeonTile> choiceList)
     {
         //Pick a random tile from the connector list. Please check if this will work. 
-        int tileChooser = (int)(Math.random() * connectorList.size());
+        int tileChooser = (int)(Math.random() * choiceList.size());
         return tileChooser;
     }
 
-    //Pick a tile adjacent to given tile.    
+    //Pick a tile adjacent to given tile. Either x or y is modified by one.
     private DungeonTile getAdjacentTile(int tileChooser)
     {
-        int x;
-        int y;       
-        if (Math.random() >= .5)
+        int x = 0;
+        int y = 0;       
+        
+        double randomNumber = Math.random();
+        if (randomNumber <= .25)
         {
             x = (connectorList.get(tileChooser).x + 1);
+            y = (connectorList.get(tileChooser).y);
         }
         
-        else
+        else if (randomNumber <= .5)
         {
             x = (connectorList.get(tileChooser).x - 1);
+            y = (connectorList.get(tileChooser).y);
         }
         
-        if (Math.random() >= .5)
+        else if (randomNumber <= .75)
         {
+            x = (connectorList.get(tileChooser).x);
             y = (connectorList.get(tileChooser).y + 1);
         }
         
-        else
+        else if (randomNumber < 1)
         {
+            x = (connectorList.get(tileChooser).x);
             y = (connectorList.get(tileChooser).y - 1);
         }
         
-        
-        DungeonTile newTile = new DungeonTile(x, y, 1);
+        DungeonTile newTile = new DungeonTile(x, y, 1 ,0);
         return newTile;
     }
     
@@ -200,6 +205,14 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             return false;  
         }
     }
+    
+    private void spawnPlayer()
+    {
+        int tileChoice = pickTile(tileList);
+        tileList.get(tileChoice).characterID = 1;
+    }
+    
+    
     /* FIX WHEN ITEM SYSTEM IS SOLIDIFIED
     private void generateItems()
     {

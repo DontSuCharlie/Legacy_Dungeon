@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 public class KeyboardInput extends JPanel
 {
 
-    public String key;
+    public static String key;
     //Note: remove this main when done testing.
     
     public static void main(String[] args)
@@ -58,7 +58,7 @@ public class KeyboardInput extends JPanel
 
     public String returnKey()
     {
-        return key;        
+        return key;
     
     }
 

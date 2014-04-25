@@ -1,30 +1,50 @@
 // Note, will be included in the save file.
 public class Config{
 
-String up = "W";
-String down = "S";
-String left = "A";
-String right = "D";
-String aimMode = "Space";
-String hotKeyHeal  = "H";
-String inventory = "I";
-String hotKeyOne = "1";
-String hotKeyTwo = "2";
-String hotKeyThree = "3";
-String hotKeyFour = "4";
-String hotKeyFive = "5";
-String hotKeySix = "6";
-String hotKeySeven = "7";
-String hotKeyEight = "8";
-String hotKeyNine = "9";
-String hotKeyTen = "10";
+public String up;
+public String down;
+public String left;
+public String right;
+public String aimMode;
+public String hotKeyHeal;
+public String inventory;
+public String hotKeyOne;
+public String hotKeyTwo;
+public String hotKeyThree;
+public String hotKeyFour;
+public String hotKeyFive;
+public String hotKeySix;
+public String hotKeySeven;
+public String hotKeyEight;
+public String hotKeyNine;
+public String hotKeyTen;
+
+
+    public Config()
+    {
+        up = "W";
+        down = "S";
+        left = "A";
+        right = "D";
+        aimMode = "Space";
+        hotKeyHeal  = "H";
+        inventory = "I";
+        hotKeyOne = "1";
+        hotKeyTwo = "2";
+        hotKeyThree = "3";
+        hotKeyFour = "4";
+        hotKeyFive = "5";
+        hotKeySix = "6";
+        hotKeySeven = "7";
+        hotKeyEight = "8";
+        hotKeyNine = "9";
+        hotKeyTen = "10";
+    
+    }
 
 
 
-
-
-
-    public rebindKeys()
+    public void rebindKeys()
     {
         
     

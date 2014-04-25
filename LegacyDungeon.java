@@ -17,6 +17,7 @@ public class LegacyDungeon extends JPanel
 		window = new JFrame("Legacy Dungeon");
 		world = new WorldMap();
 		nodeList = world.getNodeList();
+        Config config = new config();
 	}
 	//Main Method
 	public static void main(String[] args)

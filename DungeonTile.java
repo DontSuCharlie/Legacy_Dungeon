@@ -9,17 +9,23 @@ public class DungeonTile
     int numConnections;
     int itemID; //0 = nothing, 1 = money, 2 = ?
     int goldAmount;
-    int characterID;
+    int characterID; //0 = nothing, 1 = player, 2 = enemy
     BufferedImage tileImage;
     ImageLoader imageLoader;
     
-    public DungeonTile(int xPos, int yPos, int Connections)
+    //Test for improvement for generation
+    boolean tileToLeft;
+    boolean tileToRight;
+    boolean tileToUp;
+boolean tileToDown;    
+    
+    public DungeonTile(int xPos, int yPos, int tileID, int connections)
     {
         x = xPos;
         y = yPos;
         tileID = 0;
         connectionCap = 2;
-        numConnections = Connections;
+        numConnections = connections;
         itemID = 0;
         characterID = 0;
     }
