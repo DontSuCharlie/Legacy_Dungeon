@@ -35,8 +35,7 @@ public class KeyboardInput extends JPanel
     public class KeyboardListener implements KeyListener
     {
     
-        public void keyTyped(KeyEvent e)
-        
+        public void keyTyped(KeyEvent e)   
         {
         }
         
