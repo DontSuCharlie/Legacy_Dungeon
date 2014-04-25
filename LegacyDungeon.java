@@ -35,6 +35,7 @@ public class LegacyDungeon extends JPanel
 			while(inGame)
 			{
 				game.createWorld(turnCounter);
+				game.repaint();
 				//loadDungeon(createWorld(turnCounter));
 			}
 		}
@@ -134,6 +135,8 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		{
 			world.assignNodePos();
 			nodeList = world.getNodeList();
+			Polygon polygon = world.polygonMaker();
+			//Polygon polygon = polygonMaker.makePolygon(nodeList, 
 			//loads character sprite and sets them to the Heart Node as a starting position
 			//world.startCharacter(); NOT YET
 		}

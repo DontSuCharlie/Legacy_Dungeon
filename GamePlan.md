@@ -67,6 +67,13 @@ DUNGEON - finish dungeon generator. Maybe tweak it a bit to favor cooler looking
 
 MONSTERS, AI, BOSSES, BOSS HP, GUI (IE: FLOOR, TEXT, NPC), LOOT, INVENTORY, ANIMATION, SOUNDS, BGM (OH MAKE SURE BGM HAS MULTIPLER LAYERS OF MUSIC - IF EPIC ADD EPIC PART), UGH IDK WHAT ELSE HALP)
 
+Polygon Maker
+1] Go through list of all available points. Pick 4 points - largest X, largest Y, smallest X, smallest Y (add it in order of how you'll draw a polygon)
+2] Find all of their slopes.
+3] Check to see which points are outside the actual polygon
+4] Once it is outside of polygon, check which slope it's closest to.//nope
+5] Add it.//nope
+6] Repeat until all dots are in polygon.//nope
 
 
 /*

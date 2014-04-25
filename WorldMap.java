@@ -117,26 +117,23 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 		return nodeList;
 	}
 	//Method 5: PolygonDetector
-	public static Polygon polygonDetector()//This method creates polygons
+	public static Polygon polygonMaker()
 	{
-		//Creates an arraylist of nodes with Sanctuary status
 		Polygon safeZone = null;
+		ArrayList<NodeWorld> potentialList = new ArrayList<NodeWorld>();
 		ArrayList<NodeWorld> vertexList = new ArrayList<NodeWorld>();
-		ArrayList<NodeWorld> polygonList = new ArrayList<NodeWorld>();
 		NodeWorld largestX = new NodeWorld(0,0,0,0);
 		NodeWorld largestY = new NodeWorld(0,0,0,0);
-		NodeWorld smallestX = new NodeWorld(10000,10000,0,0);
+		NodeWorld smallestX = new NodeWorld(10000,10000,0,0);//need to find better numbers in the future for more elegance.
 		NodeWorld smallestY = new NodeWorld(10000,10000,0,0);
-		//NEED TO WATCH OUT FOR VERTICAL LINES BC DIVIDE BY 0
 		for(int i = 0; i < nodeList.size(); i++)
 		{
-			if (nodeList.get(i).nodeStatus == 2)
+			if(nodeList.get(i).nodeStatus == 2)
 			{
-				vertexList.add(nodeList.get(i));
-				System.out.println("Adding node: " + nodeList.get(i).x + ", " + nodeList.get(i).y);
+				potentialList.add(nodeList.get(i));
 			}
 		}
-		if(vertexList.size() == 3)
+		if(potentialList.size() == 3)//if there's only 3, don't even try to maximize area
 		{
 			int[] xCoord = new int[nodeList.size()];
 			for(int i = 0; i < xCoord.length; i++)
@@ -149,55 +146,91 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 				yCoord[i] = nodeList.get(i).y;
 			}
 			safeZone = new Polygon(xCoord,yCoord,nodeList.size());
-			//will add maximum area later
 		}
-		if(vertexList.size() > 3)
+		if(potentialList.size() > 3)//if greater than 3, try to maximize area
 		{
-			for(int i = 0; i < vertexList.size(); i++)
+			for(int i = 0; i < potentialList.size(); i++)
 			{
-				//might implement binary search here, but not yet
-				if(vertexList.get(i).x > largestX.x)
+				//Might implement binary search here, but not skilled enough yet :(
+				if(potentialList.get(i).x > largestX.x)
 				{
-					largestX = vertexList.get(i);
+					largestX = potentialList.get(i);
 				}
-				if(vertexList.get(i).x < smallestX.x)
+				if(potentialList.get(i).x < smallestX.x)
 				{
-					smallestX = vertexList.get(i);
+					smallestX = potentialList.get(i);
 				}
-				if(vertexList.get(i).y > largestY.y)
+				if(potentialList.get(i).y > largestY.y)
 				{
-					largestY = vertexList.get(i);
+					largestX = potentialList.get(i);
 				}
-				if(vertexList.get(i).y < smallestY.y)
+				if(potentialList.get(i).y < smallestY.y)
 				{
-					smallestY = vertexList.get(i);
-				}
+					smallestX = potentialList.get(i);
+				}				
 			}
-			vertexList.remove(smallestY);
-			vertexList.remove(largestY);
-			vertexList.remove(smallestX);
-			vertexList.remove(largestX);
-			//Now I have largest coordinates
-			//Should check if any are repeats. If there are, eliminate one
-			//Generate quadrilateral from these 4 points
+			//remove from search list
+			potentialList.remove(smallestY);
+			potentialList.remove(largestY);
+			potentialList.remove(smallestX);
+			potentialList.remove(largestX);
+			//add to list of actual vertices, in order of drawing
 			polygonList.add(smallestX);
 			polygonList.add(largestY);
 			polygonList.add(largestX);
 			polygonList.add(smallestY);
-			//safeZone = new Polygon(listofXCoord, listofYCoord, 4);
-			/*
-			//Doesn't matter which slope is referred to AS LONG AS LARGEST(X/Y) DOES NOT COME IN CONTACT WITH SMALLEST(X/Y) AND IT DOESN'T REPEAT
-			double rightBottomSlope = (largestY.y-largestX.y)/(largestY.x-largestX.x);
-			double 
-			//is the lower bottom slope (remember origin is top left)
-			double leftTopSlope = (smallestX.y-smallestY.y)/(smallestX.x -smallestY.x);
-			//top left slope
-			double rightTopSlope = (largestX.y-smallestY.y)/(largestX.x - smallestY.x);
-			//top right slope
-			double leftBottomSlope = (smallestX.y-largestY.y)/(smallestX.x -largestY.x);
-			//bottom left slope
-			//Plugs in values. If values are outside of the boundary, append them to the polygon
-			*/
+			if(largestY.x-largestX.x == 0)
+			{
+				System.out.println("Horizontal line here");
+			}
+			double rightBottomSlope = 0;
+			double leftTopSlope = 0;
+			double rightTopSlope = 0;
+			double leftBottomSlope = 0;
+
+			for(int i = 0; i < potentialList.size(); i++)
+			{
+				if(linearEq(smallestX.x, smallestX.y, largestY.x, largestY.y, potentialList.get(i).x, potentialList.get(i).y) < 0)
+				{
+					//check to see if it's maximum distance
+					//absoluteDistance(potentialList.get(i).x, potentialList.get(i).y, rightBottomSlope, rightBottomTranslation);
+					polygonList.add(1,potentialList.get(i));
+					
+				}
+			}
+			//create slope
+			//
+			//Now that all the vertices have been obtained, its time to add the points to the polygon object
+			int[] listofXCoord = new int[vertexList.size()];
+			int[] listofYCoord = new int[vertexList.size()];
+			for(int i = 0; i < vertexList.size(); i++)
+			{
+				listofXCoord[i] = vertexList.get(i).x;
+				listofYCoord[i] = vertexList.get(i).y;
+			}
+			safeZone = new Polygon(listofXCoord, listofYCoord, vertexList.size());
+			while(true)
+			{
+				for(int i = 0; i <= 10000000; i++)
+				{
+					if(i == 10000000)
+					{
+						int[] listofX = new int[vertexList.size()];
+						int[] listofY = new int[vertexList.size()];
+						for(int i = 0; i < vertexList.size(); i++)
+						{
+							listofX[i] = (int)(Math.random() * 1000);
+							listofY[i] = (int)(Math.random() * 1000);
+						}
+						safeZone.xpoints = listofX;
+						safeZone.ypoints = listofY;
+					}
+				}
+			}
+		}
+		return safeZone;
+	}
+	
 		for(int i = 0; i < vertexList.size(); i++)
 		{
 			//Bottom Left Slope
@@ -207,19 +240,6 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 				System.out.println("Working on it.");
 			}
 		}
-		int[] listofXCoord = new int[polygonList.size()];
-		int[] listofYCoord = new int[polygonList.size()];
-		for(int i = 0; i < polygonList.size(); i++)
-		{
-			System.out.println(polygonList.get(i).x + ", " + polygonList.get(i).y);
-			listofXCoord[i] = polygonList.get(i).x;
-			listofYCoord[i] = polygonList.get(i).y;
-			
-		}
-		safeZone = new Polygon(listofXCoord, listofYCoord, polygonList.size());
-		}
-		return safeZone;
-	}
 	public static int linearEquationMaker(int x1, int y1, int x2, int y2, int x3, int y3)
 	{
 		//Finding the slope
@@ -243,6 +263,14 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 			returnValue = - returnValue;
 		}
 		return returnValue;
+	}
+	public static double absoluteDistance(int x, int y, double slope, double translation)
+	{
+		//the absolute distance is the length of the line formed by the point you have and a point on the line that forms a perpendicular line to that line.
+		//oh, hello cross product
+		
+		//generate a perpendicular line
+		//
 	}
 		//Scan each node and identify the one with lowest distance from each other starting from arraylist.get(0)
 		//With lowest distance, use java.paint to draw a line using the two points as vertices
