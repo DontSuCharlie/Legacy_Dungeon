@@ -22,16 +22,18 @@ public class Player extends JFrame{
     }
     
 
-    public void getMovementKey()
+    public void getMovementKey(String keyReceived, Config config)
     {
         //Test only
-        KeyboardInput input = new KeyboardInput();
-        Config config = new Config();
-        if (input.key == config.up)
+        if (keyReceived == config.up)
         {
         System.out.println("Kappa");
         }
-    
+        
+        else if (keyReceived == config.down)
+        {
+        System.out.println("Down");
+        }
     }
     
     public void aimMode()
@@ -45,13 +47,17 @@ public class Player extends JFrame{
         //This frame is for testing only. KeyListener will be in LegacyDungeon.
         JFrame frame = new JFrame("Test");
         KeyboardInput input = new KeyboardInput();
+        String keyReceived = input.key;
         Config config = new Config();
         Player player = new Player();
         frame.add(input);
 		frame.setSize(200, 200);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        player.getMovementKey();
-    }
-   
+        while (true)
+        {
+        player.getMovementKey(keyReceived, config);
+
+        }
+    }   
 }

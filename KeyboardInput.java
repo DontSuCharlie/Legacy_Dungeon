@@ -42,8 +42,8 @@ public class KeyboardInput extends JPanel
         
         public void keyPressed(KeyEvent e)
         {
-            System.out.println("keyPressed: " + KeyEvent.getKeyText(e.getKeyCode()));
-            key = KeyEvent.getKeyText(e.getKeyCode());
+            key = KeyEvent.getKeyText(e.getKeyCode());        
+            System.out.println("keyPressed: " + key);
         }
     
         public void keyReleased(KeyEvent e)

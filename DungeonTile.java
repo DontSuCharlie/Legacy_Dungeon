@@ -29,27 +29,17 @@ boolean tileToDown;
         itemID = 0;
         characterID = 0;
     }
+
+    // main class for testing only.
+    public static main(String[] args)
+    {    
+    }
+    
+    
     
     	public BufferedImage loadTileImage(int tileID)
 	{
         
         return imageLoader.loadImage("DungeonTile" + tileID +".png");
 	}
-/*
-    public void draw(Graphics g)
-    {
-        g.drawImage(image, XPos, YPos, XSpriteSize, YSpriteSize, null);
-    }
-   
-    public void paint(Graphics g)
-    {
-       ObjectProperites.super.paint(g);
-    }
-
-*/
-
-
-
-
-
 }
