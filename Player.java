@@ -24,10 +24,11 @@ public class Player extends JFrame{
 
     public void getMovementKey(String keyReceived, Config config)
     {
+        System.out.println(keyReceived);
         //Test only
-        if (keyReceived == config.up)
+        if (keyReceived == "W")//config.up)
         {
-        System.out.println("Kappa");
+        System.out.println("Kappaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         }
         
         else if (keyReceived == config.down)
@@ -47,7 +48,6 @@ public class Player extends JFrame{
         //This frame is for testing only. KeyListener will be in LegacyDungeon.
         JFrame frame = new JFrame("Test");
         KeyboardInput input = new KeyboardInput();
-        String keyReceived = input.key;
         Config config = new Config();
         Player player = new Player();
         frame.add(input);
@@ -56,8 +56,9 @@ public class Player extends JFrame{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         while (true)
         {
+        String keyReceived = input.key;       
         player.getMovementKey(keyReceived, config);
-
+        keyReceived = null;
         }
     }   
 }

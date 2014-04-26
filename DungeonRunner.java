@@ -210,6 +210,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     {
         int tileChoice = pickTile(tileList);
         tileList.get(tileChoice).characterID = 1;
+        
     }
     
     

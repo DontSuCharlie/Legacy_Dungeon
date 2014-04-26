@@ -48,6 +48,8 @@ public class KeyboardInput extends JPanel
         public void keyReleased(KeyEvent e)
         {
             System.out.println("keyReleased: " + KeyEvent.getKeyText(e.getKeyCode()));
+            key = "null";
+           
         }
         
 
