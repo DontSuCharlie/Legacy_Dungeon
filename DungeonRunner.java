@@ -9,16 +9,17 @@ DungeonRunner.java will tell LegacyDungeon.java (the main runner) what to displa
 //skills level can increase by # of monsters
 public class DungeonRunner
 {
-   //Fields
-   int numMonsters; //# of monsters
-   int currentFloor; //keeps track of floor number
-   int numFloor; //how many floors are there?
-   int theme;//theme of the dungeon
-   int skillID;//skill reward at bottom of dungeon
-   int difficulty;//difficulty of dungeon
+    //Fields
+    int numMonsters; //# of monsters
+    int currentFloor; //keeps track of floor number
+    int numFloor; //how many floors are there?
+    int theme;//theme of the dungeon
+    int skillID;//skill reward at bottom of dungeon
+    int difficulty;//difficulty of dungeon
     static int xLengthInput;
     static int yLengthInput;
     static int numTiles;
+    public static Player playerCharacter = new Player();
     public static ArrayList<DungeonTile> tileList = new ArrayList<DungeonTile>();
     public static ArrayList<DungeonTile> connectorList = new ArrayList<DungeonTile>();
     public static ArrayList<DungeonTile> unusedTileList = new ArrayList<DungeonTile>();
@@ -206,10 +207,12 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         }
     }
     
+    //Player and enemy locations will be defined by two ways- a dungeonTile for each character and a different characterID on the tileList. Maybe not efficient enough.
     private void spawnPlayer()
     {
         int tileChoice = pickTile(tileList);
         tileList.get(tileChoice).characterID = 1;
+        playerCharacter.currentTile = tileList.get(tileChoice);
         
     }
     

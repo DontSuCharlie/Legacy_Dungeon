@@ -158,6 +158,21 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		this.turnCounter++;
 		return false;
 	}
+    
+    public boolean drawDungeon(turnCounter)
+    {
+        Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
+        //How many tiles are drawn, including that of the player.
+        final int numTilesX = 11;
+        final int numTilesY = 11;
+        
+        //Needed length and height of tiles in pixels
+        int tileLengthX = (int) screenRes.getWidth() / numTilesX;
+        int tileLengthY = (int) screenRes.getHeight() / numTilesY;
+        
+        
+    
+    }
 //Method 4: Entering dungeon;; not yet...
 /*
 	public static void createDungeon(boolean enterDungeon)
