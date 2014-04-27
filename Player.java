@@ -15,23 +15,15 @@ public class Player extends JFrame{
 
     }
     
-    public void movement()
+    //Issue, things that come first have priority.
+    public void move(Config config)
     {
-    
-    
-    }
-    
-
-    public void getMovementKey(int keyReceived, Config config)
-    {
-        System.out.println(keyReceived);
-        //Test only
-        if (keyReceived == config.up)
+        if (KeyboardInput.boolIsUp)
         {
         System.out.println("Up");
         }
         
-        else if (keyReceived == config.down)
+        else if (KeyboardInput.boolIsDown)
         {
         System.out.println("Down");
         }
@@ -45,7 +37,6 @@ public class Player extends JFrame{
         
    static public void main(String[] args)
     {
-     int keyReceived;
         //This frame is for testing only. KeyListener will be in LegacyDungeon.
         JFrame frame = new JFrame("Test");
         KeyboardInput input = new KeyboardInput();
@@ -56,10 +47,8 @@ public class Player extends JFrame{
       frame.setVisible(true);
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         while (true)
-        {
-        keyReceived = KeyboardInput.key;       
-        player.getMovementKey(keyReceived, config);
-//        KeyboardInput.key = 0;
+        {      
+        player.move(config);
         }
     }   
 }
