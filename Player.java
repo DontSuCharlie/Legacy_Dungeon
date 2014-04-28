@@ -8,29 +8,22 @@ public class Player extends JFrame{
 
     public Player()
     {
-    
+        DungeonTile currentTile = new DungeonTile(0,0,0,0);
     
     
 
 
     }
     
-    public void movement()
+    //Issue, things that come first have priority.
+    public void move(Config config)
     {
-    
-    
-    }
-    
-
-    public void getMovementKey(String keyReceived, Config config)
-    {
-        //Test only
-        if (keyReceived == config.up)
+        if (KeyboardInput.boolIsUp)
         {
-        System.out.println("Kappa");
+        System.out.println("Up");
         }
         
-        else if (keyReceived == config.down)
+        else if (KeyboardInput.boolIsDown)
         {
         System.out.println("Down");
         }
@@ -47,17 +40,15 @@ public class Player extends JFrame{
         //This frame is for testing only. KeyListener will be in LegacyDungeon.
         JFrame frame = new JFrame("Test");
         KeyboardInput input = new KeyboardInput();
-        String keyReceived = input.key;
         Config config = new Config();
         Player player = new Player();
         frame.add(input);
-		frame.setSize(200, 200);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.setSize(200, 200);
+      frame.setVisible(true);
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         while (true)
-        {
-        player.getMovementKey(keyReceived, config);
-
+        {      
+        player.move(config);
         }
     }   
 }

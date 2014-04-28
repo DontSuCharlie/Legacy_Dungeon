@@ -1,44 +1,46 @@
+import java.awt.event.KeyEvent;
+
 // Note, will be included in the save file.
 public class Config{
 
-public String up;
-public String down;
-public String left;
-public String right;
-public String aimMode;
-public String hotKeyHeal;
-public String inventory;
-public String hotKeyOne;
-public String hotKeyTwo;
-public String hotKeyThree;
-public String hotKeyFour;
-public String hotKeyFive;
-public String hotKeySix;
-public String hotKeySeven;
-public String hotKeyEight;
-public String hotKeyNine;
-public String hotKeyTen;
+public int up;
+public int down;
+public int left;
+public int right;
+public int aimMode;
+public int hotKeyHeal;
+public int inventory;
+public int hotKey1;
+public int hotKey2;
+public int hotKey3;
+public int hotKey4;
+public int hotKey5;
+public int hotKey6;
+public int hotKey7;
+public int hotKey8;
+public int hotKey9;
+public int hotKey10;
 
 
     public Config()
     {
-        up = "W";
-        down = "S";
-        left = "A";
-        right = "D";
-        aimMode = "Space";
-        hotKeyHeal  = "H";
-        inventory = "I";
-        hotKeyOne = "1";
-        hotKeyTwo = "2";
-        hotKeyThree = "3";
-        hotKeyFour = "4";
-        hotKeyFive = "5";
-        hotKeySix = "6";
-        hotKeySeven = "7";
-        hotKeyEight = "8";
-        hotKeyNine = "9";
-        hotKeyTen = "10";
+        up = KeyEvent.VK_W;
+        down = KeyEvent.VK_S;
+        left = KeyEvent.VK_A;
+        right = KeyEvent.VK_D;
+        aimMode = KeyEvent.VK_SPACE;
+        hotKeyHeal  = KeyEvent.VK_H;
+        inventory = KeyEvent.VK_I;
+        hotKey1 = KeyEvent.VK_1;
+        hotKey2 = KeyEvent.VK_2;
+        hotKey3 = KeyEvent.VK_3;
+        hotKey4 = KeyEvent.VK_4;
+        hotKey5 = KeyEvent.VK_5;
+        hotKey6 = KeyEvent.VK_6;
+        hotKey7 = KeyEvent.VK_7;
+        hotKey8 = KeyEvent.VK_8;
+        hotKey9 = KeyEvent.VK_9;
+        hotKey10 = KeyEvent.VK_0;
     
     }
 

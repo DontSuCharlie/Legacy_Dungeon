@@ -31,7 +31,7 @@ boolean tileToDown;
     }
 
     // main class for testing only.
-    public static main(String[] args)
+    public static void main(String[] args)
     {    
     }
     
