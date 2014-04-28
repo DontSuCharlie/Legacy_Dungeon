@@ -10,6 +10,7 @@ public class LegacyDungeon extends JPanel
 	ArrayList<NodeWorld> nodeList;
 	static JFrame window;
 	WorldMap world;
+	MaxAreaPolygon maxAreaPolygon;
 	static int turnCounter = 0;//will read safe file. turn should be 0 if save file not found or corrupt
 	//what happens when we load LegacyDungeon
 	public LegacyDungeon()
@@ -18,6 +19,7 @@ public class LegacyDungeon extends JPanel
 		world = new WorldMap();
 		nodeList = world.getNodeList();
         Config config = new Config();
+		maxAreaPolygon = new MaxAreaPolygon();
 	}
 	//Main Method
 	public static void main(String[] args)
@@ -111,6 +113,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		{
 			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,20,20,null);
 		}
+		/*
 		int vertexCounter = 0;
 		for(int i = 0; i < nodeList.size(); i++)
 		{
@@ -121,8 +124,10 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		}
 		if(vertexCounter >= 3)
 		{
-			g.drawPolygon(world.polygonDetector());
+			g.drawPolygon(maxAreaPolygon.makePolygon(nodeList));
 		}
+		*/
+			g.drawPolygon(maxAreaPolygon.makePolygon(nodeList));
 	}
 //Method 2:
 /////////////////////////////////////////Method 3: Creating and loading the World Map
@@ -136,7 +141,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		{
 			world.assignNodePos();
 			nodeList = world.getNodeList();
-			Polygon polygon = world.polygonMaker();
+			//Polygon polygon = world.polygonMaker();
 			//Polygon polygon = polygonMaker.makePolygon(nodeList, 
 			//loads character sprite and sets them to the Heart Node as a starting position
 			//world.startCharacter(); NOT YET

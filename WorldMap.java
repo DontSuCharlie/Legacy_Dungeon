@@ -117,6 +117,7 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 		return nodeList;
 	}
 	//Method 5: PolygonDetector
+	/*
 	public static Polygon polygonMaker()
 	{
 		Polygon safeZone = null;
@@ -240,6 +241,10 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 				System.out.println("Working on it.");
 			}
 		}
+		*/
+		
+		
+/*
 	public static int linearEquationMaker(int x1, int y1, int x2, int y2, int x3, int y3)
 	{
 		//Finding the slope
@@ -264,14 +269,8 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 		}
 		return returnValue;
 	}
-	public static double absoluteDistance(int x, int y, double slope, double translation)
-	{
-		//the absolute distance is the length of the line formed by the point you have and a point on the line that forms a perpendicular line to that line.
-		//oh, hello cross product
-		
-		//generate a perpendicular line
-		//
-	}
+*/
+
 		//Scan each node and identify the one with lowest distance from each other starting from arraylist.get(0)
 		//With lowest distance, use java.paint to draw a line using the two points as vertices
 		//change status of node to taken. If it is taken, then it cannot be used to form new line
