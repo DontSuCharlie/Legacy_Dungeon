@@ -6,10 +6,11 @@ import javax.swing.*;//part of UI, includes JPanel
 // Used for input and actions
 public class Player extends JFrame{
 
-    public Player()
+   public static DungeonTile currentTile;
+
+   public Player()
     {
-        DungeonTile currentTile = new DungeonTile(0,0,0,0);
-    
+      currentTile = new DungeonTile(0,0,0,0);
     
 
 
