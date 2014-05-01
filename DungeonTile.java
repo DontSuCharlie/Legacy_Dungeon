@@ -39,7 +39,7 @@ boolean tileToDown;
     
       public BufferedImage loadTileImage(int tileID)
    {
-        
+		imageLoader = new ImageLoader();
         return imageLoader.loadImage("DungeonTile" + tileID +".png");
    }
 }
