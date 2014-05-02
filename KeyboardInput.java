@@ -30,13 +30,12 @@ public class KeyboardInput extends JPanel
     
     public static void main(String[] args)
     {
-       Config config = new Config();
         JFrame frame = new JFrame("Test");
         KeyboardInput input = new KeyboardInput();
         frame.add(input);
-      frame.setSize(200, 200);
-      frame.setVisible(true);
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(200, 200);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     }
     

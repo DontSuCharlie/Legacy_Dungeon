@@ -1,33 +1,67 @@
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.awt.*;//includes Color, Dimension, Graphics, etc.
 import javax.swing.*;//part of UI, includes JPanel
 // Used for input and actions
-public class Player extends JFrame{
+public class Player extends Character{
+    int xMovement;
+    int yMovement;
+    public static DungeonTile currentTile;
 
-   public static DungeonTile currentTile;
-
-   public Player()
+    public Player()
     {
-      currentTile = new DungeonTile(0,0,0,0);
-    
+        xMovement = 0;
+        yMovement = 0;
 
 
     }
     
     //Issue, things that come first have priority.
-    public void move(Config config)
+    public int playerMoveY()
     {
-        if (KeyboardInput.boolIsUp)
-        {
-        System.out.println("Up");
-        }
-        
-        else if (KeyboardInput.boolIsDown)
-        {
-        System.out.println("Down");
-        }
+       
+       if (KeyboardInput.boolIsUp == true && KeyboardInput.boolIsDown == true)
+       {
+          return 0;
+       }
+       
+       else if (KeyboardInput.boolIsUp == true)
+       {
+          return 1;        
+       }
+       
+       else if (KeyboardInput.boolIsDown == true)
+       {
+          return -1;         
+       }
+       
+       else 
+       {
+           return 0;
+       }
+       
+    }
+    
+    public int playerMoveX(){
+       
+       if (KeyboardInput.boolIsLeft == true && KeyboardInput.boolIsRight == true)
+       {
+          return 0;         
+       }
+       
+       else if (KeyboardInput.boolIsLeft == true)
+       {
+          return 1;
+       }
+       
+       else if (KeyboardInput.boolIsRight == true)
+       {
+          return -1;        
+       }
+       else 
+       {
+          return 0;
+       }
+       
     }
     
     public void aimMode()
@@ -41,7 +75,6 @@ public class Player extends JFrame{
         //This frame is for testing only. KeyListener will be in LegacyDungeon.
         JFrame frame = new JFrame("Test");
         KeyboardInput input = new KeyboardInput();
-        Config config = new Config();
         Player player = new Player();
         frame.add(input);
       frame.setSize(200, 200);
@@ -49,7 +82,9 @@ public class Player extends JFrame{
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         while (true)
         {      
-        player.move(config);
+        player.xMovement = player.playerMoveX();
+        player.yMovement = player.playerMoveY();
+        player.charMove(player.xMovement, player.yMovement);
         }
     }   
 }

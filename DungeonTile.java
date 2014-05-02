@@ -17,15 +17,14 @@ public class DungeonTile
     boolean tileToLeft;
     boolean tileToRight;
     boolean tileToUp;
-boolean tileToDown;    
+    boolean tileToDown;    
     
-    public DungeonTile(int xPos, int yPos, int tileID, int connections)
+    public DungeonTile(int xPos, int yPos, int tileID)
     {
         x = xPos;
         y = yPos;
         tileID = 0;
         connectionCap = 2;
-        numConnections = connections;
         itemID = 0;
         characterID = 0;
     }
@@ -39,7 +38,7 @@ boolean tileToDown;
     
       public BufferedImage loadTileImage(int tileID)
    {
-		imageLoader = new ImageLoader();
+        imageLoader = new ImageLoader();
         return imageLoader.loadImage("DungeonTile" + tileID +".png");
    }
 }
