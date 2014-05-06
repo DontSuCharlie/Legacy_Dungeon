@@ -72,7 +72,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         for (int i = 0; i < (xLength* yLength); i++)
         {
             
-            unusedTileList.add(new DungeonTile (x,y,0, 0));
+            unusedTileList.add(new DungeonTile (x,y,0));
             x++;
             
             if (x == xLength)
@@ -83,8 +83,8 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         
         }
         //The first seed tile. Currently uses the middle tile. Perhaps have a random seed tile?
-        tileList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1, 0));
-        connectorList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1, 0));
+        tileList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1));
+        connectorList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1));
         //Starting at 1 because seed is 0.
         for (int i = 1; i < numTiles; i++)
         {
@@ -92,7 +92,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             boolean boolBadTile = true;
             int connectionCap = 2;
             int pickedTileNumber = 0;
-            DungeonTile possibleTile = new DungeonTile(0,0,0,0);
+            DungeonTile possibleTile = new DungeonTile(0,0,0);
             
             while (boolBadTile)
             {
@@ -176,7 +176,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             y = (connectorList.get(tileChooser).y - 1);
         }
         
-        DungeonTile newTile = new DungeonTile(x, y, 1 ,0);
+        DungeonTile newTile = new DungeonTile(x, y, 1);
         return newTile;
     }
     
@@ -212,7 +212,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     {
         int tileChoice = pickTile(tileList);
         tileList.get(tileChoice).characterID = 1;
-        playerCharacter.currentTile = tileList.get(tileChoice);
+        Player.currentTile = tileList.get(tileChoice);
         
     }
     
