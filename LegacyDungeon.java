@@ -1,3 +1,4 @@
+//Note to self: For loading screen do a blue screen of death
 import java.util.ArrayList;
 import java.awt.*;//includes Color, Dimension, Graphics, etc.
 import java.awt.event.*;
@@ -113,21 +114,18 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		{
 			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,20,20,null);
 		}
-		/*
-		int vertexCounter = 0;
+		ArrayList<NodeWorld> validList = new ArrayList<NodeWorld>();
 		for(int i = 0; i < nodeList.size(); i++)
 		{
 			if(nodeList.get(i).nodeStatus == 2)
 			{
-				vertexCounter++;
+				validList.add(nodeList.get(i));
 			}
 		}
-		if(vertexCounter >= 3)
+		if(validList.size() >= 3)
 		{
-			g.drawPolygon(maxAreaPolygon.makePolygon(nodeList));
+			g.drawPolygon(maxAreaPolygon.makePolygon(validList));
 		}
-		*/
-			g.drawPolygon(maxAreaPolygon.makePolygon(nodeList));
 	}
 //Method 2:
 /////////////////////////////////////////Method 3: Creating and loading the World Map
@@ -163,7 +161,7 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
 		this.turnCounter++;
 		return false;
 	}
-    
+/*
     public boolean drawDungeon(turnCounter)
     {
         Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
@@ -175,9 +173,9 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
         int tileLengthX = (int) screenRes.getWidth() / numTilesX;
         int tileLengthY = (int) screenRes.getHeight() / numTilesY;
         
-        
-    
+
     }
+*/
 //Method 4: Entering dungeon;; not yet...
 /*
 	public static void createDungeon(boolean enterDungeon)
