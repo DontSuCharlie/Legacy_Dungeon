@@ -94,7 +94,76 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
     }
 //Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
 //Calling game.repaint() will update what's in here.
-
+/*
+//Testing if
+<<<<<<< HEAD
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+		super.paintComponent(g);//we have to do super because magic
+		//Graphics2D g2 = (Graphics2D) g;
+		//Border lineborder = 
+		//g.setStroke(new BasicStroke(10));
+		g.setColor(Color.red);
+		if(true)
+		{
+			g.drawImage(world.map, 0, 0, (int)(screenRes.getWidth()/2),(int)(screenRes.getWidth()/2.2),null);
+		}
+		for(int i = 0; i < nodeList.size(); i++)
+		{
+			g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,20,20,null);
+		}
+		ArrayList<NodeWorld> validList = new ArrayList<NodeWorld>();
+		for(int i = 0; i < nodeList.size(); i++)
+		{
+			if(nodeList.get(i).nodeStatus == 2)
+			{
+				validList.add(nodeList.get(i));
+			}
+		}
+		if(validList.size() >= 3)
+		{
+			g.drawPolygon(maxAreaPolygon.makePolygon(validList));
+		}
+	}
+//Method 2:
+/////////////////////////////////////////Method 3: Creating and loading the World Map
+	public boolean createWorld(int turnCounter)
+	{
+		boolean inWorldMap = true;//when this turns false, createWorld stops running
+		//Always loads map image
+		//Since paintComponent requires everything to be in it, this might just turn world.map's boolean to true
+		//but i need to test whether or not if functions work in here
+		if(turnCounter == 0)//if this is the beginning, then we have to generate nodes and set character to heart node
+		{
+			world.assignNodePos();
+			nodeList = world.getNodeList();
+			//Polygon polygon = world.polygonMaker();
+			//Polygon polygon = polygonMaker.makePolygon(nodeList, 
+			//loads character sprite and sets them to the Heart Node as a starting position
+			//world.startCharacter(); NOT YET
+		}
+		//Continue on normally
+		/*
+		while(inWorldMap)//continues this loop until player chooses to enter dungeon OR exit map
+		{
+			//Takes input, updates character sprite/movement depending on what they player pressed. Will confirm player movement and then run enemyMove() to update. If the player chooses to enter the dungeon, the method returns true, else it would just keep running. If the player chooses to leave the game, the method would return false
+			if(world.playerMove())
+			{
+				turnCounter++;
+				return true;
+			}
+			inWorldMap = false;
+			//SOMETHING HERE. I MIGHT BE MISSING SOMETHING. I FEEL LIKE I'M MISSING SOMETHING. THIS NOTE SHOULD BE KEPT UNTIL WE FIND THE MISSING COMPONENT.
+		}
+		*/
+		this.turnCounter++;
+		return false;
+	}
+/*
+=======
+*/
    @Override
    public void paintComponent(Graphics g)
    {
