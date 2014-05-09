@@ -1,3 +1,4 @@
+package LegacyDungeon
 import java.util.ArrayList; //Needed for arraylist
 import java.awt.*;//Java toolkit. Includes Color, Dimension, Graphics, etc.
 import java.awt.event.*;//event listeners
@@ -35,30 +36,8 @@ public class LegacyDungeon extends JPanel
 				loadDungeon(createWorld(turnCounter));
 			}
 		}
-   //Main Method
-   public static void main(String[] args)
-   {
-      boolean running = true;
-      LegacyDungeon game = new LegacyDungeon();
-      createWindow();//creates window
-      window.add(game);//adds JPanel to window
-      //TESTING
-      game.createWorld(turnCounter);
-      game.repaint();
-      while(running)//new problem: nodes don't appear unless you repaint, might need to force repaint
-      {
-         //loadMenu();
-         boolean inGame = false;
-         while(inGame)
-         {
-            game.createWorld(turnCounter);
-            game.repaint();
-            //loadDungeon(createWorld(turnCounter));
-         }
-      }
-      //if running is false, rewrite save file, close all threads, and end program
-      //NOTE: might need to change parameters based on save file
-   }
+		//if running is false, rewrite save file, close all threads, and end program
+		//NOTE: might need to change parameters based on save file
 /*///////////////////////////////////ORIGINAL NOTES//////////////////////////////////
    //If player enters a dungeon, load dungeon
       //Use node information to generate dungeon floor
