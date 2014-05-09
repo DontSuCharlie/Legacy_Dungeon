@@ -1,25 +1,40 @@
-//Note to self: For loading screen do a blue screen of death
-import java.util.ArrayList;
-import java.awt.*;//includes Color, Dimension, Graphics, etc.
-import java.awt.event.*;
-import java.awt.image.*;//image class allows for storage of image files
+import java.util.ArrayList; //Needed for arraylist
+import java.awt.*;//Java toolkit. Includes Color, Dimension, Graphics, etc.
+import java.awt.event.*;//event listeners
+import java.awt.image.*;//image class allows for storage/usage of image files
 import javax.swing.*;//part of UI, includes JPanel
+//Note to self: If we ever have a loading screen, I want to do the blue screen of death!
 
 public class LegacyDungeon extends JPanel
 {
-   //Global Variables here
-   ArrayList<NodeWorld> nodeList;
-   static JFrame window;
-   WorldMap world;
-   static int turnCounter = 0;//will read safe file. turn should be 0 if save file not found or corrupt
-   //what happens when we load LegacyDungeon
-   public LegacyDungeon()
-   {
-      window = new JFrame("Legacy Dungeon");
-      world = new WorldMap();
-      nodeList = world.getNodeList();
-        Config config = new Config();
-   }
+	ArrayList<NodeWorld> nodeList;
+	static JFrame window;
+	WorldMap world;
+	static int turnCounter = 0;//will read save file. Turn counter will be 0 if save file is not found or is corrupt.
+	//Constructor
+	public LegacyDungeon()
+	{
+		window = new JFrame("Legacy Dungeon");
+		world = new WorldMap();
+		nodeList = world.getNodeList();
+		Config config = new Config();//What is this for?
+	}
+	public static void main(String[] args)
+	{
+		boolean running = true;
+		LegacyDungeon game = new LegacyDungeon();
+		createWindow();
+		window.add(game);
+		loadMenu();
+		game.repaint();
+		while(running)
+		{
+			boolean inGame = true;
+			while(inGame)
+			{
+				loadDungeon(createWorld(turnCounter));
+			}
+		}
    //Main Method
    public static void main(String[] args)
    {
