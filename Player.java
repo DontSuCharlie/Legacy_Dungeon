@@ -77,9 +77,9 @@ public class Player extends Character{
         KeyboardInput input = new KeyboardInput();
         Player player = new Player();
         frame.add(input);
-      frame.setSize(200, 200);
-      frame.setVisible(true);
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(200, 200);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         while (true)
         {      
         player.xMovement = player.playerMoveX();

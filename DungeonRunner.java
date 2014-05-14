@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import javax.swing.JPanel;
 /*
 Progress Bar: [||        ]
 DungeonRunner.java is the file that generates the dungeon based on the information included in NodeWorld.java
@@ -7,7 +7,8 @@ DungeonRunner.java will tell LegacyDungeon.java (the main runner) what to displa
 //RANDOM NOTES
 //difficulty should also increase with skill level
 //skills level can increase by # of monsters
-public class DungeonRunner
+//Remove extends JPanel?
+public class DungeonRunner extends JPanel
 {
     //Fields
     int numMonsters; //# of monsters
@@ -16,26 +17,43 @@ public class DungeonRunner
     int theme;//theme of the dungeon
     int skillID;//skill reward at bottom of dungeon
     int difficulty;//difficulty of dungeon
-    static int xLengthInput;
-    static int yLengthInput;
+    
+    static int xLength;
+    static int yLength;
+    //These four are designed to make picking a random tile more efficient by constraining the random area to a rectangle defined by these.
+    static int minX;
+    static int maxX;
+    static int minY;
+    static int maxY;
+    //End
     static int numTiles;
-    public static Player playerCharacter = new Player();
-    public static ArrayList<DungeonTile> tileList = new ArrayList<DungeonTile>();
-    public static ArrayList<DungeonTile> connectorList = new ArrayList<DungeonTile>();
-    public static ArrayList<DungeonTile> unusedTileList = new ArrayList<DungeonTile>();
+    public static Player playerCharacter;
+    public static DungeonTile[][] tileList;
+    public static DungeonTile[][] connectorList;
+    public static DungeonTile[][] unusedTileList;
+    
+    
    //Constructor
-   public DungeonRunner(int theme, int skillID, int difficulty)//Takes in the following parameters from NodeWorld.java
+   public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput)//Takes in the following parameters from NodeWorld.java
    {
-      this.theme = theme;
-      this.skillID = skillID;
-      this.difficulty = difficulty;//insert random factor that will adjust difficulty
-      currentFloor = 1;
-      numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
-        //Remove this stuff later. Just for testing.
-        xLengthInput = 100;
-        yLengthInput = 100;
-        numTiles = 1000;
-      //Number of floors is based on the difficulty level
+       this.theme = theme;
+       this.skillID = skillID;
+       this.difficulty = difficulty;//insert random factor that will adjust difficulty
+       currentFloor = 1;
+       numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
+       //Remove this stuff later. Just for testing.
+       xLength = xLengthInput;
+       yLength = yLengthInput;
+       numTiles = 1000;
+       playerCharacter = new Player();
+       minX = xLength/2;
+       maxX = xLength/2;
+       minY = yLength/2;
+       maxY = yLength/2;
+       tileList = new DungeonTile[xLength][yLength];
+       connectorList = new DungeonTile[xLength][yLength];
+       unusedTileList = new DungeonTile[xLength][yLength];
+       //Number of floors is based on the difficulty level
    }
 //////////////////////////////////METHODS HERE///////////////////////////////////////
 /* List of Methods:
@@ -53,8 +71,8 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     public static void main(String[] args)
     {
         //Remove when done testing.
-        DungeonRunner dungeon = new DungeonRunner(1,1,1);
-        dungeon.assignTilePos(xLengthInput, yLengthInput, numTiles);
+        DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100);
+        dungeon.assignTilePos(numTiles);
         dungeon.spawnPlayer();
         //generateItems();
     
@@ -64,52 +82,99 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
 
 
     //This generates the floor tiles of the dungeon.
-    public void assignTilePos(int xLength, int yLength, int numTiles)
+    public void assignTilePos(int numTiles)
     {
         //This generates a list of all the tiles. If the tile is not picked, it will later be added to the tileList as a wall.
-        int x = 0;
-        int y = 0; 
-        for (int i = 0; i < (xLength* yLength); i++)
+        //MAYBE UNNEEDED? POSSIBLY JUST CHECK FOR NULL REQUIRED. Maybe can be used when edge walls need to be different from normal walls
+        
+        /*
+        for (int i = 0; i < xLength; i++)
         {
-            
-            unusedTileList.add(new DungeonTile (x,y,0));
-            x++;
-            
-            if (x == xLength)
+            for (int j = 0; j < yLength; j++)
             {
-                y++;
-                x = 0;
+                unusedTileList[i][j] = new DungeonTile(i,j,0);
             }
         
         }
+        */
+        
         //The first seed tile. Currently uses the middle tile. Perhaps have a random seed tile?
-        tileList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1));
-        connectorList.add(0, new DungeonTile((int)xLength/2, (int)yLength/2, 1));
+        tileList[xLength/2][yLength/2] = new DungeonTile(xLength/2, yLength/2, 1);
+        connectorList[xLength/2][yLength/2] = new DungeonTile(xLength/2, yLength/2, 1);
         //Starting at 1 because seed is 0.
         for (int i = 1; i < numTiles; i++)
         {
             //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
             boolean boolBadTile = true;
             int connectionCap = 2;
-            int pickedTileNumber = 0;
-            DungeonTile possibleTile = new DungeonTile(0,0,0);
+            boolean isGoodConnector = false;
+            int randX = 0;
+            int randY = 0;
+            int actualX = 0;
+            int actualY = 0;
             
             while (boolBadTile)
             {
-                pickedTileNumber = pickTile(connectorList);
+                randX = pickTileCoordinateX();
+                randY = pickTileCoordinateY();
+                isGoodConnector = checkConnectorTile(randX, randY);
+                
                 //Gets the index of a random connector from the connectorList.
                 //Gets a random tile adjacent to picked connector.
-                possibleTile = getAdjacentTile(pickedTileNumber);
-                //If picked tile is invalid, then restart with another connector.
-                boolBadTile = checkTileSpace(possibleTile, xLength, yLength);            
+                if (isGoodConnector)
+                {
+                    //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
+                    //boolBadTile = checkValidAdjacentTile(randX, randY);
+                    
+                    //I don't like doing this this way but oh well. 50% chance of x change, 50% chance of y change.
+                    actualY = randY;
+                    actualX = checkValidAdjacentTileX(randX);
+                    if (randX == actualX)
+                    {
+                        actualY = checkValidAdjacentTileY(randY);
+                        
+                    }
+                    //Need to protect against OOB exception. :/
+                    if (tileList[actualX][actualY] instanceof DungeonTile)
+                    {
+                        boolBadTile = true;  
+                    }
+                    
+                    else boolBadTile = false;
+                    
+                    //If picked tile is invalid, then restart with another connector.          
+                }
+            }
+            
+            //This part helps the guesser to keep from searching too wide an area.
+            if (actualX > maxX)
+            {
+                maxX = actualX;
+            }
+            
+            if (actualX < minX)
+            {
+                minX = actualX;
+            }
+            
+            if (actualY > maxY)
+            {
+                maxY = actualY;
+            }
+            
+            if (actualY < minY)
+            {
+                minY = actualY;
             }
             
             //Add a connection to the picked tile.
-            connectorList.get(pickedTileNumber).numConnections += 1;
-            tileList.add(possibleTile);
-            connectorList.add(possibleTile);
+            connectorList[randX][randY].numConnections += 1;
+            tileList[actualX][actualY] = new DungeonTile(randX,randY,1);
+            connectorList[actualX][actualY] = new DungeonTile(randX,randY,1);
             //If a tile is used then remove it from the unused list. Not very efficient though.
             
+            /* Somewhat unneeded, just use instanceof instead.
+             * 
             for (int k = 0; k < unusedTileList.size(); k++)
             {
                 for (int j = 0; j < tileList.size(); j++)
@@ -120,31 +185,142 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                     }
                 }            
             }
-            
+            */
             //Checks if the latest connector reaches the max number of connections and deletes it if it has.
-            if (connectorList.get(pickedTileNumber).numConnections >= connectionCap)
+            if (connectorList[actualX][actualY].numConnections >= connectionCap)
             {
-                connectorList.remove(pickedTileNumber);
+                connectorList[actualX][actualY] = null;
             }
             
             //FOR TESTING
-            System.out.println(possibleTile.x + " " + possibleTile.y);
+            System.out.println(actualX + " " + actualY);
         }    
     
-        //Must fill remaining area with walls.
-        tileList.addAll(unusedTileList);
+        //Must fill remaining area with walls. Same unneeded note as above.
+        //tileList.addAll(unusedTileList);
         
         
+    }
+  
+    private boolean pickTileCoordinate(DungeonTile[][] choiceList)
+    {
+        //Pick a random tile from the list. 
+        int randX = pickTileCoordinateX();
+        int randY = pickTileCoordinateY();
+        if (choiceList[randX][randY] instanceof DungeonTile)
+        {
+            return true;
+        }
+        
+        else return false;
     }
     
-    //Returns the index of a selected connector.
-    private int pickTile(ArrayList<DungeonTile> choiceList)
+     //Returns a selected connector tile.     
+    private boolean checkConnectorTile(int x, int y)
     {
-        //Pick a random tile from the connector list. Please check if this will work. 
-        int tileChooser = (int)(Math.random() * choiceList.size());
-        return tileChooser;
+            //Pick a random tile from the connector list. numConnections is a redundancy.
+            if (connectorList[x][y] instanceof DungeonTile && connectorList[x][y].numConnections < 2)
+            {   
+                return true;
+            }
+        System.out.println("Bad guess :<");
+        return false;
     }
-
+    
+//Perhaps inefficient
+    private int pickTileCoordinateX()
+    {
+        //Pick a random int from the range (minX - maxX)
+        int x = minX + (int) ((maxX-minX + 1)* Math.random());
+        return x;
+    }
+    
+    private int pickTileCoordinateY()
+    {
+        //Pick a random int from the range (minY - maxY)
+        int y = minY + (int) ((maxY-minY + 1)* Math.random());
+        return y;
+    }
+    
+/*    private boolean checkValidAdjacentTile(int xInput, int yInput)
+    {
+        int x = xInput;
+        int y = yInput;       
+        
+        while (true)
+        {
+            double randomNumber = Math.random();
+            if (randomNumber <= .25)
+            {
+                x++;
+            }
+        
+            else if (randomNumber <= .5)
+            {
+                x--;
+            }
+        
+            else if (randomNumber <= .75)
+            {
+                y++;
+            }
+        
+            else if (randomNumber < 1)
+            {
+                y--;
+            }
+        
+            if (tileList[x][y] instanceof DungeonTile)
+            {
+                //Will restart loop if this tile is occupied
+                return true;
+            }
+                //Breaks loop.
+                return false;
+            
+        }
+    }*/
+    
+    private int  checkValidAdjacentTileX(int xInput)
+    {
+        int x = xInput;    
+        
+        {
+            double randomNumber = Math.random();
+            if (randomNumber <= .25)
+            {
+                x++;
+            }
+        
+            else if (randomNumber <= .5)
+            {
+                x--;
+            }
+        
+            return x;
+        }
+    }
+    
+    private int checkValidAdjacentTileY(int yInput)
+    {
+        int y = yInput;       
+        
+        {
+            double randomNumber = Math.random();
+            if (randomNumber <= .5)
+            {
+                y++;
+            }
+        
+            else if (randomNumber < 1)
+            {
+                y--;
+            }
+            return y;
+        }
+    }
+    
+/*
     //Pick a tile adjacent to given tile. Either x or y is modified by one.
     private DungeonTile getAdjacentTile(int tileChooser)
     {
@@ -179,9 +355,9 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         DungeonTile newTile = new DungeonTile(x, y, 1);
         return newTile;
     }
-    
-    
-    private boolean checkTileSpace(DungeonTile tile, int xLength, int yLength)
+  */  
+    /*
+    private boolean checkTileSpace(DungeonTile tile)
     {
     //If on same space as another tile or in contact with the edges, then return false.
     //Note that if the only available spaces are out of bounds, this program will crash.
@@ -206,14 +382,30 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             return false;  
         }
     }
-    
+    */
     //Player and enemy locations will be defined by two ways- a dungeonTile for each character and a different characterID on the tileList. Maybe not efficient enough.
     private void spawnPlayer()
     {
-        int tileChoice = pickTile(tileList);
-        tileList.get(tileChoice).characterID = 1;
-        Player.currentTile = tileList.get(tileChoice);
+        boolean isBadTile = true;
+        int x = 0;
+        int y = 0;
+
+        while (isBadTile)
+        {
+            x = pickTileCoordinateX();
+            y = pickTileCoordinateY();
         
+            if (tileList[x][y] instanceof DungeonTile)
+            {
+                isBadTile = false;
+            }
+            //Breaks loop.
+            isBadTile = true;    
+        
+        }
+        tileList[x][y].characterID = 1;
+        //Player.currentTile = tileList[x][y];
+        System.out.println("I am at: " + x + ", " + y);
     }
     
     
