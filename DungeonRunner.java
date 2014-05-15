@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
 /*
 Progress Bar: [||        ]
@@ -29,7 +31,7 @@ public class DungeonRunner extends JPanel
     static int numTiles;
     public static Player playerCharacter;
     public static DungeonTile[][] tileList;
-    public static DungeonTile[][] connectorList;
+    public static ArrayList<DungeonTile> connectorList;
     public static DungeonTile[][] unusedTileList;
     
     
@@ -51,7 +53,7 @@ public class DungeonRunner extends JPanel
        minY = yLength/2;
        maxY = yLength/2;
        tileList = new DungeonTile[xLength][yLength];
-       connectorList = new DungeonTile[xLength][yLength];
+       connectorList = new ArrayList<DungeonTile>();
        unusedTileList = new DungeonTile[xLength][yLength];
        //Number of floors is based on the difficulty level
    }
@@ -98,79 +100,51 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         }
         */
         
+        //Maybe have multiple seeds? Need to connect them.
         //The first seed tile. Currently uses the middle tile. Perhaps have a random seed tile?
         tileList[xLength/2][yLength/2] = new DungeonTile(xLength/2, yLength/2, 1);
-        connectorList[xLength/2][yLength/2] = new DungeonTile(xLength/2, yLength/2, 1);
+        connectorList.add(new DungeonTile(xLength/2, yLength/2, 1));
         //Starting at 1 because seed is 0.
         for (int i = 1; i < numTiles; i++)
         {
             //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
             boolean boolBadTile = true;
             int connectionCap = 2;
-            boolean isGoodConnector = false;
-            int randX = 0;
-            int randY = 0;
             int actualX = 0;
             int actualY = 0;
+            int connectorNumber = 0;
+            connectorNumber = (int) (connectorList.size() * Math.random());
             
             while (boolBadTile)
-            {
-                randX = pickTileCoordinateX();
-                randY = pickTileCoordinateY();
-                isGoodConnector = checkConnectorTile(randX, randY);
-                
+            {   
                 //Gets the index of a random connector from the connectorList.
                 //Gets a random tile adjacent to picked connector.
-                if (isGoodConnector)
-                {
                     //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
                     //boolBadTile = checkValidAdjacentTile(randX, randY);
                     
                     //I don't like doing this this way but oh well. 50% chance of x change, 50% chance of y change.
-                    actualY = randY;
-                    actualX = checkValidAdjacentTileX(randX);
-                    if (randX == actualX)
-                    {
-                        actualY = checkValidAdjacentTileY(randY);
-                        
-                    }
-                    //Need to protect against OOB exception. :/
-                    if (tileList[actualX][actualY] instanceof DungeonTile)
-                    {
-                        boolBadTile = true;  
-                    }
+                actualY = connectorList.get(connectorNumber).y;
+                actualX = checkValidAdjacentTileX(connectorList.get(connectorNumber).x);
+                if (connectorList.get(connectorNumber).x == actualX)
+                {
+                    actualY = checkValidAdjacentTileY(connectorList.get(connectorNumber).y);
+                      
+                }
+                //Need to protect against OOB exception. :/
+                if (tileList[actualX][actualY] instanceof DungeonTile)
+                {
+                    boolBadTile = true;  
+                    connectorNumber = (int) (connectorList.size() * Math.random());
+                }
                     
-                    else boolBadTile = false;
+                else boolBadTile = false;
                     
                     //If picked tile is invalid, then restart with another connector.          
-                }
-            }
-            
-            //This part helps the guesser to keep from searching too wide an area.
-            if (actualX > maxX)
-            {
-                maxX = actualX;
-            }
-            
-            if (actualX < minX)
-            {
-                minX = actualX;
-            }
-            
-            if (actualY > maxY)
-            {
-                maxY = actualY;
-            }
-            
-            if (actualY < minY)
-            {
-                minY = actualY;
-            }
-            
+            }         
             //Add a connection to the picked tile.
-            connectorList[randX][randY].numConnections += 1;
-            tileList[actualX][actualY] = new DungeonTile(randX,randY,1);
-            connectorList[actualX][actualY] = new DungeonTile(randX,randY,1);
+            connectorList.get(connectorNumber).numConnections += 1;
+            tileList[actualX][actualY] = new DungeonTile(actualX,actualY,1);
+            connectorList.add(new DungeonTile(actualX,actualY,1));
             //If a tile is used then remove it from the unused list. Not very efficient though.
             
             /* Somewhat unneeded, just use instanceof instead.
@@ -187,9 +161,9 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             }
             */
             //Checks if the latest connector reaches the max number of connections and deletes it if it has.
-            if (connectorList[actualX][actualY].numConnections >= connectionCap)
+            if (connectorList.get(connectorNumber).numConnections >= connectionCap)
             {
-                connectorList[actualX][actualY] = null;
+                connectorList.remove(connectorNumber);
             }
             
             //FOR TESTING
@@ -215,19 +189,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         else return false;
     }
     
-     //Returns a selected connector tile.     
-    private boolean checkConnectorTile(int x, int y)
-    {
-            //Pick a random tile from the connector list. numConnections is a redundancy.
-            if (connectorList[x][y] instanceof DungeonTile && connectorList[x][y].numConnections < 2)
-            {   
-                return true;
-            }
-        System.out.println("Bad guess :<");
-        return false;
-    }
-    
-//Perhaps inefficient
+//Perhaps inefficient?
     private int pickTileCoordinateX()
     {
         //Pick a random int from the range (minX - maxX)

@@ -1,81 +1,44 @@
-
+/*
+PURPOSE/USE: In essence this class will be used to test new methods. This class will ONLY have fully completed functions! Also, this class doesn't have a game loop implemented.
+////////////////////////////////////LIST OF METHODS////////////////////////////////////////////
+List of useable methods:
+createWindow() - creates the window
+paint() - needed to actually draw graphics
+*/
 import java.util.ArrayList;
-import java.awt.*;//includes Color, Dimension, Graphics, etc.
+import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;//image class allows for storage of image files
-import javax.swing.*;//part of UI, includes JPanel
-
+import java.awt.image.*;
+import javax.swing.*;
 public class LegacyDungeonCopy extends JPanel
 {
-   //Global Variables here
-   ArrayList<NodeWorld> nodeList;
-   static JFrame window;
-   WorldMap world;
-   static int turnCounter = 0;//will read safe file. turn should be 0 if save file not found or corrupt
-   //what happens when we load LegacyDungeon
-   public LegacyDungeonCopy()
-   {
-      window = new JFrame("Legacy Dungeon");
-      world = new WorldMap();
-      nodeList = world.getNodeList();
+    ArrayList<NodeWorld> nodeList;
+    static JFrame window;
+    WorldMap world;
+    static int turnCounter = 0;
+    public LegacyDungeonCopy()
+    {
+    DungeonRunner dungeon;
+    
+        window = new JFrame("Hazardous Laboratory");
+        world = new WorldMap();
+        nodeList = world.getNodeList();
         Config config = new Config();
-   }
-   //Main Method
-   public static void main(String[] args)
-   {
-      boolean running = true;
-      LegacyDungeonCopy game = new LegacyDungeonCopy();
-      DungeonRunner dungeon = new DungeonRunner(1,1,1);
-      createWindow();//creates window
-      window.add(game);//adds JPanel to window
-      window.add(dungeon);
-      
-      //TESTING
-      game.createWorld(turnCounter);
-      game.repaint();
-      while(running)//new problem: nodes don't appear unless you repaint, might need to force repaint
-      {
-         //loadMenu();
-         boolean inGame = false;
-         while(inGame)
-         {
-            //game.createWorld(turnCounter);
-            //game.drawDungeon(turnCounter);
-            game.repaint();
-            //loadDungeon(createWorld(turnCounter));
-         }
-      }
-      //if running is false, rewrite save file, close all threads, and end program
-      //NOTE: might need to change parameters based on save file
-   }
-/*///////////////////////////////////ORIGINAL NOTES//////////////////////////////////
-   //If player enters a dungeon, load dungeon
-      //Use node information to generate dungeon floor
-      //Takes input.
-      //Displays UI that reflects HP, Skill EXP (skill EXP is dependent on use), Cooldown, etc.
-      //Displays Timer
-      //Every 5 minutes, the enemy forces will have moved by 1 turn (will notify player)
-      //Check to see if the player has reached another floor
-         //If the player is about to approach the final floor, a new type of floor will be generated - the final floor
-      //Generates new map
-      //repeat until player reaches final floor
-      //If player reaches end of dungeon, dies, or uses Escape Crystal, return to World Map
-      //Update World Map with movement of Enemy Forces
-   //Checks to see if Final Boss is at the Heart. If so, starts counting down on turns left before game ends
-   //If Final Boss succeeds, game ends
-   //If player defeats Final Boss, the player wins!
-   //Creates a drawing based from a picture file
-   */
+        dungeon = new DungeonRunner(1,1,1,100,100);
+    }
+    public static void main(String[] args)
+    {
+        LegacyDungeonCopy game = new LegacyDungeonCopy();
+        createWindow();
+        window.add(game);
+        game.repaint();
+        //Insert what you need to test here
+    }
+//Insert test methods below
+//Insert test methods above
 
-////////////////////////////////////LIST OF METHODS//////////////////////////////////
-/*
-Method 0: createWindow() creates the JFrame
-Method 1: ???() creates a new thread for playing background music.
-Method 2: loadMenu() runs through the start-up screen and then loads the menu. It is in a while loop and won't exit until you press buttons
-Method 3: loadWorldMap() is the part that loads the World Map. It is in a while loop and won't exit until you return to menu (which runs the menu) or until you enter a dungeon
-
-*/
-////////////////////////////////////////////////////////Method 0: Creating the Window
+//Methods that already work
+/////////////////////////////////////////////////////////////////Method 0: Creating the Window
    public static void createWindow()
    {
       Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
@@ -98,53 +61,47 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
     }
 //Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
 //Calling game.repaint() will update what's in here.
-//Testing if
    @Override
-   public void paintComponent(Graphics g)
+   public void paint(Graphics g)
    {
-      Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
-      super.paintComponent(g);//we have to do super because magic
-      //Graphics2D g2 = (Graphics2D) g;
-      //Border lineborder = 
-      //g.setStroke(new BasicStroke(10));
-      g.setColor(Color.red);
-      final int numTilesX = 11;
-      final int numTilesY = 11;
-      
-      //Needed length and height of tiles in pixels
-      int tileLengthX = (int) screenRes.getWidth() / numTilesX;
-      int tileLengthY = (int) screenRes.getHeight() / numTilesY;
-      int currentX;
-      int currentY;
-      //Maybe remove?
-      int playerX = Player.currentTile.x;
-      int playerY = Player.currentTile.y;
+       int xLocation = 0;
+       int yLocation = 0;
+       Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+       super.paintComponent(g);//we have to do super because magic
+       //Graphics2D g2 = (Graphics2D) g;
+       //Border lineborder = 
+       //g.setStroke(new BasicStroke(10));
+       g.setColor(Color.red);
+       final int numTilesX = 11;
+       final int numTilesY = 11;
+       
+       //Needed length and height of tiles in pixels
+       int tileLengthX = (int) screenRes.getWidth() / numTilesX;
+       int tileLengthY = (int) screenRes.getHeight() / numTilesY;
+       
+       for (int i = 0; i < numTilesX; i++)
+       {
+           for (int j = 0; j < numTilesY; j++)
+           {
+               
+            DungeonTile drawnTile = dungeon.tileList[Player.currentTile.x - numTilesX/2 + i][Player.currentTile.y - numTilesY/2 + i];
+               // Draws a row of tiles.
+               g.drawImage(drawnTile.tileImage, drawnTile.x, drawnTile.y, i * tileLengthX, j * tileLengthY, null);
+       
+           }
+       
+       
+       }
+      /*
       if(true)
       {
-         //g.drawImage(world.map, 0, 0, (int)(screenRes.getWidth()/2),(int)(screenRes.getWidth()/2.2),null);
+         g.drawImage(world.map, 0, 0, (int)(screenRes.getWidth()/2),(int)(screenRes.getWidth()/2.2),null);
       }
-      
-
-      for (int i = 0; i < numTilesX; i++)
+      for(int i = 0; i < nodeList.size(); i++)
       {
-          for (int j = 0; j < numTilesY; j++)
-          {
-              DungeonTile drawnTile = (findTile((playerX-numTilesX + i), (playerY-numTilesY + j)));
-              // Draws a row of tiles.
-              g.drawImage(drawnTile.tileImage, drawnTile.x, drawnTile.y, i * tileLengthX, j * tileLengthY, null);
-      
-          }
-      
-      
+         g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,20,20,null);
       }
-   }
-      
-/*      for(int i = 0; i < nodeList.size(); i++)
-      {}
-         //g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,20,20,null);
-   }
-*/
-      /*int vertexCounter = 0;
+      int vertexCounter = 0;
       for(int i = 0; i < nodeList.size(); i++)
       {
          if(nodeList.get(i).nodeStatus == 2)
@@ -156,106 +113,6 @@ Method 3: loadWorldMap() is the part that loads the World Map. It is in a while 
       {
          g.drawPolygon(world.polygonDetector());
       }
-   }*/
-//Method 2:
-/////////////////////////////////////////Method 3: Creating and loading the World Map
-   public boolean createWorld(int turnCounter)
-   {
-      boolean inWorldMap = true;//when this turns false, createWorld stops running
-      //Always loads map image
-      //Since paintComponent requires everything to be in it, this might just turn world.map's boolean to true
-      //but i need to test whether or not if functions work in here
-      if(turnCounter == 0)//if this is the beginning, then we have to generate nodes and set character to heart node
-      {
-         world.assignNodePos();
-         nodeList = world.getNodeList();
-         //Polygon polygon = world.polygonMaker();
-         //Polygon polygon = polygonMaker.makePolygon(nodeList, 
-         //loads character sprite and sets them to the Heart Node as a starting position
-         //world.startCharacter(); NOT YET
-      }
-      //Continue on normally
-      /*
-      while(inWorldMap)//continues this loop until player chooses to enter dungeon OR exit map
-      {
-         //Takes input, updates character sprite/movement depending on what they player pressed. Will confirm player movement and then run enemyMove() to update. If the player chooses to enter the dungeon, the method returns true, else it would just keep running. If the player chooses to leave the game, the method would return false
-         if(world.playerMove())
-         {
-            turnCounter++;
-            return true;
-         }
-         inWorldMap = false;
-         //SOMETHING HERE. I MIGHT BE MISSING SOMETHING. I FEEL LIKE I'M MISSING SOMETHING. THIS NOTE SHOULD BE KEPT UNTIL WE FIND THE MISSING COMPONENT.
-      }
       */
-      this.turnCounter++;
-      return false;
    }
-   
-    //Reused in character, inefficient. :<
-    public DungeonTile findTile(int x, int y)
-    {
-        for (int i = 0; i < DungeonRunner.tileList.size(); i++)
-        {
-            if ((DungeonRunner.tileList.get(i).x == x) && (DungeonRunner.tileList.get(i).y == y))
-            {
-                return DungeonRunner.tileList.get(i);
-            
-            }
-        
-        }    
-        // If tile not found, return a dummy tile.
-        System.out.println("Error:Tile not found.");
-        DungeonTile dummy = new DungeonTile(0,0,0);
-        return dummy;
-    }
-    
-    // Performed after player movement.
-  /*  public boolean drawDungeon(int turnCounter)
-    {
-        Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
-        //How many tiles are drawn, including that of the player.
-        final int numTilesX = 11;
-        final int numTilesY = 11;
-        
-        //Needed length and height of tiles in pixels
-        int tileLengthX = (int) screenRes.getWidth() / numTilesX;
-        int tileLengthY = (int) screenRes.getHeight() / numTilesY;
-        int currentX;
-        int currentY;
-        //Maybe remove?
-        int playerX = Player.currentTile.x;
-        int playerY = Player.currentTile.y;
-        
-        for (int i = 0; i < numTilesX; i++)
-        {
-            for (int j = 0; j < numTilesY; j++)
-            {
-                DungeonTile drawnTile = (findTile((playerX-numTilesX + i), (playerY-numTilesY + j)));
-                // Draws a row of tiles.
-               // g.drawImage(drawnTile.tileImage, drawnTile.x, drawnTile.y, i * tileLengthX, j * tileLengthY, null);
-        
-            }
-        
-        
-        }
-      
-        
-    
-    } */
-//Method 4: Entering dungeon;; not yet...
-/*
-   public static void createDungeon(boolean enterDungeon)
-   {
-      while(enterDungeon)
-      {
-      }
-   }
-*/
-    
-    
-    
-    
-    
-    
 }
