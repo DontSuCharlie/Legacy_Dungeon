@@ -1,4 +1,6 @@
+
 package LegacyDungeon;//let's make it a package for robustness
+
 import java.util.ArrayList; //Needed for arraylist
 import java.awt.*;//Java toolkit. Includes Color, Dimension, Graphics, etc.
 import java.awt.event.*;//event listeners
@@ -156,8 +158,74 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
             }
         }
     }
+
+   @Override
+   public void paintComponent(Graphics g)
+   {
+      Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+      super.paintComponent(g);//we have to do super because magic
+      //Graphics2D g2 = (Graphics2D) g;
+      //Border lineborder = 
+      //g.setStroke(new BasicStroke(10));
+      g.setColor(Color.red);
+      if(true)
+      {
+         g.drawImage(world.map, 0, 0, (int)(screenRes.getWidth()/2),(int)(screenRes.getWidth()/2.2),null);
+      }
+      for(int i = 0; i < nodeList.size(); i++)
+      {
+         g.drawImage(nodeList.get(i).nodeImage,nodeList.get(i).x,nodeList.get(i).y,20,20,null);
+      }
+      int vertexCounter = 0;
+      for(int i = 0; i < nodeList.size(); i++)
+      {
+         if(nodeList.get(i).nodeStatus == 2)
+         {
+            vertexCounter++;
+         }
+      }
+      if(vertexCounter >= 3)
+      {
+         g.drawPolygon(world.polygonDetector());
+      }
+   }
+//Method 2:
+/////////////////////////////////////////Method 3: Creating and loading the World Map
+   public boolean createWorld(int turnCounter)
+   {
+      boolean inWorldMap = true;//when this turns false, createWorld stops running
+      //Always loads map image
+      //Since paintComponent requires everything to be in it, this might just turn world.map's boolean to true
+      //but i need to test whether or not if functions work in here
+      if(turnCounter == 0)//if this is the beginning, then we have to generate nodes and set character to heart node
+      {
+         world.assignNodePos();
+         nodeList = world.getNodeList();
+         Polygon polygon = world.polygonMaker();
+         //Polygon polygon = polygonMaker.makePolygon(nodeList, 
+         //loads character sprite and sets them to the Heart Node as a starting position
+         //world.startCharacter(); NOT YET
+      }
+      //Continue on normally
+      /*
+      while(inWorldMap)//continues this loop until player chooses to enter dungeon OR exit map
+      {
+         //Takes input, updates character sprite/movement depending on what they player pressed. Will confirm player movement and then run enemyMove() to update. If the player chooses to enter the dungeon, the method returns true, else it would just keep running. If the player chooses to leave the game, the method would return false
+         if(world.playerMove())
+         {
+            turnCounter++;
+            return true;
+         }
+         inWorldMap = false;
+         //SOMETHING HERE. I MIGHT BE MISSING SOMETHING. I FEEL LIKE I'M MISSING SOMETHING. THIS NOTE SHOULD BE KEPT UNTIL WE FIND THE MISSING COMPONENT.
+      }
+      */
+      this.turnCounter++;
+      return false;
+   }
+    
     // Performed after player movement.
-    public boolean drawDungeon(turnCounter)
+    public boolean drawDungeon(int turnCounter)
     {
         Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
         //How many tiles are drawn, including that of the player.
@@ -169,13 +237,15 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
         int currentX;
         int currentY;
         //Maybe remove?
+
         int playerX = player.currentTile.x;
         int playerY = player.currentTile.y;
+
         for (int i = 0; i < numTilesX; i++)
         {
             for (int j = 0; j < numTilesY; j++)
             {
-                dungeonTile drawnTile = (findTile((playerX-numTilesX + i), (playerY-numTilesY + j)));
+                DungeonTile drawnTile = DungeonRunner.tileList[i][j];
                 // Draws a row of tiles.
                 g.drawImage(drawnTile.tileImage, drawnTile.x, drawnTile.y, i * tileLengthX, j * tileLengthY, null);
             }

@@ -10,7 +10,7 @@ public class DungeonTile
     int itemID; //0 = nothing, 1 = money, 2 = ?
     int goldAmount;
     int characterID; //0 = nothing, 1 = player, 2 = enemy
-    BufferedImage tileImage;
+    public BufferedImage tileImage;
     ImageLoader imageLoader;
     
     //Test for improvement for generation
@@ -32,6 +32,8 @@ public class DungeonTile
     // main class for testing only.
     public static void main(String[] args)
     {    
+        DungeonTile tile = new DungeonTile(1,1,1);
+        BufferedImage testImage = tile.loadTileImage(1);
     }
     
     
