@@ -24,7 +24,7 @@ public class KeyboardInput extends JPanel
    public static boolean boolIs8;
    public static boolean boolIs9;
    public static boolean boolIs10;
-
+   //condense to array might make it faster
     public static int key;
     //Note: remove this main when done testing.
     
@@ -36,7 +36,6 @@ public class KeyboardInput extends JPanel
         frame.setSize(200, 200);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
     }
     
     public KeyboardInput()
@@ -44,7 +43,6 @@ public class KeyboardInput extends JPanel
         KeyListener listener = new KeyboardListener();
         addKeyListener(listener);
         setFocusable(true);
-    
     }
 
     public class KeyboardListener implements KeyListener
@@ -54,7 +52,6 @@ public class KeyboardInput extends JPanel
         public void keyTyped(KeyEvent e)   
         {
         }
-        
         public void keyPressed(KeyEvent e)
         {
             key = e.getKeyCode();        
@@ -203,15 +200,7 @@ public class KeyboardInput extends JPanel
             else if (key == config.hotKey10)
             {
                boolIs10 = false;
-            }
-           
+            }  
         }
-        
-
-        
-    
     }
-
-
-
 }

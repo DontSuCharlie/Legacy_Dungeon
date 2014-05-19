@@ -1,3 +1,7 @@
+abcdefghijklmnopqrstuvwxyz
+00000000011111111112222222
+12345678901234567890123456
+
 import java.awt.Polygon;
 import java.util.ArrayList;
 public class MaxAreaPolygon
