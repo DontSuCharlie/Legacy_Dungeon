@@ -13,18 +13,18 @@ import javax.swing.*;
 public class LegacyDungeonCopy extends JPanel
 {
     ArrayList<NodeWorld> nodeList;
+    DungeonTile[][] tileArray;
     static JFrame window;
     WorldMap world;
     static int turnCounter = 0;
+    DungeonRunner dungeon;    
     public LegacyDungeonCopy()
     {
-    DungeonRunner dungeon;
-    
         window = new JFrame("Hazardous Laboratory");
         world = new WorldMap();
         nodeList = world.getNodeList();
-        Config config = new Config();
         dungeon = new DungeonRunner(1,1,1,100,100);
+        tileArray = DungeonRunner.tileList;
     }
     public static void main(String[] args)
     {
@@ -64,8 +64,6 @@ public class LegacyDungeonCopy extends JPanel
    @Override
    public void paint(Graphics g)
    {
-       int xLocation = 0;
-       int yLocation = 0;
        Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
        super.paintComponent(g);//we have to do super because magic
        //Graphics2D g2 = (Graphics2D) g;
@@ -83,9 +81,16 @@ public class LegacyDungeonCopy extends JPanel
        {
            for (int j = 0; j < numTilesY; j++)
            {
+               System.out.println(Player.currentTile.x - numTilesX/2 + i);
+               System.out.println(Player.currentTile.y - numTilesY/2 + i);
                
-            DungeonTile drawnTile = dungeon.tileList[Player.currentTile.x - numTilesX/2 + i][Player.currentTile.y - numTilesY/2 + i];
+               
+               DungeonTile drawnTile = tileArray[Player.currentTile.x - numTilesX/2 + i][Player.currentTile.y - numTilesY/2 + i];
                // Draws a row of tiles.
+               BufferedImage image = drawnTile.tileImage;
+               int test = drawnTile.x;
+               int test2 = drawnTile.y;
+               
                g.drawImage(drawnTile.tileImage, drawnTile.x, drawnTile.y, i * tileLengthX, j * tileLengthY, null);
        
            }

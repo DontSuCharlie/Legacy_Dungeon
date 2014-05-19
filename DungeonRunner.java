@@ -30,10 +30,12 @@ public class DungeonRunner extends JPanel
     //End
     static int numTiles;
     public static Player playerCharacter;
+    //Stores all tiles.    
     public static DungeonTile[][] tileList;
-    public static ArrayList<DungeonTile> connectorList;
-    public static DungeonTile[][] unusedTileList;
-    
+    //Used for tile generation
+    private ArrayList<DungeonTile> connectorList;
+    //Used to pick a tile for enemy generation, player generation, item generation, etc.
+    private ArrayList<DungeonTile> checkList;
     
    //Constructor
    public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput)//Takes in the following parameters from NodeWorld.java
@@ -48,13 +50,13 @@ public class DungeonRunner extends JPanel
        yLength = yLengthInput;
        numTiles = 1000;
        playerCharacter = new Player();
-       minX = xLength/2;
-       maxX = xLength/2;
-       minY = yLength/2;
-       maxY = yLength/2;
        tileList = new DungeonTile[xLength][yLength];
+       //This list is used for generating tiles
        connectorList = new ArrayList<DungeonTile>();
-       unusedTileList = new DungeonTile[xLength][yLength];
+       checkList = new ArrayList<DungeonTile>();
+       this.assignTilePos(numTiles);
+       this.spawnPlayer();       
+      
        //Number of floors is based on the difficulty level
    }
 //////////////////////////////////METHODS HERE///////////////////////////////////////
@@ -74,8 +76,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     {
         //Remove when done testing.
         DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100);
-        dungeon.assignTilePos(numTiles);
-        dungeon.spawnPlayer();
         //generateItems();
     
     
@@ -145,6 +145,14 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             connectorList.get(connectorNumber).numConnections += 1;
             tileList[actualX][actualY] = new DungeonTile(actualX,actualY,1);
             connectorList.add(new DungeonTile(actualX,actualY,1));
+            //Testing this for generation.
+            checkList.add(new DungeonTile(actualX,actualY,1));
+            
+            //
+            
+            
+            
+            
             //If a tile is used then remove it from the unused list. Not very efficient though.
             
             /* Somewhat unneeded, just use instanceof instead.
@@ -173,7 +181,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //Must fill remaining area with walls. Same unneeded note as above.
         //tileList.addAll(unusedTileList);
         
-        
+        System.out.println("Done :>");
     }
   
     private boolean pickTileCoordinate(DungeonTile[][] choiceList)
@@ -349,25 +357,26 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     private void spawnPlayer()
     {
         boolean isBadTile = true;
-        int x = 0;
-        int y = 0;
-
+        int tileNumber = 0;
+        
         while (isBadTile)
         {
-            x = pickTileCoordinateX();
-            y = pickTileCoordinateY();
-        
-            if (tileList[x][y] instanceof DungeonTile)
+            tileNumber = (int) (Math.random() * checkList.size());
+            if (checkList.get(tileNumber).characterID == 0)
             {
+                //Breaks loop on valid tile.
                 isBadTile = false;
             }
-            //Breaks loop.
-            isBadTile = true;    
+
+            else 
+                isBadTile = true;    
         
         }
-        tileList[x][y].characterID = 1;
-        //Player.currentTile = tileList[x][y];
-        System.out.println("I am at: " + x + ", " + y);
+        
+        tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].characterID = 1;
+        Player.currentTile = checkList.get(tileNumber);
+        System.out.println("I am at: " + Player.currentTile.x + ", " + Player.currentTile.y);
+        
     }
     
     

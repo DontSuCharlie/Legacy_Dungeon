@@ -1,4 +1,3 @@
-package LegacyDungeon
 import java.util.ArrayList; //Needed for arraylist
 import java.awt.*;//Java toolkit. Includes Color, Dimension, Graphics, etc.
 import java.awt.event.*;//event listeners
