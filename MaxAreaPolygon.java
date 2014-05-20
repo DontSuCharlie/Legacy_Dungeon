@@ -1,6 +1,8 @@
+
 import java.awt.Polygon;
 import java.util.ArrayList;
 public class MaxAreaPolygon
+
 {
 	//List of global variables
 	ArrayList<NodeWorld> potentialList;
@@ -111,6 +113,9 @@ public class MaxAreaPolygon
 			return -1;
 		if((slope*x3) + translation > y3)//below in cartesian plane; above in java
 			return 1;
+		
+		//Should not get here
+		return 0;
 	}
 //Updator method
 //Because Java doesn't use fucking ArrayLists for Polygons, we have to redraw the polygon every single time. .add() doesn't work, because you can't choose the specific index you want it to add it into.

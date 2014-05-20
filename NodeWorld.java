@@ -10,12 +10,12 @@ public class NodeWorld
 	BufferedImage nodeImage; //image of node
 	ImageLoader imageLoader;//need to initiate ImageLoader
 	//Constructor
-    public NodeWorld(int xPos, int yPos, int skill, int theme)
+    public NodeWorld(int xPos, int yPos, int inputSkill, int inputTheme)
 	{
 		x = xPos;
 		y = yPos;
-		skillID = skill;
-		this.theme = theme;
+		skillID = inputSkill;
+		theme = inputTheme;
 		difficulty = 1;//defaults to 1, the starting difficulty
 		nodeStatus = (int)(Math.random()*5);//defaults to 0 bc all nodes start out as dungeons
 		imageLoader = new ImageLoader();
