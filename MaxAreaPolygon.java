@@ -1,4 +1,3 @@
-
 import java.awt.Polygon;
 import java.util.ArrayList;
 public class MaxAreaPolygon

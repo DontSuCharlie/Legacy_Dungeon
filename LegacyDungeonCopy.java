@@ -107,7 +107,6 @@ public class LegacyDungeonCopy extends JPanel
                    }
                }
                g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
-
            }
        
        
