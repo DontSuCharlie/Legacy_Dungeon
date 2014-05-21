@@ -66,29 +66,29 @@ public class Character extends JFrame
         
     }
     */
-    public boolean charMove(int deltaX, int deltaY)
+    public DungeonTile charMove(int deltaX, int deltaY, Character character)
     {    
-           if (DungeonRunner.tileList[this.currentTile.x + deltaX] [this.currentTile.y + deltaY] instanceof DungeonTile)
+           if (DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY] instanceof DungeonTile)
            {
-               DungeonTile potentialTile = DungeonRunner.tileList[this.currentTile.x + deltaX] [this.currentTile.y + deltaY];
+               DungeonTile potentialTile = DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
                if (potentialTile.tileID == 0 || potentialTile.characterID != 0)
                {
                    //Play a sound
-                   return false;
+                   System.out.println("Oh no a wall");
+                   return character.currentTile;
                }
                else 
                {
-                   //Not sure if this is allowed. The theory is that currentTile and tileList.get(potentialTileNum) refer to the same object, so changing one changes both.
-                   //Need to change charID for new and old tile for 
-                   DungeonRunner.tileList[this.currentTile.x] [this.currentTile.y].characterID = 0;
-                   this.currentTile = potentialTile;
-                   DungeonRunner.tileList[this.currentTile.x + deltaX] [this.currentTile.y + deltaY].characterID = this.characterID;
-                   return true;
+                   DungeonRunner.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
+                   DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
+                   character.currentTile = new DungeonTile(character.currentTile.x + deltaX, character.currentTile.y + deltaY,1);
+                   //System.out.println("I moved to " + character.currentTile);
+                   //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
                }
            } 
            
            System.out.println("Error: Missing movement tile or is a wall");
-           return false;
+           return character.currentTile;
     }
     
 /*    

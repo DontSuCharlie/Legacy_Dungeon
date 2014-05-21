@@ -6,6 +6,14 @@ import javax.imageio.ImageIO;
 
 public class ImageLoader
 {
+    
+    public static void main(String[] args)
+    {
+        ImageLoader loader = new ImageLoader();
+        loader.loadImage("BattleFieldNode.jpg");
+        
+        
+    }
 	public BufferedImage loadImage(String fileDirectory)
 	{
 		try 

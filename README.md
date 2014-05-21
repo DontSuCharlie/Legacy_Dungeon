@@ -162,6 +162,25 @@ c. Menu Category
 	4) Key and Mouse Listeners are both important
 III. Completed List
 =====================
+//RANDOM NOTES
+/*///////////////////////////////////ORIGINAL NOTES//////////////////////////////////
+   //If player enters a dungeon, load dungeon
+      //Use node information to generate dungeon floor
+      //Takes input.
+      //Displays UI that reflects HP, Skill EXP (skill EXP is dependent on use), Cooldown, etc.
+      //Displays Timer
+      //Every 5 minutes, the enemy forces will have moved by 1 turn (will notify player)
+      //Check to see if the player has reached another floor
+         //If the player is about to approach the final floor, a new type of floor will be generated - the final floor
+      //Generates new map
+      //repeat until player reaches final floor
+      //If player reaches end of dungeon, dies, or uses Escape Crystal, return to World Map
+      //Update World Map with movement of Enemy Forces
+   //Checks to see if Final Boss is at the Heart. If so, starts counting down on turns left before game ends
+   //If Final Boss succeeds, game ends
+   //If player defeats Final Boss, the player wins!
+   //Creates a drawing based from a picture file
+   */
 
 IV. Activity Log
 ====================
