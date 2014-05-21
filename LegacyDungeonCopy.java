@@ -30,7 +30,6 @@ public class LegacyDungeonCopy extends JPanel
         nodeList = world.getNodeList();
         dungeon = new DungeonRunner(1,1,1,100,100);
         tileArray = DungeonRunner.tileList;
-
     }
     public static void main(String[] args)
     {
@@ -93,6 +92,7 @@ public class LegacyDungeonCopy extends JPanel
    public void paint(Graphics g)
    {
        BufferedImage image = null;
+
        super.paintComponent(g);//we have to do super because magic
        //Graphics2D g2 = (Graphics2D) g;
        //Border lineborder = 
@@ -104,6 +104,8 @@ public class LegacyDungeonCopy extends JPanel
        //Needed length and height of tiles in pixels
        int tileLengthX = (int) screenRes.getWidth() / numTilesX;
        int tileLengthY = (int) screenRes.getHeight() / numTilesY;
+       int previousImageID = -1;
+       
        
        for (int i = 0; i < numTilesX; i++)
        {

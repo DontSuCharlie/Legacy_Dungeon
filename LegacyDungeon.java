@@ -44,6 +44,42 @@ public class LegacyDungeon extends JPanel
         //end();
         //NOTE: might need to change parameters based on save file
     }
+{
+	ArrayList<NodeWorld> nodeList;
+	static JFrame window;
+	WorldMap world;
+	static int turnCounter = 0;//will read save file. Turn counter will be 0 if save file is not found or is corrupt.
+	//Constructor
+	public LegacyDungeon()
+	{
+		window = new JFrame("Legacy Dungeon");
+		world = new WorldMap();
+		nodeList = world.getNodeList();
+		Config config = new Config();//What is this for?
+	}
+	//Main method
+	public static void main(String[] args)
+	{
+		boolean running = true;
+		LegacyDungeon game = new LegacyDungeon();
+		createWindow();
+		window.add(game);
+		game.repaint();
+		while(running)
+		{
+			//loadMenu();//loads menu screen
+			boolean inGame = true;//should be global
+			while(inGame)
+			{
+				loadDungeon(createWorld(turnCounter));
+			}
+		}
+		//if running is false, rewrite save file, close all threads, and end program
+		//saveUpdate();//note, make sure saveUpdate runs periodically OR will be executed EVERYTIME IT CLOSES
+		//thread.close();
+		//end();
+		//NOTE: might need to change parameters based on save file
+	}
 ////////////////////////////////////LIST OF METHODS///////////////////////////////////////////
 /*
 createWindow() creates the JFrame - need to make Window size dependent on options
@@ -158,6 +194,7 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
         }
     }
 */
+
    @Override
    public void paintComponent(Graphics g)
    {

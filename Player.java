@@ -94,7 +94,7 @@ public class Player extends Character{
             {      
                 player.xMovement = player.playerMoveX();
                 player.yMovement = player.playerMoveY();
-                player.charMove(player.xMovement, player.yMovement);
+                //player.charMove(player.xMovement, player.yMovement);
         }
     }   
 }

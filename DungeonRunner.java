@@ -141,12 +141,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             connectorList.add(possibleTile);
             //Testing this for generation.
             checkList.add(possibleTile);
-            
-            //
-            
-            
-            
-            
             //If a tile is used then remove it from the unused list. Not very efficient though.
             
             /* Somewhat unneeded, just use instanceof instead.
