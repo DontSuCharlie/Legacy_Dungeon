@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
-public class LegacyDungeonCopy extends JPanel
+public class LegacyDungeonPaintTest extends JPanel
 {
     static Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
     ArrayList<NodeWorld> nodeList;
@@ -17,7 +17,7 @@ public class LegacyDungeonCopy extends JPanel
     static JFrame window;
     WorldMap world;
     static int turnCounter = 0;
-    DungeonRunner dungeon;    
+    DungeonRunnerV2 dungeon;    
     ImageLoader imageLoader = new ImageLoader();
     BufferedImage tileImage0 = imageLoader.loadImage("Wall.png");
     BufferedImage tileImage1 = imageLoader.loadImage("DungeonTile1.png");
@@ -26,18 +26,18 @@ public class LegacyDungeonCopy extends JPanel
     BufferedImage playerImageNorth = imageLoader.loadImage("playerNorth.png");
     BufferedImage playerImageSouth = imageLoader.loadImage("playerSouth.png");
         
-    public LegacyDungeonCopy()
+    public LegacyDungeonPaintTest()
     {
         window = new JFrame("Hazardous Laboratory");
         world = new WorldMap();
         nodeList = world.getNodeList();
-        dungeon = new DungeonRunner(1,1,1,100,100);
-        tileArray = DungeonRunner.tileList;
+        dungeon = new DungeonRunnerV2(1,1,1,100,100);
+        tileArray = DungeonRunnerV2.tileList;
 
     }
     public static void main(String[] args)
     {
-        LegacyDungeonCopy game = new LegacyDungeonCopy();
+        LegacyDungeonPaintTest game = new LegacyDungeonPaintTest();
         createWindow();
         window.add(game);
         

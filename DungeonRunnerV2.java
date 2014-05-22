@@ -10,7 +10,7 @@ DungeonRunner.java will tell LegacyDungeon.java (the main runner) what to displa
 //difficulty should also increase with skill level
 //skills level can increase by # of monsters
 //Remove extends JPanel?
-public class DungeonRunner extends JPanel
+public class DungeonRunnerV2 extends JPanel
 {
     //Fields
     int numMonsters; //# of monsters
@@ -38,7 +38,7 @@ public class DungeonRunner extends JPanel
     private ArrayList<DungeonTile> checkList;
     
    //Constructor
-   public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput)//Takes in the following parameters from NodeWorld.java
+   public DungeonRunnerV2(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput)//Takes in the following parameters from NodeWorld.java
    {
        this.theme = theme;
        this.skillID = skillID;
@@ -49,6 +49,8 @@ public class DungeonRunner extends JPanel
        xLength = xLengthInput;
        yLength = yLengthInput;
        numTiles = 1000;
+       //May be randomly chosen.
+       int tilesUntilRoom = 100;
        playerCharacter = new Player();
        tileList = new DungeonTile[xLength][yLength];
        //This list is used for generating tiles
@@ -104,12 +106,100 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //The first seed tile. Currently uses the middle tile. Perhaps have a random seed tile?
         tileList[xLength/2][yLength/2] = new DungeonTile(xLength/2, yLength/2, 1);
         connectorList.add(new DungeonTile(xLength/2, yLength/2, 1));
+        
+        for (int i = 1; i < numTiles; i++)
+        {
+            //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
+            boolean boolBadTile = true;
+            int connectionCap = 1;
+            int roomConnectionCap = 2;
+            int tilesSinceRoom = 0;
+            int actualX = 0;
+            int actualY = 0;
+            int connectorNumber = 0;
+            connectorNumber = (int) (connectorList.size() * Math.random());
+            DungeonTile possibleTile = null;
+            int failCount = 0;
+            
+            while (boolBadTile)
+            {   
+                //Gets the index of a random connector from the connectorList.
+                //Gets a random tile adjacent to picked connector.
+                    //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
+                actualY = connectorList.get(connectorNumber).y;
+                actualX = connectorList.get(connectorNumber).x;
+                possibleTile = getAdjacentTile(actualX, actualY);
+                //Need to protect against OOB exception. :/
+                if (tileList[possibleTile.x][possibleTile.y] instanceof DungeonTile)
+                {
+                    boolBadTile = true;  
+                    connectorNumber = (int) (connectorList.size() * Math.random());
+                    failCount++;
+                    //If the tile is trapped, then we start again from the seed tile.
+                    if (failCount == 4)
+                    {
+                        connectorList.remove(connectorNumber);
+                        connectorList.add(checkList.get((int) (Math.random()*checkList.size())));
+                    }
+                }
+                    
+                else boolBadTile = false;
+                failCount = 0;
+                    
+                    //If picked tile is invalid, then restart with another connector.          
+            }         
+            //Add a connection to the picked tile.
+            connectorList.get(connectorNumber).numConnections += 1;
+            tileList[possibleTile.x][possibleTile.y] = possibleTile;
+            connectorList.add(possibleTile);
+            //Testing this for generation.
+            checkList.add(possibleTile);
+            
+            //
+            
+            
+            
+            
+            //If a tile is used then remove it from the unused list. Not very efficient though.
+            
+            /* Somewhat unneeded, just use instanceof instead.
+             * 
+            for (int k = 0; k < unusedTileList.size(); k++)
+            {
+                for (int j = 0; j < tileList.size(); j++)
+                {
+                    if ((tileList.get(j).x == unusedTileList.get(k).x) && (tileList.get(j).y == unusedTileList.get(k).y))
+                    {
+                        unusedTileList.remove(k);                    
+                    }
+                }            
+            }
+            */
+            //Checks if the latest connector reaches the max number of connections and deletes it if it has.
+            if (connectorList.get(connectorNumber).numConnections >= connectionCap)
+            {
+                connectorList.remove(connectorNumber);
+            }
+            
+            //FOR TESTING
+            System.out.println(possibleTile.x + " " + possibleTile.y);
+        }    
+    
+        //Must fill remaining area with walls. Same unneeded note as above.
+        //tileList.addAll(unusedTileList);
+        
+        System.out.println("Done :>");
+        
+       
         //Starting at 1 because seed is 0.
+        /* Can use for mutiple generation types. This one makes a large blob.
         for (int i = 1; i < numTiles; i++)
         {
             //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
             boolean boolBadTile = true;
             int connectionCap = 2;
+            int roomConnectionCap = 2;
+            int tilesSinceRoom = 100;
             int actualX = 0;
             int actualY = 0;
             int connectorNumber = 0;
@@ -163,7 +253,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             }
             */
             //Checks if the latest connector reaches the max number of connections and deletes it if it has.
-            if (connectorList.get(connectorNumber).numConnections >= connectionCap)
+        /*    if (connectorList.get(connectorNumber).numConnections >= connectionCap)
             {
                 connectorList.remove(connectorNumber);
             }
@@ -176,6 +266,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //tileList.addAll(unusedTileList);
         
         System.out.println("Done :>");
+        */
     }
   
     private boolean pickTileCoordinate(DungeonTile[][] choiceList)

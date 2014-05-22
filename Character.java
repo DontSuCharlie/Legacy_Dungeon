@@ -30,7 +30,7 @@ public class Character extends JFrame
     public int attemptedY;
     public int characterID;// Used to check between player or enemy.
     public DungeonTile currentTile;
-    public int direction; // Used for direction of sprite and attacks
+    public int direction; // Used for direction of sprite and attacks 0=east, 1=north, 2=west, 3=south
 
    //Constructor
     
@@ -82,6 +82,27 @@ public class Character extends JFrame
                    DungeonRunner.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
                    DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
                    character.currentTile = new DungeonTile(character.currentTile.x + deltaX, character.currentTile.y + deltaY,1);
+           
+                   if(deltaX > 0)
+                   {
+                       direction = 0;
+                   }
+                   else if(deltaX < 0)
+                   {
+                       direction = 2;
+                   }
+                   else if(deltaY > 0)
+                   {
+                       direction = 3;
+                   }
+                   else if(deltaY < 0)
+                   {
+                       direction = 1;
+                   }
+                   else
+                   {
+                       direction = 0;
+                   }
                    //System.out.println("I moved to " + character.currentTile);
                    //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
                }
