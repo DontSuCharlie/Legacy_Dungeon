@@ -81,7 +81,7 @@ public class Character extends JFrame
                {
                    DungeonRunner.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
                    DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
-                   character.currentTile = new DungeonTile(character.currentTile.x + deltaX, character.currentTile.y + deltaY,1);
+                   character.currentTile = DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
            
                    if(deltaX > 0)
                    {
@@ -108,7 +108,7 @@ public class Character extends JFrame
                }
            } 
            
-           System.out.println("Error: Missing movement tile or is a wall");
+           System.out.println("Oh no a wall");
            return character.currentTile;
     }
     

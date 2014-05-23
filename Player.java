@@ -5,16 +5,18 @@ import javax.swing.*;//part of UI, includes JPanel
 public class Player extends Character{
     int xMovement;
     int yMovement;
+    int riches;
     
-    public Player()
+    public Player(int inputRiches)
     {
         xMovement = 0;
         yMovement = 0;
+        characterID = 1;
+        riches = inputRiches;
 
 
     }
     
-    //Issue, things that come first have priority.
     public int playerMoveY()
     {
        
@@ -85,7 +87,7 @@ public class Player extends Character{
         //This frame is for testing only. KeyListener will be in LegacyDungeon.
             JFrame frame = new JFrame("Test");
             KeyboardInput input = new KeyboardInput();
-            Player player = new Player();
+            Player player = new Player(1);
             frame.add(input);
             frame.setSize(200, 200);
             frame.setVisible(true);

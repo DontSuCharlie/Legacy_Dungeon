@@ -38,24 +38,27 @@ public class DungeonRunner extends JPanel
     private ArrayList<DungeonTile> checkList;
     
    //Constructor
-   public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput)//Takes in the following parameters from NodeWorld.java
+   public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput, int currentFloorInput, int moneyInput)//Takes in the following parameters from NodeWorld.java
    {
        this.theme = theme;
        this.skillID = skillID;
        this.difficulty = difficulty;//insert random factor that will adjust difficulty
-       currentFloor = 1;
+       currentFloor = currentFloorInput;
        numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
        //Remove this stuff later. Just for testing.
        xLength = xLengthInput;
        yLength = yLengthInput;
        numTiles = 1000;
-       playerCharacter = new Player();
+       //May be randomly chosen.
+       playerCharacter = new Player(moneyInput);
        tileList = new DungeonTile[xLength][yLength];
        //This list is used for generating tiles
        connectorList = new ArrayList<DungeonTile>();
        checkList = new ArrayList<DungeonTile>();
        this.assignTilePos(numTiles);
        this.spawnPlayer();       
+       this.spawnStairs();
+       this.generateItems();
       
        //Number of floors is based on the difficulty level
    }
@@ -75,7 +78,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     public static void main(String[] args)
     {
         //Remove when done testing.
-        DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100);
+        DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100,1,0);
         //generateItems();
     
     
@@ -104,12 +107,102 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //The first seed tile. Currently uses the middle tile. Perhaps have a random seed tile?
         tileList[xLength/2][yLength/2] = new DungeonTile(xLength/2, yLength/2, 1);
         connectorList.add(new DungeonTile(xLength/2, yLength/2, 1));
+        
+        for (int i = 1; i < numTiles; i++)
+        {
+            //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
+            boolean boolBadTile = true;
+            int connectionCap = 1;
+            int actualX = 0;
+            int actualY = 0;
+            int connectorNumber = 0;
+            connectorNumber = (int) (connectorList.size() * Math.random());
+            DungeonTile possibleTile = null;
+            int failCount = 0;
+            
+            while (boolBadTile)
+            {   
+                //Gets the index of a random connector from the connectorList.
+                //Gets a random tile adjacent to picked connector.
+                    //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
+                actualY = connectorList.get(connectorNumber).y;
+                actualX = connectorList.get(connectorNumber).x;
+                possibleTile = getAdjacentTile(actualX, actualY);
+                if (possibleTile.x > 0 && possibleTile.x < xLength && possibleTile.y > 0 && possibleTile.y < yLength && tileList[possibleTile.x][possibleTile.y] instanceof DungeonTile != true)
+                {
+                    boolBadTile = false;  
+                    failCount = 0;
+                    
+                }
+                    
+                else 
+                {
+                    boolBadTile = true;
+                    connectorNumber = (int) (connectorList.size() * Math.random());
+                    failCount++;
+                    //If the tile is trapped, then we start again from the seed tile.
+                    if (failCount == 4)
+                    {
+                        connectorList.remove(connectorNumber);
+                        connectorList.add(checkList.get((int) (Math.random()*checkList.size())));
+                        System.out.println("connectorList");
+                        failCount = 0;
+                    }  
+                }
+                //If picked tile is invalid, then restart with another connector.          
+            }         
+            //Add a connection to the picked tile.
+            connectorList.get(connectorNumber).numConnections += 1;
+            tileList[possibleTile.x][possibleTile.y] = possibleTile;
+            connectorList.add(possibleTile);
+            //Testing this for generation.
+            checkList.add(possibleTile);
+            
+            //
+            
+            
+            
+            
+            //If a tile is used then remove it from the unused list. Not very efficient though.
+            
+            /* Somewhat unneeded, just use instanceof instead.
+             * 
+            for (int k = 0; k < unusedTileList.size(); k++)
+            {
+                for (int j = 0; j < tileList.size(); j++)
+                {
+                    if ((tileList.get(j).x == unusedTileList.get(k).x) && (tileList.get(j).y == unusedTileList.get(k).y))
+                    {
+                        unusedTileList.remove(k);                    
+                    }
+                }            
+            }
+            */
+            //Checks if the latest connector reaches the max number of connections and deletes it if it has.
+            if (connectorList.get(connectorNumber).numConnections >= connectionCap)
+            {
+                connectorList.remove(connectorNumber);
+            }
+            
+            //FOR TESTING
+            System.out.println(possibleTile.x + " " + possibleTile.y);
+        }    
+    
+        //Must fill remaining area with walls. Same unneeded note as above.
+        //tileList.addAll(unusedTileList);
+        
+        System.out.println("Done :>");
+        
+       
         //Starting at 1 because seed is 0.
+        /* Can use for mutiple generation types. This one makes a large blob.
         for (int i = 1; i < numTiles; i++)
         {
             //Methods needed: get adjacent tile, check if good tile, add to tileList and connectorList, remove tiles from connector list with more than connectionCap connections
             boolean boolBadTile = true;
             int connectionCap = 2;
+            int roomConnectionCap = 2;
+            int tilesSinceRoom = 100;
             int actualX = 0;
             int actualY = 0;
             int connectorNumber = 0;
@@ -163,7 +256,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             }
             */
             //Checks if the latest connector reaches the max number of connections and deletes it if it has.
-            if (connectorList.get(connectorNumber).numConnections >= connectionCap)
+        /*    if (connectorList.get(connectorNumber).numConnections >= connectionCap)
             {
                 connectorList.remove(connectorNumber);
             }
@@ -176,6 +269,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //tileList.addAll(unusedTileList);
         
         System.out.println("Done :>");
+        */
     }
   
     private boolean pickTileCoordinate(DungeonTile[][] choiceList)
@@ -398,6 +492,88 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         playerCharacter.currentTile = checkList.get(tileNumber);
         System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
         
+    }
+    
+    private void spawnStairs()
+    {
+        boolean isBadTile = true;
+        int tileNumber = 0;
+        
+        while (isBadTile)
+        {
+            tileNumber = (int) (Math.random() * checkList.size());
+            if (checkList.get(tileNumber).characterID == 0)
+            {
+                //Breaks loop on valid tile.
+                isBadTile = false;
+            }
+
+            else 
+                isBadTile = true;    
+        
+        }
+        
+        tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].tileID = 2;
+        checkList.get(tileNumber).tileID = 2;
+        System.out.println("Stairs are at: " + checkList.get(tileNumber));
+        
+    }
+    
+    private void generateItems()
+    {
+        for (int i = 0; i < numTiles; i++)
+        {
+            //If the random double is less than itemChance, randomly pick the item that will be there.
+            double itemChance = .15;
+            if (Math.random() < .15)
+            {
+                //Note: these are placeholders for the actual way we do the item lists. (Maybe arraylists?)
+                //This set of high/low variables is for picking which item of the class we spawn.
+                int lowCommon = 2;
+                int highCommon = 3;
+                int lowUncommon = 4;
+                int highUncommon = 5;
+                int lowRare = 6;
+                int highRare = 7;
+                int lowSuper = 8;
+                int highSuper = 9;
+                
+                double chooser = Math.random();
+                double goldChance = .4;
+                double commonChance = .3;             
+                double uncommonChance = .19;
+                double rareChance = .1;
+                double superChance = .01;
+                
+                if (chooser < goldChance)
+                {
+                    tileList[checkList.get(i).x][checkList.get(i).y].itemID = 1;
+                    //Need to decide how to do this.
+                    tileList[checkList.get(i).x][checkList.get(i).y].goldAmount = this.currentFloor;                
+                }
+                
+                else if (chooser < commonChance)
+                {
+                    tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highCommon - lowCommon)) + lowCommon);                                
+                }
+            
+                else if (chooser < uncommonChance)
+                {
+                    tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highUncommon - lowUncommon)) + lowUncommon);
+                }
+            
+                else if (chooser < rareChance)
+                {
+                    tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highRare - lowRare)) + lowRare);
+                }
+            
+                else if (chooser < superChance)
+                {
+                    tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highSuper - lowSuper)) + lowSuper);
+                }
+            
+            }
+        }
     }
     
     

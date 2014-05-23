@@ -11,6 +11,8 @@ public class DungeonTile
     int goldAmount;
     int characterID; //0 = nothing, 1 = player, 2 = enemy
     public BufferedImage tileImage;
+    public BufferedImage itemImage;
+    public BufferedImage charImage;
     ImageLoader imageLoader;
     
     //Test for improvement for generation

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
+
 public class LegacyDungeonCopy extends JPanel
 {
     static Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
@@ -18,21 +19,35 @@ public class LegacyDungeonCopy extends JPanel
     WorldMap world;
     static int turnCounter = 0;
     DungeonRunner dungeon;    
+    PlayerLegacyDungeon superPlayer;
     ImageLoader imageLoader = new ImageLoader();
     BufferedImage tileImage0 = imageLoader.loadImage("Wall.png");
     BufferedImage tileImage1 = imageLoader.loadImage("DungeonTile1.png");
+    BufferedImage tileImage2 = imageLoader.loadImage("DungeonTile2.png");
+    BufferedImage money = imageLoader.loadImage("coinGold.png");
     BufferedImage playerImageEast = imageLoader.loadImage("playerEast.png");
     BufferedImage playerImageWest = imageLoader.loadImage("playerWest.png");
     BufferedImage playerImageNorth = imageLoader.loadImage("playerNorth.png");
     BufferedImage playerImageSouth = imageLoader.loadImage("playerSouth.png");
+    BufferedImage num0 = imageLoader.loadImage("0.png");
+    BufferedImage num1 = imageLoader.loadImage("1.png");
+    BufferedImage num2 = imageLoader.loadImage("2.png");
+    BufferedImage num3 = imageLoader.loadImage("3.png");
+    BufferedImage num4 = imageLoader.loadImage("4.png");
+    BufferedImage num5 = imageLoader.loadImage("5.png");
+    BufferedImage num6 = imageLoader.loadImage("6.png");
+    BufferedImage num7 = imageLoader.loadImage("7.png");
+    BufferedImage num8 = imageLoader.loadImage("8.png");
+    BufferedImage num9 = imageLoader.loadImage("9.png");
         
     public LegacyDungeonCopy()
     {
         window = new JFrame("Hazardous Laboratory");
         world = new WorldMap();
         nodeList = world.getNodeList();
-        dungeon = new DungeonRunner(1,1,1,100,100);
+        dungeon = new DungeonRunner(1,1,1,100,100,1, 0);
         tileArray = DungeonRunner.tileList;
+        superPlayer = new PlayerLegacyDungeon();
 
     }
     public static void main(String[] args)
@@ -50,10 +65,51 @@ public class LegacyDungeonCopy extends JPanel
         {
             if (KeyboardInput.boolIsMoving == true)
             {
+                System.out.println("Moving");
                 game.dungeon.playerCharacter.charMove(game.dungeon.playerCharacter.playerMoveX(), game.dungeon.playerCharacter.playerMoveY(), game.dungeon.playerCharacter);
+                
                 isChange = true;
                 System.out.println(game.dungeon.playerCharacter.currentTile);
                 KeyboardInput.boolIsMoving = false;
+                //game.tileArray = DungeonRunner.tileList;
+            }
+            //Probably a better way to do this but oh well
+            if(KeyboardInput.boolIsInteracting == true)
+            {
+                if(game.dungeon.playerCharacter.currentTile.tileID == 2)
+                {
+                    System.out.println("NEXT LEVEL");
+                    game.superPlayer.goldCount = game.dungeon.playerCharacter.riches;
+                    game.dungeon.currentFloor++;                    
+                    game.dungeon = new DungeonRunner(1,1,1,100,100,game.dungeon.currentFloor, game.superPlayer.goldCount);
+                    game.tileArray = DungeonRunner.tileList;
+                    isChange = true;
+
+                }
+                else if (game.dungeon.playerCharacter.currentTile.itemID != 0)
+                {
+                    if (game.dungeon.playerCharacter.currentTile.itemID == 1)
+                    {
+                        System.out.println("MOENEY");
+                        game.dungeon.playerCharacter.riches += game.dungeon.playerCharacter.currentTile.goldAmount;
+                        game.superPlayer.goldCount += game.dungeon.playerCharacter.currentTile.goldAmount;
+                        //THIS LINE MUST CHANGE THE VALUE IN TILEARRAY FROM LDungeon. ACCESSING SAME MEMORY?
+                        game.dungeon.playerCharacter.currentTile.itemID = 0;
+                        game.dungeon.tileList[game.dungeon.playerCharacter.currentTile.x][game.dungeon.playerCharacter.currentTile.y].itemID = 0;
+                        isChange = true;
+                            
+                    }
+                    
+                    if (game.dungeon.playerCharacter.currentTile.itemID == 2)
+                    {
+                        System.out.println("");
+                    }
+                        //game.tileArray = DungeonRunner.tileList;
+                }
+                
+                
+                System.out.println("Interacting woah");
+                KeyboardInput.boolIsInteracting = false; 
             }
             
             while(isChange)
@@ -63,8 +119,8 @@ public class LegacyDungeonCopy extends JPanel
                 isChange = false;
             }          
         }
-        //Insert what you need to test here
     }
+        //Insert what you need to test here
 //Insert test methods below
 //Insert test methods above
 
@@ -114,15 +170,21 @@ public class LegacyDungeonCopy extends JPanel
            {
                //System.out.print(dungeon.playerCharacter.currentTile.x - numTilesX/2 + i + " ");
                //System.out.println(dungeon.playerCharacter.currentTile.y - numTilesY/2 + j);
-               
-               
-               DungeonTile drawnTile = tileArray[dungeon.playerCharacter.currentTile.x - numTilesX/2 + i][dungeon.playerCharacter.currentTile.y - numTilesY/2 + j];
+               DungeonTile drawnTile = null;
+               if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunner.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunner.yLength)
+               {
+                   drawnTile = tileArray[dungeon.playerCharacter.currentTile.x - numTilesX/2 + i][dungeon.playerCharacter.currentTile.y - numTilesY/2 + j];
+               }
                // Draws a row of tiles.
                if (drawnTile instanceof DungeonTile)
                {
                    if (drawnTile.tileID == 1)
                    {
                        image = tileImage1;
+                   }
+                   else if (drawnTile.tileID == 2)
+                   {
+                       image = tileImage2;
                    }
                    
                    //More variations of tiles here.
@@ -134,22 +196,193 @@ public class LegacyDungeonCopy extends JPanel
                }
                
                g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+               
+               if (drawnTile instanceof DungeonTile && drawnTile.itemID != 0)
+               {
+                   if (drawnTile.itemID == 1)
+                   {
+                       image = money;
+                       g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+                   }
+               }
+               
+               if (drawnTile instanceof DungeonTile && drawnTile.characterID != 0)
+               {
+                   if (drawnTile.characterID == 1)
+                   {
+                       Image playerImage;
+                       switch(dungeon.playerCharacter.direction)
+                       {
+                           case 0: playerImage = playerImageEast;
+                               break;
+                           case 1: playerImage = playerImageNorth;
+                               break;
+                           case 2: playerImage = playerImageWest;
+                               break;
+                           case 3: playerImage = playerImageSouth;
+                               break;
+                           default: playerImage = playerImageEast;
+                       }
+                       g.drawImage(playerImage, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX/2 + 1) * tileLengthX, (numTilesY/2 + 1) * tileLengthY, 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
+                   }
+               }
            }      
        }
-       Image playerImage;
-       switch(dungeon.playerCharacter.direction)
+
+       int floorNum = dungeon.currentFloor;
+       int numCounter = 0;
+       int oneDigit = 0;
+       
+       //Supports 3-digit numbers for floors.Theoretically could do more, but that makes GUI :<.
+       do
        {
-           case 0: playerImage = playerImageEast;
-               break;
-           case 1: playerImage = playerImageNorth;
-               break;
-           case 2: playerImage = playerImageWest;
-               break;
-           case 3: playerImage = playerImageSouth;
-               break;
-           default: playerImage = playerImageEast;
+           if(floorNum > 9)
+           {
+               
+               oneDigit = floorNum % 10;
+               floorNum /= 10;
+               numCounter++;
+           }
+           
+           else
+           {
+               oneDigit = floorNum;
+               floorNum = 0;
+               numCounter++;
+           }
+           
+       //Even more inefficient. More a test.
+           
+       if(oneDigit == 0)
+       {
+           image = num0;
        }
-       g.drawImage(playerImage, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX/2 + 1) * tileLengthX, (numTilesY/2 + 1) * tileLengthY, 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
+           
+       if(oneDigit == 1)
+       {
+           image = num1;
+       }
+       
+       if(oneDigit == 2)
+       {
+           image = num2;
+       }
+       
+       if(oneDigit == 3)
+       {
+           image = num3;
+       }
+       
+       if(oneDigit == 4)
+       {
+           image = num4;
+       }
+       
+       if(oneDigit == 5)
+       {
+           image = num5;
+       }
+       
+       if(oneDigit == 6)
+       {
+           image = num6;
+       }
+       
+       if(oneDigit == 7)
+       {
+           image = num7;
+       }
+       
+       if(oneDigit == 8)
+       {
+           image = num8;
+       }
+       
+       if(oneDigit == 9)
+       {
+           image = num9;
+       }
+       
+       g.drawImage(image, tileLengthX - numCounter * tileLengthX/4, 3 * tileLengthY/4, 5*tileLengthX/4 - numCounter * tileLengthX/4, tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null),(null));
+       
+       }while(floorNum != 0);
+       
+       int goldNum = superPlayer.goldCount;
+       numCounter = 0;
+       oneDigit = 0;
+       
+       do
+       {
+           if(superPlayer.goldCount > 9)
+           {
+               
+               oneDigit = goldNum % 10;
+               goldNum /= 10;
+               numCounter++;
+           }
+           
+           else
+           {
+               oneDigit = goldNum;
+               goldNum = 0;
+               numCounter++;
+           }
+           
+       //Even more inefficient. More a test.
+           
+       if(oneDigit == 0)
+       {
+           image = num0;
+       }
+           
+       if(oneDigit == 1)
+       {
+           image = num1;
+       }
+       
+       if(oneDigit == 2)
+       {
+           image = num2;
+       }
+       
+       if(oneDigit == 3)
+       {
+           image = num3;
+       }
+       
+       if(oneDigit == 4)
+       {
+           image = num4;
+       }
+       
+       if(oneDigit == 5)
+       {
+           image = num5;
+       }
+       
+       if(oneDigit == 6)
+       {
+           image = num6;
+       }
+       
+       if(oneDigit == 7)
+       {
+           image = num7;
+       }
+       
+       if(oneDigit == 8)
+       {
+           image = num8;
+       }
+       
+       if(oneDigit == 9)
+       {
+           image = num9;
+       }
+       
+       g.drawImage(image, 2 * tileLengthX - numCounter * tileLengthX/4, 3 * tileLengthY/4, 9*tileLengthX/4 - numCounter * tileLengthX/4, tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null),(null));
+       
+       }while(goldNum != 0);
        //g.drawImage(tileImage0, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX+1)/2 * tileLengthX, (numTilesY+1)/2 * tileLengthY, 0, 0, tileImage0.getWidth(null), tileImage0.getHeight(null), null);
       /*
       if(true)
