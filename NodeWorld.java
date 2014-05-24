@@ -29,4 +29,13 @@ Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 		BufferedImage node = imageLoader.loadImage("Node" + nodeStatus + ".png");
 		return node;
 	}
+/*
+Method 1: Comparing nodes
+*/
+	public boolean equals(NodeWorld comparedNode)
+	{
+		if (this.x == comparedNode.x && this.y == comparedNode.y)
+			return true;
+		return false;
+	}
 }

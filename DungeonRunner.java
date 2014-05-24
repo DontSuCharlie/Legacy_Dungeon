@@ -123,6 +123,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                     //boolBadTile = checkValidAdjacentTile(randX, randY);
                     
                     //I don't like doing this this way but oh well. 50% chance of x change, 50% chance of y change.
+				
                 actualY = connectorList.get(connectorNumber).y;
                 actualX = checkValidAdjacentTileX(connectorList.get(connectorNumber).x);
                 if (connectorList.get(connectorNumber).x == actualX)
@@ -146,13 +147,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             tileList[actualX][actualY] = new DungeonTile(actualX,actualY,1);
             connectorList.add(new DungeonTile(actualX,actualY,1));
             //Testing this for generation.
-            checkList.add(new DungeonTile(actualX,actualY,1));
-            
-            //
-            
-            
-            
-            
+            checkList.add(new DungeonTile(actualX,actualY,1));                                                
             //If a tile is used then remove it from the unused list. Not very efficient though.
             
             /* Somewhat unneeded, just use instanceof instead.
@@ -250,46 +245,20 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             
         }
     }*/
-    
-    private int  checkValidAdjacentTileX(int xInput)
+
+    private int returnAdjacentTile (int x, int y)
     {
-        int x = xInput;    
-        
-        {
-            double randomNumber = Math.random();
-            if (randomNumber <= .25)
-            {
-                x++;
-            }
-        
-            else if (randomNumber <= .5)
-            {
-                x--;
-            }
-        
-            return x;
-        }
-    }
-    
-    private int checkValidAdjacentTileY(int yInput)
-    {
-        int y = yInput;       
-        
-        {
-            double randomNumber = Math.random();
-            if (randomNumber <= .5)
-            {
-                y++;
-            }
-        
-            else if (randomNumber < 1)
-            {
-                y--;
-            }
-            return y;
-        }
-    }
-    
+		double randomNumber = Math.random()
+		if(randomNumber <= 0.25)
+			x++;
+		else if(randomNumber <= 0.5)
+			x--;
+		else if(randomNumber <= 0.75)
+			y++;
+		else if(randomNumber <= 1)
+			y--;
+	}
+
 /*
     //Pick a tile adjacent to given tile. Either x or y is modified by one.
     private DungeonTile getAdjacentTile(int tileChooser)

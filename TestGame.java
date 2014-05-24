@@ -1,3 +1,21 @@
+//"People say 'You are what you eat.' The same people call me a monster, but I just tell them I'm human."
+//"The general public can be a great and powerful resource. But it can also turn into a monster when misled." - story about how dangerous
+//Singing positively with depressing lyrics
+//Energy
+//Portal "3", in space (include space orb cameo)
+//Big room
+//Portal set in space
+//Portal will flush out all the gas out of the Earth's atmosphere
+//Goal is to stop them
+//Use the ship's electrical circuits to create a fire that destroys the portal OR DESTROY PORTAL MACHINE OR (IF FLAME WAY, MAIN ANTAGONIST DIES, BUT HIS AI TAKES OVER DIRECTIVE)
+//tHE PADS ARE USED AS A DEFENSE ARRAY
+//Too many fires - > Secret organization on watch suspicious -> Sendsyou -> Someone's causing fires in all the forests, suspicious criminal activity suspectedAncient Temple - > Sea Floor - > Paint/Portal Factory - > Space - > Secret World (where all the water are teleported to)
+//In space, only direct line to original world results in communication with your guide
+//Portal outwards, use fire
+//Villian wants to remake the whole world. Drain current world and kill non-elite inhabitants, create artificial planetary paradise
+//Spheres for a surface
+//1 54.184
+//2 09.368
 /*
 PURPOSE/USE: In essence this class will be used to test new methods. This class will ONLY have fully completed functions! Also, this class doesn't have a game loop implemented.
 ANY VARIABLES/METHODS/ETC. WILL HAVE THE COMMENT //test RIGHT NEXT TO IT
@@ -22,18 +40,22 @@ public class TestGame extends JPanel
 	MaxAreaPolygon maxAreaPolygon;//test
 	public TestGame()
 	{
-		window = new JFrame("Hazardous Laboratory");
+		window = new JFrame("I'm a poopoo");
 		world = new WorldMap();
+		world.assignNodePos();
 		nodeList = world.getNodeList();
 		maxAreaPolygon = new MaxAreaPolygon();//test
-		Config config = new Config();
+		//Config config = new Config();
 	}
 	public static void main(String[] args)
 	{
 		TestGame game = new TestGame();
 		createWindow();
 		window.add(game);
-		game.repaint();
+		while(true)
+		{
+			game.repaint();
+		}
 		//Insert what you need to test here
 	}
 //Insert test methods below
@@ -93,6 +115,7 @@ public class TestGame extends JPanel
 		if(validList.size() >= 3)
 		{
 			g.drawPolygon(maxAreaPolygon.makePolygon(validList));
+			//don't declare the method every time. Only update the polygon every time a new defense node is added. Otherwise draw same polygon.
 		}
 		//testEND
 	}

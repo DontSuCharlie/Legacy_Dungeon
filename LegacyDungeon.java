@@ -52,7 +52,7 @@ public class LegacyDungeon extends JPanel
 createWindow() creates the JFrame - need to make Window size dependent on options
 paint(Graphics g) updates the screen - need to update
 loadMenu() loads the menu screen - need to make
-loadDungeon(boolean b), if true, load dungeon map. If false, do nothing - ask Anish to finish
+loadDungeon(boolean b), if true, load dungeon map. If false, do nothing
 createWorld(int turn), takes the current turn #, adjusts difficulty of newly generated dungeons, and creates/updates the world map. - need to finish
 ???() plays background music - need to make
 ????() animation? - need to make
@@ -145,8 +145,7 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 		return false;
 	}
 /////////////////////////////////////////Method 4: Creating, loading, and updating Dungeon
-//TO ANISH: I've moved every dungeon related method under this category. Please turn it into 1 method
-    //Reused in character, inefficient. :<
+    //Reused in character, inefficient. :(
     public DungeonTile findTile(int x, int y)
     {
         for (int i = 0; i < DungeonRunner.tileList.size(); i++)

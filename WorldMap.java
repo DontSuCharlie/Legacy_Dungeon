@@ -316,6 +316,7 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 		//Find nodes nearest to it, USE THE MOST FUCKING EFFICIENT SORT MOFO MWAHAHAH
 			//start with a small circle. If no nodes detected, increase radius of circle
 			//repeat until at least 1 node is detected
+			//once one is detected, increase radius by 5 and make them all valid (or some other number)
 		while(pointsNotFound)
 		{
 			for(int i = 0; i < nodeList.size(); i++)

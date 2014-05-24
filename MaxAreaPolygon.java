@@ -1,7 +1,45 @@
-abcdefghijklmnopqrstuvwxyz
-00000000011111111112222222
-12345678901234567890123456
+/*
+To improve it, make it so it does this:
+1) check slope
+2) 
 
+Also import java.math.BigDecimal
+
+Next Steps:
+1] Fix the 3 point problem
+2] Fix the vertical line problem
+3] Alter it so makePolygon is only called every time the NodeList has a new defensive node
+4] Find a way to draw a thicker line. Change opacity of polygon. (see if it's possible to load image, I can make an animation within the safe area)
+5] Draw new images and animations
+6] 
+
+4] Load character sprite
+5] Add mouse input and keyboard input
+	Set it so all nodes have an area where it can be clickable. However, clickable is only true for nodes near the character. 
+	Assign clicked node as target node (for character movement)
+	When/if clicked, activate Method 6]
+	
+6] Movement of character
+	Generate slope with the initial node and target node. Increase x value continously. Change y value according to equation. x value should be that of the map not the character (To look like scrolling)
+7] Add scrolling
+7] Add music
+8] Add sounds
+9] Add a temporary "manual" node type changer (CHANGE TO NORMAL NODE CHANGER AFTER MAIN DUNGEON IS DONE)
+10] Add animation
+11] Change World Map based on current stage
+12] Add turn counter
+13] Add enemy movement
+	Create a polygon, set opacity/lightness to 0. Set the normal to darker (so it looks like enemy lines are destroying the world)
+14] Draw enemy sprites
+15] Add AI (different modes of AI for different levels of difficulty, diff war strategies?)
+15] Add animation for attacked nodes (later)
+16] Add scrolling
+17] Add clouds (misty, yay!)
+18] Draw custom map
+19] Make GUI AS APPEALING AS POSSIBLE (fonts, colors, quality of images, etc.)
+
+IN DUNGEON, MULTIPLE BOSSES CAN BE MOVING. 1 WILL BE ATTACKING YOU, OTHER WILL BE TRYING TO DESTROY BASE.
+*/
 import java.awt.Polygon;
 import java.util.ArrayList;
 public class MaxAreaPolygon
@@ -44,6 +82,7 @@ public class MaxAreaPolygon
 			if(potentialList.get(i).y > largestY.y)
 				largestY = potentialList.get(i);
 		}
+		if(smallestY.equals(smallestX))
 		firstPointIndex = 0;
 		secondPointIndex = 1;
 		thirdPointIndex = 2;
@@ -57,14 +96,31 @@ public class MaxAreaPolygon
 		//This is the part that repeats until it finishes EVERYTHING
 		//fuck this part
 		//fuck it so much
-		addVertex(smallestY.x, smallestY.y, smallestX.x, smallestX.y, "TopLeft");
-		System.out.println("Past 1st stage");
-		addVertex(largestX.x, largestX.y, smallestY.x, smallestY.y, "TopRight");
-		System.out.println("Past 2nd stage");
-		addVertex(largestY.x, largestY.y, largestX.x, largestX.y, "BottomRight");
-		System.out.println("Past 3rd stage");
-		addVertex(smallestX.x, smallestX.y, largestY.x, largestY.y, "BottomLeft");
-		System.out.println("Past 4th stage");
+		
+		if(!smallestX.equals(smallestY))//slope 1 (Topleft) does not exist
+		{
+			addVertex(smallestY.x, smallestY.y, smallestX.x, smallestX.y, "TopLeft");
+			System.out.println("Top Left is done.");
+			System.out.println("=============================================");
+		}
+		if(!smallestY.equals(largestX))//slope 2 (Topright) does not exist
+		{
+			addVertex(largestX.x, largestX.y, smallestY.x, smallestY.y, "TopRight");
+			System.out.println("Top Right is done.");
+			System.out.println("=============================================");
+		}
+		if(!largestX.equals(largestY))//slope 3 (Bottomriht) does not exist
+		{
+			addVertex(largestY.x, largestY.y, largestX.x, largestX.y, "BottomRight");
+			System.out.println("Bottom Right is done.");
+			System.out.println("=============================================");
+		}
+		if(!smallestX.equals(largestY))//slope 4 (bottom left) does not exist
+		{
+			addVertex(smallestX.x, smallestX.y, largestY.x, largestY.y, "BottomLeft");
+			System.out.println("Bottom Left is done.");
+			System.out.println("=============================================");
+		}
 		return drawPolygon(vertexList);
 	}
 //Sub-main method
@@ -76,24 +132,42 @@ public class MaxAreaPolygon
 		ArrayList<NodeWorld> viableList = new ArrayList<NodeWorld>();
 		for(int i = 0; i < potentialList.size(); i++)
 		{
+			System.out.print("Checking point: " + i);
+			int reference = drawLine(x1, y1, x2, y2, potentialList.get(i).x, potentialList.get(i).y);
+			if(reference == 0)
+			{
+				System.out.println("Found a vertical line. Skip!");
+			}
 			if(ref.equals("TopLeft") || ref.equals("TopRight"))
 			{
-				//<0 means, visually, above it
-				if(drawLine(x1,y1,x2,y2,potentialList.get(i).x, potentialList.get(i).y) > 0)
+				//x>0 means, visually, above it
+				if(reference > 0)
+				{
+					System.out.println("FOUND ONE!!!!!!! Point is visually above: X = " + potentialList.get(i).x + " Y = " + potentialList.get(i).y);
 					viableList.add(potentialList.get(i));
+				}
 			}
 			if(ref.equals("BottomLeft") || ref.equals("BottomRight"))
 			{
-				//>0 means, visually above it
-				if(drawLine(x1,y1,x2,y2,potentialList.get(i).x, potentialList.get(i).y) < 0)
+				//x<0 means, visually below it
+				if(reference < 0)
+				{
+					System.out.println("Point is visually below: X = " + potentialList.get(i).x + " Y = " + potentialList.get(i).y);
 					viableList.add(potentialList.get(i));
+				}
 			}
 		}
-		int i = 0;
+		int i = 1;//for bug testing
 		while(viableList.size() > 0)
 		{
 			addFarthestPoint(ref, viableList);
 			safeZone = drawPolygon(viableList);
+			i++;
+			if(i > 10)
+			{
+				System.out.println(ref + "has failed.");
+				break;
+			}
 		}
 	}
 //Core method (not checked yet :/)
@@ -102,19 +176,22 @@ public class MaxAreaPolygon
 	{
 		if(x2-x1 == 0)//if the slope is a 100% vertical line
 		{
-			System.out.println("NOTE: CURRENTLY INVALID. PLEASE FIX THIS LATER");
+			return 0;
 			//if it is left of the boundary, return 1
-			if(x3 < x2)
-				return 1;
+			//if(x3 < x2)
+				//return 1;
 			//if it is right of the boundary, return -1
-			return -1;
+			//return -1;
 		}
 		slope = (double)(y2-y1)/(double)(x2-x1);
 		translation = y1 - (slope*x1);
-		if((slope*x3) + translation < y3)//above it in cartesiain plane; below in java
+		System.out.println("Equation = " + slope + "x + " + translation + " Input X Value: " + x3 + " Input Y Value: " + y3);
+		System.out.println("Resultant y value = " + ((slope*x3) + translation));
+		if((slope*x3) + translation < y3)//above it in Cartesian plane; below in java
 			return -1;
-		if((slope*x3) + translation > y3)//below in cartesian plane; above in java
+		if((slope*x3) + translation > y3)//below in Cartesian plane; above in java
 			return 1;
+		return 0;
 	}
 //Updator method
 //Because Java doesn't use fucking ArrayLists for Polygons, we have to redraw the polygon every single time. .add() doesn't work, because you can't choose the specific index you want it to add it into.
@@ -137,7 +214,7 @@ public class MaxAreaPolygon
 		{
 			if(polygon.contains(inputList.get(i).x, inputList.get(i).y))
 			{
-				inputList.remove(i);
+				inputList.remove(i);//NOTE: I think contains does not include vertex point
 				i--;//don't want to skip the actual next index
 			}
 		}
@@ -156,7 +233,18 @@ public class MaxAreaPolygon
 				farthestIndex = i;
 		}
 		vertexList.add(getVertexIndex(slopeRef, viableList.get(farthestIndex)), viableList.get(farthestIndex));
-		System.out.println(getVertexIndex("index: " + slopeRef, viableList.get(farthestIndex)) + "node x:" + viableList.get(farthestIndex).x + "node y:" + viableList.get(farthestIndex).y);
+		viableList.remove(farthestIndex);
+		//TESTING ZONE
+		System.out.println("# of elements = " + viableList.size());
+		if(viableList.size() < 3)
+		{
+			for(int i = 0; i < viableList.size(); i++)
+			{
+				System.out.println("Viable List Index #: " + i);
+				System.out.println("x: " + viableList.get(i).x + " y: " + viableList.get(i).y);
+				//System.out.println("New points vertexList index: " + getVertexIndex(slopeRef, viableList.get(farthestIndex)));
+			}
+		}
 	}
 //Most annoying of them all
 //Core method
