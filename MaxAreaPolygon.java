@@ -43,6 +43,7 @@ IN DUNGEON, MULTIPLE BOSSES CAN BE MOVING. 1 WILL BE ATTACKING YOU, OTHER WILL B
 import java.awt.Polygon;
 import java.util.ArrayList;
 public class MaxAreaPolygon
+
 {
 	//List of global variables
 	ArrayList<NodeWorld> potentialList;
@@ -191,6 +192,7 @@ public class MaxAreaPolygon
 			return -1;
 		if((slope*x3) + translation > y3)//below in Cartesian plane; above in java
 			return 1;
+		//Should not get here
 		return 0;
 	}
 //Updator method
