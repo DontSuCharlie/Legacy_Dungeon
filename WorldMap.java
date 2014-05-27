@@ -84,29 +84,28 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 				*/
 	//Method 1: Creates nodes and assigns different positions
 	public void assignNodePos(){
-		for(int i = 0; i < numNodes; i++){
+		for(int i = 0; i < numNodes; i++)
+		{
 			nodeList.add(i, new NodeWorld((int)(Math.random()*screenRes1X1), (int)(Math.random()*screenRes1Y1), 0, 0));//will change the skillID/theme parameter inputs later
 			boolean check = true; //for checking purposes
-			for(int j = 0; j < i; j++){
+			for(int j = 0; j < i; j++)
+			{
 				int counter = 0;
-				while(check){
+				while(check)//if check is true, retry because that means the nodes are on top of another
+				{
 					int dontWantX = Math.abs(nodeList.get(i).x - nodeList.get(j).x);
 					int dontWantY = Math.abs(nodeList.get(i).y - nodeList.get(j).y);
 					// Checking a range if far enough from other nodes. Basically, the range from (xPos - 20) to (xPos + 20) must be both less or both greater than the other nodes available.
-					if(dontWantX <= 20 && dontWantY <= 20)
+					if(dontWantX <= 10 && dontWantY <= 10)
 					{
 						nodeList.get(i).x = (int)(Math.random()*screenRes1X1);
 						nodeList.get(i).y = (int)(Math.random()*screenRes1Y1);
 						counter++;
 					}
 					if(counter > 0)//should check if need brackets here......
-					{
 						check = true;
-					}
 					else
-					{
 						check = false;
-					}
 				System.out.println("Node " + i + ": " + nodeList.get(i).x + ", " + nodeList.get(i).y);
 				}
 			}
