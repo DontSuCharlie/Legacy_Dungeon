@@ -16,6 +16,7 @@ public class KeyboardInput extends JPanel
     public static boolean boolIsInventory;
     public static boolean boolIsMoving;
     public static boolean boolIsInteracting;
+    public static boolean boolIsAttack;
     public static boolean boolIs1;
     public static boolean boolIs2;
     public static boolean boolIs3;
@@ -60,7 +61,6 @@ public class KeyboardInput extends JPanel
             System.out.println("keyPressed: " + key);
             if (key == config.up)
             {
-                System.out.println("Up");
                 boolIsMoving = true;
                 boolIsUp = true;
             }
@@ -82,6 +82,10 @@ public class KeyboardInput extends JPanel
             else if (key == config.aimMode)
             {
                boolIsAim = true;
+            }
+            else if (key == config.attack)
+            {
+               boolIsAttack = true;
             }
             else if (key == config.hotKeyHeal)
             {

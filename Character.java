@@ -20,15 +20,16 @@ public class Character extends JFrame
     BufferedImage image; //Creates an image and loads it. 
     int maxHealth;//maximum HP
     int currentHealth; //current HP
-    double xPos; //current x-coordinate position
-    double yPos; //current y-coordinate position
+    //double xPos; //current x-coordinate position
+    //double yPos; //current y-coordinate position
     ArrayList<Integer> inventory = new ArrayList<Integer>();//this is the inventory
     //Skill[] skill = new Skill[20];//maximum number of skills you can hold is 20.
     public int spriteHeight;//height of image, so rescaling is possible
     public int spriteWidth;//width of image, so rescaling is possible
     public int attemptedX;// These are the coordinates of a tile the character tries to go to. 
     public int attemptedY;
-    public int characterID;// Used to check between player or enemy.
+    //public int characterID;// Used to check between player or enemy.
+    public String description;
     public DungeonTile currentTile;
     public int direction; // Used for direction of sprite and attacks 0=east, 1=north, 2=west, 3=south
 
@@ -46,18 +47,18 @@ public class Character extends JFrame
  /*   
     public int CopiedCheckTile(int deltaX, int deltaY, DungeonTile occupiedTile)
     {
-        for (int i = 0; i < DungeonRunner.tileList.size(); i++)
+        for (int i = 0; i < DungeonRunnerV2.tileList.size(); i++)
         {
-            //Will use the static ArrayList<DungeonTile> tileList from DungeonRunner.java
-            if ((DungeonRunner.tileList.get(i).x == (occupiedTile.x + deltaX) ) && (DungeonRunner.tileList.get(i).y == occupiedTile.y + deltaY))
+            //Will use the static ArrayList<DungeonTile> tileList from DungeonRunnerV2.java
+            if ((DungeonRunnerV2.tileList.get(i).x == (occupiedTile.x + deltaX) ) && (DungeonRunnerV2.tileList.get(i).y == occupiedTile.y + deltaY))
             {
                 // If another character is there, return the ID for a wall.
-                if (DungeonRunner.tileList.get(i).characterID != 0)
+                if (DungeonRunnerV2.tileList.get(i).characterID != 0)
                 {
                     return 0;               
                 }
                 
-                return DungeonRunner.tileList.get(i).tileID;
+                return DungeonRunnerV2.tileList.get(i).tileID;
             }
         } 
         //If it gets here, then the tile is not found.
@@ -66,12 +67,34 @@ public class Character extends JFrame
         
     }
     */
-    public DungeonTile charMove(int deltaX, int deltaY, Character character)
+    public DungeonTile charMove(int deltaX, int deltaY, Character character, DungeonRunner dungeonChar)
     {    
-           if (DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY] instanceof DungeonTile)
+        if(deltaX > 0)
+        {
+            direction = 0;
+        }
+        else if(deltaX < 0)
+        {
+            direction = 2;
+        }
+        else if(deltaY > 0)
+        {
+            direction = 3;
+        }
+        else if(deltaY < 0)
+        {
+            direction = 1;
+        }
+        else
+        {
+            direction = -1;
+        }
+           if (character.currentTile.x + deltaX >= 0 && character.currentTile.x + deltaX < dungeonChar.xLength && character.currentTile.y + deltaY >= 0 && character.currentTile.y + deltaY < dungeonChar.yLength && dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY] instanceof DungeonTile)
+               
            {
-               DungeonTile potentialTile = DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
-               if (potentialTile.tileID == 0 || potentialTile.characterID != 0)
+               
+               DungeonTile potentialTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
+               if (potentialTile.tileID == 0 || potentialTile.character instanceof Character)
                {
                    //Play a sound
                    System.out.println("Oh no a wall");
@@ -79,31 +102,14 @@ public class Character extends JFrame
                }
                else 
                {
-                   DungeonRunner.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
-                   DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
-                   character.currentTile = DungeonRunner.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
+                   //dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
+                   dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].character = null;
+                   //dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
+                   dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].character = character;
+                   character.currentTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
            
-                   if(deltaX > 0)
-                   {
-                       direction = 0;
-                   }
-                   else if(deltaX < 0)
-                   {
-                       direction = 2;
-                   }
-                   else if(deltaY > 0)
-                   {
-                       direction = 3;
-                   }
-                   else if(deltaY < 0)
-                   {
-                       direction = 1;
-                   }
-                   else
-                   {
-                       direction = 0;
-                   }
-                   //System.out.println("I moved to " + character.currentTile);
+
+                   System.out.println(character.getClass().getName()+ " moved to " + character.currentTile);
                    //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
                }
            } 

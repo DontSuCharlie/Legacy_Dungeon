@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public class LegacyDungeonCopy extends JPanel
+public class LegacyDungeonPaintTest extends JPanel
 {
     static Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
     ArrayList<NodeWorld> nodeList;
@@ -18,7 +18,9 @@ public class LegacyDungeonCopy extends JPanel
     static JFrame window;
     WorldMap world;
     static int turnCounter = 0;
-    DungeonRunner dungeon;    
+    int frameCounterX = 0;
+    int frameCounterY = 0;
+    DungeonRunnerV2 dungeon;    
     //PlayerLegacyDungeon superPlayer;
     ImageLoader imageLoader = new ImageLoader();
     BufferedImage tileImage0 = imageLoader.loadImage("Wall.png");
@@ -29,10 +31,6 @@ public class LegacyDungeonCopy extends JPanel
     BufferedImage playerImageWest = imageLoader.loadImage("playerWest.png");
     BufferedImage playerImageNorth = imageLoader.loadImage("playerNorth.png");
     BufferedImage playerImageSouth = imageLoader.loadImage("playerSouth.png");
-    BufferedImage slimeImageEast = imageLoader.loadImage("slimeEast.png");
-    BufferedImage slimeImageWest = imageLoader.loadImage("slimeWest.png");
-    BufferedImage slimeImageNorth = imageLoader.loadImage("slimeNorth.png");
-    BufferedImage slimeImageSouth = imageLoader.loadImage("slimeSouth.png");
     BufferedImage num0 = imageLoader.loadImage("0.png");
     BufferedImage num1 = imageLoader.loadImage("1.png");
     BufferedImage num2 = imageLoader.loadImage("2.png");
@@ -44,7 +42,7 @@ public class LegacyDungeonCopy extends JPanel
     BufferedImage num8 = imageLoader.loadImage("8.png");
     BufferedImage num9 = imageLoader.loadImage("9.png");
         
-    public LegacyDungeonCopy() throws InstantiationException, IllegalAccessException
+    public LegacyDungeonPaintTest()
     {
         window = new JFrame("Hazardous Laboratory");
         world = new WorldMap();
@@ -54,16 +52,15 @@ public class LegacyDungeonCopy extends JPanel
         //superPlayer = new PlayerLegacyDungeon();
 
     }
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException
+    public static void main(String[] args)
     {
-        LegacyDungeonCopy game = new LegacyDungeonCopy();
+        LegacyDungeonPaintTest game = new LegacyDungeonPaintTest();
         createWindow();
         window.add(game);
         
         //Changes to true when something needs to be repainted.
         boolean isChange = true;
         boolean inGame = true;
-        boolean isEnemyTurn = false;
         game.repaint();
         
         
@@ -73,51 +70,13 @@ public class LegacyDungeonCopy extends JPanel
             {
                 System.out.println("Moving");
                 game.dungeon.playerCharacter.charMove(game.dungeon.playerCharacter.playerMoveX(), game.dungeon.playerCharacter.playerMoveY(), game.dungeon.playerCharacter, game.dungeon);
+                
                 isChange = true;
                 System.out.println(game.dungeon.playerCharacter.currentTile);
                 KeyboardInput.boolIsMoving = false;
-                isEnemyTurn = true;
-                
-                //game.tileArray = DungeonRunner.tileList;
+                //game.tileArray = DungeonRunnerV2.tileList;
             }
             //Probably a better way to do this but oh well
-            if (KeyboardInput.boolIsAttack == true)
-            {
-                KeyboardInput.boolIsAttack = false;
-                isEnemyTurn = true;
-                isChange = true;
-                System.out.println("punch him!");
-                int damage = (int) (2 * Math.random()) + 1;
-                int targetTileX = game.dungeon.playerCharacter.currentTile.x;
-                int targetTileY = game.dungeon.playerCharacter.currentTile.y;
-            
-                switch(game.dungeon.playerCharacter.direction)
-                {
-                    case 0: targetTileX += 1;
-                        break;
-                    case 1: targetTileY -= 1;
-                        break;
-                    case 2: targetTileX -= 1;
-                        break;
-                    case 3: targetTileY += 1;
-                        break;
-                    default: targetTileX += 1;
-                }
-            
-                if (targetTileX  >= 0 && targetTileX < DungeonRunner.xLength && targetTileY >= 0 && targetTileY < DungeonRunner.yLength && game.dungeon.tileList[targetTileX][targetTileY] instanceof DungeonTile && game.dungeon.tileList[targetTileX][targetTileY].character instanceof Character)
-                {
-                    game.dungeon.tileList[targetTileX][targetTileY].character.currentHealth -= damage;
-                    System.out.println(game.dungeon.tileList[targetTileX][targetTileY].character.currentHealth);
-                    if(game.dungeon.tileList[targetTileX][targetTileY].character.currentHealth <= 0)
-                    {
-                            if(game.dungeon.tileList[targetTileX][targetTileY].character instanceof Jam)
-                            {
-                                ((Jam)(game.dungeon.tileList[targetTileX][targetTileY].character)).onDeath();
-                            }
-                    }
-                }
-            }
-
             if(KeyboardInput.boolIsInteracting == true)
             {
                 if (game.dungeon.playerCharacter.currentTile.itemID != 0)
@@ -138,7 +97,7 @@ public class LegacyDungeonCopy extends JPanel
                     {
                         System.out.println("");
                     }
-                        //game.tileArray = DungeonRunner.tileList;
+                        //game.tileArray = DungeonRunnerV2.tileList;
                 }
                 
                 if(game.dungeon.playerCharacter.currentTile.tileID == 2)
@@ -146,8 +105,8 @@ public class LegacyDungeonCopy extends JPanel
                     System.out.println("NEXT LEVEL");
                     //game.superPlayer.goldCount = game.dungeon.playerCharacter.riches;
                     game.dungeon.currentFloor++;                    
-                    game.dungeon = new DungeonRunner(1,1,1,100,100,game.dungeon.currentFloor, game.dungeon.playerCharacter);
-                    game.tileArray = DungeonRunner.tileList;
+                    game.dungeon = new DungeonRunnerV2(1,1,1,100,100,game.dungeon.currentFloor, game.dungeon.playerCharacter);
+                    game.tileArray = DungeonRunnerV2.tileList;
                     isChange = true;
                     
                     //If this is the last floor, we export stuff from player and set ingame to false;
@@ -166,25 +125,14 @@ public class LegacyDungeonCopy extends JPanel
                 KeyboardInput.boolIsInteracting = false; 
             }
             
-            while(isEnemyTurn)
-            {
-                for (Enemy i: game.dungeon.enemyList)
-                {
-                    if(i instanceof Jam)
-                    {
-                        ((Jam)i).act(game.dungeon);     
-                    }   
-                    
-                    //else if other stuff
-                isEnemyTurn = false;
-                }
-            }
-            
             while(isChange)
             {
                 //game.revalidate();
                 game.repaint();
-                isChange = false;
+                if (game.frameCounterX == 0 && game.frameCounterY == 0)
+                {
+                    isChange = false;
+                }
             }          
         }
     }
@@ -196,8 +144,8 @@ public class LegacyDungeonCopy extends JPanel
 /////////////////////////////////////////////////////////////////Method 0: Creating the Window
    public static void createWindow()
    {
-       //window.setSize((int)(100),(int)(100));//Sets size in pixels based on player's screen
-       window.setSize((int)(screenRes.getWidth()), (int)(screenRes.getHeight()) );
+       window.setSize((int)(100),(int)(100));//Sets size in pixels based on player's screen
+       //window.setSize((int)(screenRes.getWidth()), (int)(screenRes.getHeight()) );
        int windowX = (int) (window.getWidth());//grabs the width of window made
        int windowY = (int) (window.getHeight());//grabs the height of window made
        int windowPosX = (int) (screenRes.getWidth() - windowX)/2;//obtains width of user screen, divides by two, then subtracts by size of window
@@ -227,11 +175,40 @@ public class LegacyDungeonCopy extends JPanel
        g.setColor(Color.red);
        final int numTilesX = 16;
        final int numTilesY = 9;
+
        
        //Needed length and height of tiles in pixels
        int tileLengthX = (int) screenRes.getWidth() / numTilesX;
        int tileLengthY = (int) screenRes.getHeight() / numTilesY;
-       int enemyNumber = 0;
+       int deltaX = 0;
+       int deltaY = 0;
+       
+       switch(dungeon.playerCharacter.direction)
+       {
+           case 0: deltaX = 1;
+               break;
+           case 1: deltaY = -1;
+               break;
+           case 2: deltaX = -1;
+               break;
+           case 3: deltaY = 1;
+               break;
+               //Diags. Not implemented yet.
+           /*case 4: deltaX = 1; 
+            *   deltaY = 1;
+            *   break;
+            *   case 5: deltaX = 1; 
+            *   deltaY = -1;
+            *   break;
+            *   case 6: deltaX = -1; 
+            *   deltaY = 1;
+            *   break;
+            *   case 7: deltaX = -1; 
+            *   deltaY = -1;
+            *   break;
+            *   default: break;
+            */
+       }
        
        for (int i = 0; i < numTilesX; i++)
        {
@@ -240,7 +217,7 @@ public class LegacyDungeonCopy extends JPanel
                //System.out.print(dungeon.playerCharacter.currentTile.x - numTilesX/2 + i + " ");
                //System.out.println(dungeon.playerCharacter.currentTile.y - numTilesY/2 + j);
                DungeonTile drawnTile = null;
-               if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunner.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunner.yLength)
+               if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunnerV2.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunnerV2.yLength)
                {
                    drawnTile = tileArray[dungeon.playerCharacter.currentTile.x - numTilesX/2 + i][dungeon.playerCharacter.currentTile.y - numTilesY/2 + j];
                }
@@ -264,21 +241,20 @@ public class LegacyDungeonCopy extends JPanel
                        image = tileImage0;
                }
                
-               g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
-               
+               g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+ 1)* tileLengthX, (j + 1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
                if (drawnTile instanceof DungeonTile && drawnTile.itemID != 0)
                {
                    if (drawnTile.itemID == 1)
                    {
                        image = money;
-                       g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+                       g.drawImage(image, i * tileLengthX, j * tileLengthY, (i + 1)* tileLengthX, (j + 1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
                    }
                }
                
-               if (drawnTile instanceof DungeonTile && drawnTile.character instanceof Character)
+               if (drawnTile instanceof DungeonTile && drawnTile.characterID != 0)
                {
-                   if (drawnTile.character instanceof Player)
-                   {    
+                   if (drawnTile.characterID == 1)
+                   {
                        Image playerImage;
                        switch(dungeon.playerCharacter.direction)
                        {
@@ -294,31 +270,86 @@ public class LegacyDungeonCopy extends JPanel
                        }
                        g.drawImage(playerImage, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX/2 + 1) * tileLengthX, (numTilesY/2 + 1) * tileLengthY, 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
                    }
-                   
-                   else if (drawnTile.character instanceof Jam)
+               }
+           }      
+       }
+       /*for (int i = 0; i < numTilesX; i++)
+       {
+           for (int j = 0; j < numTilesY; j++)
+           {
+               //System.out.print(dungeon.playerCharacter.currentTile.x - numTilesX/2 + i + " ");
+               //System.out.println(dungeon.playerCharacter.currentTile.y - numTilesY/2 + j);
+               DungeonTile drawnTile = null;
+               if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunnerV2.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunnerV2.yLength)
+               {
+                   drawnTile = tileArray[dungeon.playerCharacter.currentTile.x - numTilesX/2 + i][dungeon.playerCharacter.currentTile.y - numTilesY/2 + j];
+               }
+               // Draws a row of tiles.
+               if (drawnTile instanceof DungeonTile)
+               {
+                   if (drawnTile.tileID == 1)
                    {
-                       Image slimeImage;
-                       switch(drawnTile.character.direction)
+                       image = tileImage1;
+                   }
+                   else if (drawnTile.tileID == 2)
+                   {
+                       image = tileImage2;
+                   }
+                   
+                   //More variations of tiles here.
+               }       
+               
+               else
+               {           
+                       image = tileImage0;
+               }
+               
+               g.drawImage(image, (i + frameCounterX/100)* tileLengthX, (j + frameCounterY/100)* tileLengthY, (i+ 1 + frameCounterX/10)* tileLengthX, (j + 1 + frameCounterY/10) * tileLengthX, 0, 0, image.getWidth(null), image.getHeight(null), null);
+               if (drawnTile instanceof DungeonTile && drawnTile.itemID != 0)
+               {
+                   if (drawnTile.itemID == 1)
+                   {
+                       image = money;
+                       g.drawImage(image, (i + frameCounterX/100)* tileLengthX, (j + frameCounterY/100)* tileLengthY, (i+ 1 + frameCounterX/10)* tileLengthX, (j + 1 + frameCounterY/10) * tileLengthX, 0, 0, image.getWidth(null), image.getHeight(null), null);
+                   }
+               }
+               
+               if (drawnTile instanceof DungeonTile && drawnTile.characterID != 0)
+               {
+                   if (drawnTile.characterID == 1)
+                   {
+                       Image playerImage;
+                       switch(dungeon.playerCharacter.direction)
                        {
-                           case 0: slimeImage = slimeImageEast;
+                           case 0: playerImage = playerImageEast;
                                break;
-                           case 1: slimeImage = slimeImageNorth;
+                           case 1: playerImage = playerImageNorth;
                                break;
-                           case 2: slimeImage = slimeImageWest;
+                           case 2: playerImage = playerImageWest;
                                break;
-                           case 3: slimeImage = slimeImageSouth;
+                           case 3: playerImage = playerImageSouth;
                                break;
-                           default: slimeImage = slimeImageEast;
+                           default: playerImage = playerImageEast;
                        }
-                       g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                       g.drawImage(playerImage, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX/2 + 1) * tileLengthX, (numTilesY/2 + 1) * tileLengthY, 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
                    }
                }
            }      
        }
+       
+       frameCounterX += deltaX;
+       frameCounterY += deltaY;
+       
+       if (frameCounterX == 10 || frameCounterX == -10)
+       {
+           frameCounterX = 0;
+       }
+       
+       if (frameCounterY == 10 || frameCounterY == -10)
+       {
+           frameCounterY = 0;
+       }*/
 
-       
-       
-       //UI is drawn last so it's on top of everything else.
        int floorNum = dungeon.currentFloor;
        int numCounter = 0;
        int oneDigit = 0;

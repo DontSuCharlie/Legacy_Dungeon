@@ -3,14 +3,14 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 /*
 Progress Bar: [||        ]
-DungeonRunner.java is the file that generates the dungeon based on the information included in NodeWorld.java
-DungeonRunner.java will tell LegacyDungeon.java (the main runner) what to display on the screen, so yeah.
+DungeonRunnerV2.java is the file that generates the dungeon based on the information included in NodeWorld.java
+DungeonRunnerV2.java will tell LegacyDungeon.java (the main runner) what to display on the screen, so yeah.
 */
 //RANDOM NOTES
 //difficulty should also increase with skill level
 //skills level can increase by # of monsters
 //Remove extends JPanel?
-public class DungeonRunner extends JPanel
+public class DungeonRunnerV2 extends JPanel
 {
     //Fields
     int numMonsters; //# of monsters
@@ -34,13 +34,11 @@ public class DungeonRunner extends JPanel
     public static DungeonTile[][] tileList;
     //Used for tile generation
     private ArrayList<DungeonTile> connectorList;
-    //Used to pick a tile for enemy generation, player generation, item generation, etc. Random tile should be found in DRunner
+    //Used to pick a tile for enemy generation, player generation, item generation, etc.
     private ArrayList<DungeonTile> checkList;
-    static ArrayList<Enemy> enemyList;
-    private ArrayList<Enemy> spawningEnemyList;
     
    //Constructor
-   public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput, int currentFloorInput, Player playerCharacterInput) throws InstantiationException, IllegalAccessException//Takes in the following parameters from NodeWorld.java
+   public DungeonRunnerV2(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput, int currentFloorInput, Player playerCharacterInput)//Takes in the following parameters from NodeWorld.java
    {
        this.theme = theme;
        this.skillID = skillID;
@@ -65,14 +63,10 @@ public class DungeonRunner extends JPanel
        //This list is used for generating tiles
        connectorList = new ArrayList<DungeonTile>();
        checkList = new ArrayList<DungeonTile>();
-       enemyList = new ArrayList<Enemy>();
-       spawningEnemyList = new ArrayList<Enemy>();
-       spawningEnemyList.add(new Jam());
        this.assignTilePos(numTiles);
        this.spawnPlayer();       
        this.spawnStairs();
        this.generateItems();
-       this.spawnEnemies(spawningEnemyList);
       
        //Number of floors is based on the difficulty level
    }
@@ -89,10 +83,10 @@ Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
 
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException
+    public static void main(String[] args)
     {
         //Remove when done testing.
-        DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100,1,null);
+        DungeonRunnerV2 dungeon = new DungeonRunnerV2(1,1,1,100,100,1,null);
         //generateItems();
     
     
@@ -490,7 +484,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         while (isBadTile)
         {
             tileNumber = (int) (Math.random() * checkList.size());
-            if (!(checkList.get(tileNumber).character instanceof Character))
+            if (checkList.get(tileNumber).characterID == 0)
             {
                 //Breaks loop on valid tile.
                 isBadTile = false;
@@ -500,9 +494,10 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 isBadTile = true;    
         
         }
+        
+        tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].characterID = 1;
+        checkList.get(tileNumber).characterID = 1;
         playerCharacter.currentTile = checkList.get(tileNumber);
-        tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].character = playerCharacter;
-        checkList.get(tileNumber).character = playerCharacter;
         System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
         
     }
@@ -515,7 +510,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         while (isBadTile)
         {
             tileNumber = (int) (Math.random() * checkList.size());
-            if (!(checkList.get(tileNumber).character instanceof Character))
+            if (checkList.get(tileNumber).characterID == 0)
             {
                 //Breaks loop on valid tile.
                 isBadTile = false;
@@ -565,72 +560,28 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                     tileList[checkList.get(i).x][checkList.get(i).y].goldAmount = this.currentFloor;                
                 }
                 
-                else if (chooser < (commonChance + goldChance))
+                else if (chooser < commonChance)
                 {
                     tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highCommon - lowCommon)) + lowCommon);                                
                 }
             
-                else if (chooser < uncommonChance+ commonChance + goldChance)
+                else if (chooser < uncommonChance)
                 {
                     tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highUncommon - lowUncommon)) + lowUncommon);
                 }
             
-                else if (chooser < rareChance + uncommonChance + commonChance + goldChance)
+                else if (chooser < rareChance)
                 {
                     tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highRare - lowRare)) + lowRare);
                 }
             
-                else if (chooser < superChance + rareChance + uncommonChance + commonChance + goldChance)
+                else if (chooser < superChance)
                 {
                     tileList[checkList.get(i).x][checkList.get(i).y].itemID = (int)((Math.random() * (highSuper - lowSuper)) + lowSuper);
                 }
             
             }
         }
-    }
-    
-    //When generating dungeons, we choose which sets of enemies spawn with these ArrayLists.
-    private void spawnEnemies(ArrayList<Enemy> enemyTypes) throws InstantiationException, IllegalAccessException
-    {
-        int mainEnemyID = 0;
-        for (int i = 0; i < numTiles-1; i++)
-        {
-            if (!(checkList.get(i).character instanceof Character))
-            {
-                //If the random double is less than itemChance, randomly pick the item that will be there.
-                double enemyChance = .05;
-                if (Math.random() < enemyChance)
-                {
-                    double chooser = Math.random();
-                    int prevSpawnRate = 0;
-                
-                    for(int j = 0; j < enemyTypes.size(); j++)
-                    {
-                
-                        if (chooser < enemyTypes.get(j).spawnRate + prevSpawnRate)
-                        {
-                            //checkList.get(i).character = enemyTypes.get(j).characterID;
-                            //tileList[checkList.get(i).x][checkList.get(i).y].character = enemyTypes.get(j).characterID;
-                            Class<? extends Enemy> temp = enemyTypes.get(j).getClass();
-                            Enemy something = temp.newInstance();
-                            something.enemyID = mainEnemyID;
-                            something.currentTile = tileList[checkList.get(i).x][checkList.get(i).y];
-                            tileList[checkList.get(i).x][checkList.get(i).y].character = something;
-                            
-                            enemyList.add(something);
-                            checkList.get(i).character = something;
-                            System.out.println("I AM JAM");
-                            mainEnemyID++;
-                        }
-                
-                        else 
-                        {
-                            prevSpawnRate += enemyTypes.get(j).spawnRate;                                
-                        }
-                    }
-                }
-            }
-        }  
     }
     
     
