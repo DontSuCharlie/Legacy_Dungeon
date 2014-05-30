@@ -2,10 +2,11 @@ import java.awt.Polygon;
 import java.util.ArrayList;
 public class polygonMaker
 {
-	double slope;
-	double translation;
+    // Not sure if these should be static
+	static double slope;
+	static double translation;
 	//NodeWorld is an object with x and y coordinates
-	public Polygon makePolygon(ArrayList<NodeWorld>)
+	public Polygon makePolygon(ArrayList<NodeWorld> nodeList)
 	{
 		Polygon safeZone = null;
 		ArrayList<NodeWorld> potentialList = new ArrayList<NodeWorld>();
@@ -79,9 +80,10 @@ public class polygonMaker
 			double rightTopSlope = 0;
 			double leftBottomSlope = 0;
 			int indexOfMaxNode = 0;
+			//What does this segment do?
 			for(int i = 0; i < potentialList.size(); i++)
 			{
-				ArrayList <NodeWorld> viableList = new ArrayList<NodeWorld>();
+				ArrayList<NodeWorld> viableList = new ArrayList<NodeWorld>();
 				if(lineMaker(smallestX.x, smallestX.y, largestY.x, largestY.y, potentialList.get(i).x, potentialList.get(i).y) < 0)
 				{
 					viableList.add(potentialList.get(i));
@@ -91,8 +93,9 @@ public class polygonMaker
 					}
 				}
 			}
+			//WHERE IS POLYGON LIST FROM?
 			//check to see if the point lies at the left or right of the point
-			polygonList.add(,potentialList.get(indexOfMaxNode));
+			polygonList.add(potentialList.get(indexOfMaxNode));
 			//create slope
 			//
 			//Now that all the vertices have been obtained, its time to add the points to the polygon object
@@ -130,7 +133,6 @@ public class polygonMaker
 			returnValue = - returnValue;
 		}
 		return returnValue;
-	}
 	}
 	public static double perpendicularMaker()
 	{
