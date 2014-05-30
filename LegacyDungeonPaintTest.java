@@ -10,15 +10,19 @@ import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public class LegacyDungeonCopy extends JPanel
+public class LegacyDungeonPaintTest extends JPanel implements Runnable
 {
     static Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
     ArrayList<NodeWorld> nodeList;
+    ArrayList<Character> visibleCharacters = new ArrayList<Character>();
     DungeonTile[][] tileArray;
     static JFrame window;
     WorldMap world;
     static int turnCounter = 0;
     DungeonRunner dungeon;    
+    //private Timer timer;
+    final static int DELAY = 25;
+    private Thread animator;
     //PlayerLegacyDungeon superPlayer;
     ImageLoader imageLoader = new ImageLoader();
     BufferedImage tileImage0 = imageLoader.loadImage("Wall.png");
@@ -33,6 +37,10 @@ public class LegacyDungeonCopy extends JPanel
     BufferedImage slimeImageWest = imageLoader.loadImage("slimeWest.png");
     BufferedImage slimeImageNorth = imageLoader.loadImage("slimeNorth.png");
     BufferedImage slimeImageSouth = imageLoader.loadImage("slimeSouth.png");
+    BufferedImage slimeImageEastWalk = imageLoader.loadImage("slimeEastWalk.png");
+    BufferedImage slimeImageWestWalk = imageLoader.loadImage("slimeWestWalk.png");
+    BufferedImage slimeImageNorthWalk = imageLoader.loadImage("slimeNorthWalk.png");
+    BufferedImage slimeImageSouthWalk = imageLoader.loadImage("slimeSouthWalk.png");
     BufferedImage num0 = imageLoader.loadImage("0.png");
     BufferedImage num1 = imageLoader.loadImage("1.png");
     BufferedImage num2 = imageLoader.loadImage("2.png");
@@ -44,7 +52,7 @@ public class LegacyDungeonCopy extends JPanel
     BufferedImage num8 = imageLoader.loadImage("8.png");
     BufferedImage num9 = imageLoader.loadImage("9.png");
         
-    public LegacyDungeonCopy() throws InstantiationException, IllegalAccessException
+    public LegacyDungeonPaintTest() throws InstantiationException, IllegalAccessException
     {
         window = new JFrame("Hazardous Laboratory");
         world = new WorldMap();
@@ -56,16 +64,15 @@ public class LegacyDungeonCopy extends JPanel
     }
     public static void main(String[] args) throws InstantiationException, IllegalAccessException, InterruptedException
     {
-        LegacyDungeonCopy game = new LegacyDungeonCopy();
+        LegacyDungeonPaintTest game = new LegacyDungeonPaintTest();
         createWindow();
         window.add(game);
-        game.repaint();
         
         //Changes to true when something needs to be repainted.
-        boolean isChange = true;
+       // boolean isChange = true;
         boolean inGame = true;
         boolean isEnemyTurn = false;
-        game.repaint();
+        //game.repaint();
         
         
         while (inGame)
@@ -74,7 +81,7 @@ public class LegacyDungeonCopy extends JPanel
             {
                 System.out.println("Moving");
                 game.dungeon.playerCharacter.charMove(game.dungeon.playerCharacter.playerMoveX(), game.dungeon.playerCharacter.playerMoveY(), game.dungeon.playerCharacter, game.dungeon);
-                isChange = true;
+                //isChange = true;
                 System.out.println(game.dungeon.playerCharacter.currentTile);
                 KeyboardInput.boolIsMoving = false;
                 isEnemyTurn = true;
@@ -86,7 +93,7 @@ public class LegacyDungeonCopy extends JPanel
             {
                 KeyboardInput.boolIsAttack = false;
                 isEnemyTurn = true;
-                isChange = true;
+                //isChange = true;
                 System.out.println("punch him!");
                 int damage = (int) (2 * Math.random()) + 1;
                 int targetTileX = game.dungeon.playerCharacter.currentTile.x;
@@ -132,7 +139,7 @@ public class LegacyDungeonCopy extends JPanel
                         //THIS LINE MUST CHANGE THE VALUE IN TILEARRAY FROM LDungeon. ACCESSING SAME MEMORY?
                         game.dungeon.playerCharacter.currentTile.itemID = 0;
                         game.dungeon.tileList[game.dungeon.playerCharacter.currentTile.x][game.dungeon.playerCharacter.currentTile.y].itemID = 0;
-                        isChange = true;
+                        //isChange = true;
                             
                     }
                     
@@ -150,7 +157,7 @@ public class LegacyDungeonCopy extends JPanel
                     game.dungeon.currentFloor++;                    
                     game.dungeon = new DungeonRunner(1,1,1,100,100,game.dungeon.currentFloor, game.dungeon.playerCharacter);
                     game.tileArray = DungeonRunner.tileList;
-                    isChange = true;
+                    //isChange = true;
                     
                     //If this is the last floor, we export stuff from player and set ingame to false;
                     /*
@@ -175,21 +182,20 @@ public class LegacyDungeonCopy extends JPanel
                     if(i instanceof Jam)
                     {
                         ((Jam)i).act(game.dungeon);  
-                        game.repaint();
-                        //Thread.sleep(10);
+                        //game.repaint();
                     }   
                     
                     //else if other stuff
                 isEnemyTurn = false;
                 }
             }
-            
+            /*
             while(isChange)
             {
                 //game.revalidate();
-                game.repaint();
+                //game.repaint();
                 isChange = false;
-            }          
+            } */         
         }
     }
         //Insert what you need to test here
@@ -219,11 +225,23 @@ public class LegacyDungeonCopy extends JPanel
        //window.setLocationByPlatform(true);
        window.setVisible(true);//Makes it visible...
    }
+   
+   //Run when panel has started.
+   public void addNotify()
+   {
+       super.addNotify();
+       animator = new Thread(this);
+       animator.start();
+       
+       
+   }
+   
 //Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
 //Calling game.repaint() will update what's in here.
    @Override
-   public void paint(Graphics g)
+   public void paintComponent(Graphics g)
    {
+       visibleCharacters.clear();
        BufferedImage image = null;
        super.paintComponent(g);//we have to do super because magic
        //Graphics2D g2 = (Graphics2D) g;
@@ -276,14 +294,16 @@ public class LegacyDungeonCopy extends JPanel
                    if (drawnTile.itemID == 1)
                    {
                        image = money;
-                       g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+                       g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (int)((.5+j) * tileLengthY), 0, 0, image.getWidth(null), image.getHeight(null), null);
                    }
                }
                
                if (drawnTile instanceof DungeonTile && drawnTile.character instanceof Character)
                {
+                   visibleCharacters.add(drawnTile.character);
                    if (drawnTile.character instanceof Player)
                    {    
+                       
                        Image playerImage;
                        switch(dungeon.playerCharacter.direction)
                        {
@@ -302,9 +322,11 @@ public class LegacyDungeonCopy extends JPanel
                    
                    else if (drawnTile.character instanceof Jam)
                    {
-                       Image slimeImage;
-                       switch(drawnTile.character.direction)
+                       Image slimeImage = null;
+                       if (drawnTile.character.imageID == 0)
                        {
+                           switch(drawnTile.character.direction)
+                           {
                            case 0: slimeImage = slimeImageEast;
                                break;
                            case 1: slimeImage = slimeImageNorth;
@@ -314,6 +336,22 @@ public class LegacyDungeonCopy extends JPanel
                            case 3: slimeImage = slimeImageSouth;
                                break;
                            default: slimeImage = slimeImageEast;
+                           }
+                       }
+                       else if(drawnTile.character.imageID == 1)
+                       {
+                           switch(drawnTile.character.direction)
+                           {
+                           case 0: slimeImage = slimeImageEastWalk;
+                               break;
+                           case 1: slimeImage = slimeImageNorthWalk;
+                               break;
+                           case 2: slimeImage = slimeImageWestWalk;
+                               break;
+                           case 3: slimeImage = slimeImageSouthWalk;
+                               break;
+                           default: slimeImage = slimeImageEastWalk;
+                           }
                        }
                        g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                    }
@@ -502,4 +540,49 @@ public class LegacyDungeonCopy extends JPanel
       }
       */
    }
+@Override
+    public void run()
+    {
+        long previousTime, sleepTime, timeDifference;
+        int counter = 0;
+        previousTime = System.currentTimeMillis();
+        while (true)
+        {
+            repaint();
+            timeDifference = System.currentTimeMillis() - previousTime;
+            sleepTime = DELAY - timeDifference;
+            if (sleepTime < 0)
+            {
+                sleepTime = 2;
+            }
+            
+            try
+            {
+                Thread.sleep(sleepTime);
+            }
+            catch (InterruptedException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            previousTime = System.currentTimeMillis();
+            counter++;
+            // Note: change to visible enemyList.
+            for (Character i : visibleCharacters)
+            {
+                if (counter%i.altTimer == 0)
+                {
+                    if (i.imageID == 0)
+                    {
+                        i.imageID = 1;
+                    }
+                    
+                    else if(i.imageID == 1)
+                    {
+                        i.imageID = 0;
+                    }
+                }
+            }
+        }
+    }
 }

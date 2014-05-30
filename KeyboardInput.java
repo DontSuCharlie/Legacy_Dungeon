@@ -7,24 +7,27 @@ import javax.swing.JFrame;
 //Used to get keyboard input, similar in use to imageLoader
 public class KeyboardInput extends JPanel
 {
-   public static boolean boolIsUp;
-   public static boolean boolIsDown;
-   public static boolean boolIsLeft;
-   public static boolean boolIsRight;
-   public static boolean boolIsAim;
-   public static boolean boolIsHeal;
-   public static boolean boolIsInventory;
-   public static boolean boolIs1;
-   public static boolean boolIs2;
-   public static boolean boolIs3;
-   public static boolean boolIs4;
-   public static boolean boolIs5;
-   public static boolean boolIs6;
-   public static boolean boolIs7;
-   public static boolean boolIs8;
-   public static boolean boolIs9;
-   public static boolean boolIs10;
-
+    public static boolean boolIsUp;
+    public static boolean boolIsDown;
+    public static boolean boolIsLeft;
+    public static boolean boolIsRight;
+    public static boolean boolIsAim;
+    public static boolean boolIsHeal;
+    public static boolean boolIsInventory;
+    public static boolean boolIsMoving;
+    public static boolean boolIsInteracting;
+    public static boolean boolIsAttack;
+    public static boolean boolIs1;
+    public static boolean boolIs2;
+    public static boolean boolIs3;
+    public static boolean boolIs4;
+    public static boolean boolIs5;
+    public static boolean boolIs6;
+    public static boolean boolIs7;
+    public static boolean boolIs8;
+    public static boolean boolIs9;
+    public static boolean boolIs10;
+    //condense to array might make it faster
     public static int key;
     //Note: remove this main when done testing.
     
@@ -36,7 +39,6 @@ public class KeyboardInput extends JPanel
         frame.setSize(200, 200);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
     }
     
     public KeyboardInput()
@@ -44,7 +46,6 @@ public class KeyboardInput extends JPanel
         KeyListener listener = new KeyboardListener();
         addKeyListener(listener);
         setFocusable(true);
-    
     }
 
     public class KeyboardListener implements KeyListener
@@ -54,30 +55,37 @@ public class KeyboardInput extends JPanel
         public void keyTyped(KeyEvent e)   
         {
         }
-        
         public void keyPressed(KeyEvent e)
         {
             key = e.getKeyCode();        
             System.out.println("keyPressed: " + key);
             if (key == config.up)
             {
-               boolIsUp = true;
+                boolIsMoving = true;
+                boolIsUp = true;
             }
             else if (key == config.down)
             {
+                boolIsMoving = true;
                boolIsDown = true;
             }
             else if (key == config.left)
             {
+                boolIsMoving = true;
                boolIsLeft = true;
             }
             else if (key == config.right)
             {
+                boolIsMoving = true;
                boolIsRight = true;
             }
             else if (key == config.aimMode)
             {
                boolIsAim = true;
+            }
+            else if (key == config.attack)
+            {
+               boolIsAttack = true;
             }
             else if (key == config.hotKeyHeal)
             {
@@ -86,6 +94,10 @@ public class KeyboardInput extends JPanel
             else if (key == config.inventory)
             {
                boolIsInventory = true;
+            }
+            else if (key == config.interact)
+            {
+               boolIsInteracting = true;
             }
             else if (key == config.hotKey1)
             {
@@ -132,9 +144,10 @@ public class KeyboardInput extends JPanel
     
         public void keyReleased(KeyEvent e)
         {
+            
             key = e.getKeyCode();        
             System.out.println("keyPressed: " + key);
-            
+            /*
             if (key == config.up)
             {
                boolIsUp = false;
@@ -151,7 +164,8 @@ public class KeyboardInput extends JPanel
             {
                boolIsRight = false;
             }
-            else if (key == config.aimMode)
+            */
+            if (key == config.aimMode)
             {
                boolIsAim = false;
             }
@@ -163,6 +177,11 @@ public class KeyboardInput extends JPanel
             {
                boolIsInventory = false;
             }
+            /*else if (key == config.interact)
+            {
+               boolIsInteracting = false;
+            } 
+            */ 
             else if (key == config.hotKey1)
             {
                boolIs1 = false;
@@ -179,7 +198,6 @@ public class KeyboardInput extends JPanel
             {
                boolIs4 = false;
             }
-            
             else if (key == config.hotKey5)
             {
                boolIs5 = false;
@@ -203,15 +221,9 @@ public class KeyboardInput extends JPanel
             else if (key == config.hotKey10)
             {
                boolIs10 = false;
-            }
-           
+            }  
+            
+            
         }
-        
-
-        
-    
     }
-
-
-
 }
