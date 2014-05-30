@@ -35,7 +35,6 @@ public class Character extends JFrame
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
     public int direction; // Used for direction of sprite and attacks 0=east, 1=north, 2=west, 3=south
     public boolean isHit;
-    
    //Constructor
     
 /*
