@@ -1,13 +1,6 @@
 /*
-To improve it, make it so it does this:
-1) check slope
-2) 
-
-Also import java.math.BigDecimal
-
 Next Steps:
-1] Fix the 3 point problem
-2] Fix the vertical line problem
+1] Fix the recurring problem
 3] Alter it so makePolygon is only called every time the NodeList has a new defensive node
 4] Find a way to draw a thicker line. Change opacity of polygon. (see if it's possible to load image, I can make an animation within the safe area)
 5] Draw new images and animations
@@ -42,12 +35,12 @@ IN DUNGEON, MULTIPLE BOSSES CAN BE MOVING. 1 WILL BE ATTACKING YOU, OTHER WILL B
 */
 import java.awt.Polygon;
 import java.util.ArrayList;
+import java.util.Scanner;
 public class MaxAreaPolygon
-
 {
 	//List of global variables
-	ArrayList<NodeWorld> potentialList;
-	ArrayList<NodeWorld> vertexList;
+	ArrayList<Node> potentialList;
+	static ArrayList<Node> vertexList;
 	Polygon safeZone;
 	double slope;
 	double translation;
@@ -55,23 +48,31 @@ public class MaxAreaPolygon
 	int secondPointIndex;
 	int thirdPointIndex;
 	int fourthPointIndex;
+	static int meow = 0;
+	static int refVar;
 //Main method
 //Pre-condition: There is at least 3 points that are satisfactory
-	public Polygon makePolygon(ArrayList<NodeWorld> potentialList)
+	public Polygon makePolygon(ArrayList<Node> potentialList)
 	{
+		Scanner console = new Scanner(System.in);
 		this.potentialList = potentialList;
-		vertexList = new ArrayList<NodeWorld>();
+		refVar = potentialList.size();
+		vertexList = new ArrayList<Node>();
 		//If there are 3, draw a triangle. Don't even bother trying to maximize area
 		if(potentialList.size() == 3)
 		{
+			for(int i = 0; i < 3; i++)
+			{
+				vertexList.add(potentialList.get(i));
+			}
 			return drawPolygon(potentialList);
 		}
 		//Otherwise continue
 		//Grab the 4 farthest points
-		NodeWorld largestX = new NodeWorld(0,0,0,0);
-		NodeWorld largestY = new NodeWorld(0,0,0,0);
-		NodeWorld smallestX = new NodeWorld(10000,10000,0,0);//need to find better numbers in the future for more elegance.
-		NodeWorld smallestY = new NodeWorld(10000,10000,0,0);
+		Node largestX = new Node(0,0,0,0);
+		Node largestY = new Node(0,0,0,0);
+		Node smallestX = new Node(10000,10000,0,0);//need to find better numbers in the future for more elegance.
+		Node smallestY = new Node(10000,10000,0,0);
 		for(int i = 0; i < potentialList.size(); i++)
 		{
 			if(potentialList.get(i).x < smallestX.x)
@@ -93,34 +94,53 @@ public class MaxAreaPolygon
 		vertexList.add(smallestY);
 		vertexList.add(largestX);
 		vertexList.add(largestY);
+		//System.out.println("original starts");
+		//System.out.println(vertexList.get(firstPointIndex).x + " " + vertexList.get(firstPointIndex).y);
+		//System.out.println(vertexList.get(secondPointIndex).x + " " + vertexList.get(secondPointIndex).y);
+		//System.out.println(vertexList.get(thirdPointIndex).x + " " + vertexList.get(thirdPointIndex).y);
+		//System.out.println(vertexList.get(fourthPointIndex).x + " " + vertexList.get(fourthPointIndex).y);
 		safeZone = drawPolygon(potentialList);
-		//This is the part that repeats until it finishes EVERYTHING
-		//fuck this part
-		//fuck it so much
-		
+		if(meow == 0)
+		{
+			meow++;
+			//return safeZone;
+		}
 		if(!smallestX.equals(smallestY))//slope 1 (Topleft) does not exist
 		{
 			addVertex(smallestY.x, smallestY.y, smallestX.x, smallestX.y, "TopLeft");
-			System.out.println("Top Left is done.");
-			System.out.println("=============================================");
+			//System.out.println("Top Left is done.");
+			//System.out.println("=============================================");
+			meow++;
+			//return safeZone;
 		}
-		if(!smallestY.equals(largestX))//slope 2 (Topright) does not exist
+		//console.nextLine();
+		if(!smallestY.equals(largestX) && meow == 2)//slope 2 (Topright) does not exist
 		{
 			addVertex(largestX.x, largestX.y, smallestY.x, smallestY.y, "TopRight");
-			System.out.println("Top Right is done.");
-			System.out.println("=============================================");
+			//System.out.println("Top Right is done.");
+			//System.out.println("=============================================");
+			meow++;
+			//return safeZone;
 		}
+		//console.nextLine();
 		if(!largestX.equals(largestY))//slope 3 (Bottomriht) does not exist
 		{
 			addVertex(largestY.x, largestY.y, largestX.x, largestX.y, "BottomRight");
-			System.out.println("Bottom Right is done.");
-			System.out.println("=============================================");
+			//System.out.println("Bottom Right is done.");
+			//System.out.println("=============================================");
+			meow++;
+			//return safeZone;
 		}
+		//console.nextLine();
 		if(!smallestX.equals(largestY))//slope 4 (bottom left) does not exist
 		{
 			addVertex(smallestX.x, smallestX.y, largestY.x, largestY.y, "BottomLeft");
-			System.out.println("Bottom Left is done.");
-			System.out.println("=============================================");
+			//System.out.println("Bottom Left is done.");
+			//System.out.println("=============================================");
+		}
+		for(int i = 0; i < vertexList.size(); i++)
+		{
+			//System.out.println("#: " + i + " X: " + vertexList.get(i).x + " Y: " + vertexList.get(i).y);
 		}
 		return drawPolygon(vertexList);
 	}
@@ -130,21 +150,21 @@ public class MaxAreaPolygon
 	public void addVertex(int x1, int y1, int x2, int y2, String ref)
 	{
 		//Creates a new arraylist. This arraylist checks for points on 1 specific side of the polygon
-		ArrayList<NodeWorld> viableList = new ArrayList<NodeWorld>();
+		ArrayList<Node> viableList = new ArrayList<Node>();
 		for(int i = 0; i < potentialList.size(); i++)
 		{
-			System.out.print("Checking point: " + i);
+			//System.out.print("Checking point: " + i + " ");
 			int reference = drawLine(x1, y1, x2, y2, potentialList.get(i).x, potentialList.get(i).y);
 			if(reference == 0)
 			{
-				System.out.println("Found a vertical line. Skip!");
+				//System.out.println("Found a vertical line. Skip!");
 			}
 			if(ref.equals("TopLeft") || ref.equals("TopRight"))
 			{
 				//x>0 means, visually, above it
 				if(reference > 0)
 				{
-					System.out.println("FOUND ONE!!!!!!! Point is visually above: X = " + potentialList.get(i).x + " Y = " + potentialList.get(i).y);
+					//System.out.println("FOUND ONE!!!!!!! Point is visually above: X = " + potentialList.get(i).x + " Y = " + potentialList.get(i).y);
 					viableList.add(potentialList.get(i));
 				}
 			}
@@ -153,22 +173,15 @@ public class MaxAreaPolygon
 				//x<0 means, visually below it
 				if(reference < 0)
 				{
-					System.out.println("Point is visually below: X = " + potentialList.get(i).x + " Y = " + potentialList.get(i).y);
+					//System.out.println("FOUND ONE !!!!!! Point is visually below: X = " + potentialList.get(i).x + " Y = " + potentialList.get(i).y);
 					viableList.add(potentialList.get(i));
 				}
 			}
 		}
-		int i = 1;//for bug testing
 		while(viableList.size() > 0)
 		{
 			addFarthestPoint(ref, viableList);
 			safeZone = drawPolygon(viableList);
-			i++;
-			if(i > 10)
-			{
-				System.out.println(ref + "has failed.");
-				break;
-			}
 		}
 	}
 //Core method (not checked yet :/)
@@ -178,26 +191,21 @@ public class MaxAreaPolygon
 		if(x2-x1 == 0)//if the slope is a 100% vertical line
 		{
 			return 0;
-			//if it is left of the boundary, return 1
-			//if(x3 < x2)
-				//return 1;
-			//if it is right of the boundary, return -1
-			//return -1;
 		}
 		slope = (double)(y2-y1)/(double)(x2-x1);
 		translation = y1 - (slope*x1);
-		System.out.println("Equation = " + slope + "x + " + translation + " Input X Value: " + x3 + " Input Y Value: " + y3);
-		System.out.println("Resultant y value = " + ((slope*x3) + translation));
-		if((slope*x3) + translation < y3)//above it in Cartesian plane; below in java
+		//System.out.println("Equation = " + slope + "x + " + translation + " Input X Value: " + x3 + " Input Y Value: " + y3);
+		//System.out.println("Resultant y value = " + ((slope*x3) + translation));
+		if((slope*x3) + translation < y3 - 0.001)//above it in Cartesian plane; below in java
 			return -1;
-		if((slope*x3) + translation > y3)//below in Cartesian plane; above in java
+		if((slope*x3) + translation > y3 + 0.001)//below in Cartesian plane; above in java
 			return 1;
 		//Should not get here
 		return 0;
 	}
 //Updator method
 //Because Java doesn't use fucking ArrayLists for Polygons, we have to redraw the polygon every single time. .add() doesn't work, because you can't choose the specific index you want it to add it into.
-	public Polygon drawPolygon(ArrayList<NodeWorld> inputList)//entering an ArrayList as a parameter does indeed change the value of the parameter, which is nice!
+	public Polygon drawPolygon(ArrayList<Node> inputList)//entering an ArrayList as a parameter does indeed change the value of the parameter, which is nice!
 	{
 		//Convert our ArrayList's coordinates to arrays. Polygon takes in arrays as parameters
 		int[] xCoord = new int[vertexList.size()];
@@ -225,7 +233,7 @@ public class MaxAreaPolygon
 //Core method
 //Goes through the arraylist of viable points and looks for the one that is farthest away
 //fuck you
-	public void addFarthestPoint(String slopeRef, ArrayList<NodeWorld> viableList)
+	public void addFarthestPoint(String slopeRef, ArrayList<Node> viableList)
 	{
 		int farthestIndex = 0;
 		double farthestDistance = 0;
@@ -234,24 +242,15 @@ public class MaxAreaPolygon
 			if(minDistance(viableList.get(i).x, viableList.get(i).y) > farthestDistance)
 				farthestIndex = i;
 		}
+		//System.out.print("Adding to vertexList:" + " X: " + viableList.get(farthestIndex).x + " Y: " + viableList.get(farthestIndex).y);
+		//System.out.prinlnt("To: " + getVertexIndex(slopeRef, viableList.get(farthestIndex)));
 		vertexList.add(getVertexIndex(slopeRef, viableList.get(farthestIndex)), viableList.get(farthestIndex));
 		viableList.remove(farthestIndex);
-		//TESTING ZONE
-		System.out.println("# of elements = " + viableList.size());
-		if(viableList.size() < 3)
-		{
-			for(int i = 0; i < viableList.size(); i++)
-			{
-				System.out.println("Viable List Index #: " + i);
-				System.out.println("x: " + viableList.get(i).x + " y: " + viableList.get(i).y);
-				//System.out.println("New points vertexList index: " + getVertexIndex(slopeRef, viableList.get(farthestIndex)));
-			}
-		}
 	}
 //Most annoying of them all
 //Core method
 //Keeps track of the original 4's vertex indices.
-	public int getVertexIndex(String slopeRef, NodeWorld farthestNode)
+	public int getVertexIndex(String slopeRef, Node farthestNode)
 	{
 		//if translation is bigger, then it is more to the right
 		//for the top left, and bottom left, to the right = add index after
@@ -268,6 +267,7 @@ public class MaxAreaPolygon
 						secondPointIndex++;//now that secondPoint is at a new index, update it
 						thirdPointIndex++;
 						fourthPointIndex++;
+						//System.out.println(" " + i);
 						return i;// i - 1 = the index that is before it. Therefore, you should move the current i to i + 1, and make this one the i.
 					}
 				}
@@ -279,6 +279,7 @@ public class MaxAreaPolygon
 					{
 						thirdPointIndex++;
 						fourthPointIndex++;
+						//System.out.println(i);
 						return i;
 					}
 				}
@@ -288,6 +289,7 @@ public class MaxAreaPolygon
 					if(vertexList.get(i).y > farthestNode.y)//opposite here, since we're going from a higher point to a lower point
 					{
 						fourthPointIndex++;
+						//System.out.println(i);						
 						return i;
 					}
 				}
@@ -297,6 +299,7 @@ public class MaxAreaPolygon
 				{
 					if(vertexList.get(i).y < farthestNode.y)//back to normal
 					{
+						//System.out.println(i);
 						return i;
 					}
 				}
