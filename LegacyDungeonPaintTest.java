@@ -10,32 +10,21 @@ import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-<<<<<<< HEAD
 public class LegacyDungeonPaintTest extends JPanel implements Runnable
 {
     static Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
     ArrayList<NodeWorld> nodeList;
     ArrayList<Character> visibleCharacters = new ArrayList<Character>();
-=======
-public class LegacyDungeonPaintTest extends JPanel
-{
-    static Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
-    ArrayList<NodeWorld> nodeList;
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
+    static ArrayList<DeadCharacter> recentDeadCharList = new ArrayList<DeadCharacter>();
+    
     DungeonTile[][] tileArray;
     static JFrame window;
     WorldMap world;
     static int turnCounter = 0;
-<<<<<<< HEAD
     DungeonRunner dungeon;    
     //private Timer timer;
     final static int DELAY = 25;
     private Thread animator;
-=======
-    int frameCounterX = 0;
-    int frameCounterY = 0;
-    DungeonRunnerV2 dungeon;    
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
     //PlayerLegacyDungeon superPlayer;
     ImageLoader imageLoader = new ImageLoader();
     BufferedImage tileImage0 = imageLoader.loadImage("Wall.png");
@@ -46,7 +35,6 @@ public class LegacyDungeonPaintTest extends JPanel
     BufferedImage playerImageWest = imageLoader.loadImage("playerWest.png");
     BufferedImage playerImageNorth = imageLoader.loadImage("playerNorth.png");
     BufferedImage playerImageSouth = imageLoader.loadImage("playerSouth.png");
-<<<<<<< HEAD
     BufferedImage slimeImageEast = imageLoader.loadImage("slimeEast.png");
     BufferedImage slimeImageWest = imageLoader.loadImage("slimeWest.png");
     BufferedImage slimeImageNorth = imageLoader.loadImage("slimeNorth.png");
@@ -55,8 +43,14 @@ public class LegacyDungeonPaintTest extends JPanel
     BufferedImage slimeImageWestWalk = imageLoader.loadImage("slimeWestWalk.png");
     BufferedImage slimeImageNorthWalk = imageLoader.loadImage("slimeNorthWalk.png");
     BufferedImage slimeImageSouthWalk = imageLoader.loadImage("slimeSouthWalk.png");
-=======
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
+    BufferedImage slimeImageEastDead = imageLoader.loadImage("slimeEastDead.png");
+    BufferedImage slimeImageWestDead = imageLoader.loadImage("slimeWestDead.png");
+    BufferedImage slimeImageNorthDead = imageLoader.loadImage("slimeNorthDead.png");
+    BufferedImage slimeImageSouthDead = imageLoader.loadImage("slimeSouthDead.png");
+    BufferedImage slimeImageEastHit = imageLoader.loadImage("slimeEastHit.png");
+    BufferedImage slimeImageWestHit = imageLoader.loadImage("slimeWestHit.png");
+    BufferedImage slimeImageNorthHit = imageLoader.loadImage("slimeNorthHit.png");
+    BufferedImage slimeImageSouthHit = imageLoader.loadImage("slimeSouthHit.png");
     BufferedImage num0 = imageLoader.loadImage("0.png");
     BufferedImage num1 = imageLoader.loadImage("1.png");
     BufferedImage num2 = imageLoader.loadImage("2.png");
@@ -68,11 +62,7 @@ public class LegacyDungeonPaintTest extends JPanel
     BufferedImage num8 = imageLoader.loadImage("8.png");
     BufferedImage num9 = imageLoader.loadImage("9.png");
         
-<<<<<<< HEAD
     public LegacyDungeonPaintTest() throws InstantiationException, IllegalAccessException
-=======
-    public LegacyDungeonPaintTest()
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
     {
         window = new JFrame("Hazardous Laboratory");
         world = new WorldMap();
@@ -82,27 +72,17 @@ public class LegacyDungeonPaintTest extends JPanel
         //superPlayer = new PlayerLegacyDungeon();
 
     }
-<<<<<<< HEAD
     public static void main(String[] args) throws InstantiationException, IllegalAccessException, InterruptedException
-=======
-    public static void main(String[] args)
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
     {
         LegacyDungeonPaintTest game = new LegacyDungeonPaintTest();
         createWindow();
         window.add(game);
         
         //Changes to true when something needs to be repainted.
-<<<<<<< HEAD
        // boolean isChange = true;
         boolean inGame = true;
         boolean isEnemyTurn = false;
         //game.repaint();
-=======
-        boolean isChange = true;
-        boolean inGame = true;
-        game.repaint();
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
         
         
         while (inGame)
@@ -111,7 +91,6 @@ public class LegacyDungeonPaintTest extends JPanel
             {
                 System.out.println("Moving");
                 game.dungeon.playerCharacter.charMove(game.dungeon.playerCharacter.playerMoveX(), game.dungeon.playerCharacter.playerMoveY(), game.dungeon.playerCharacter, game.dungeon);
-<<<<<<< HEAD
                 //isChange = true;
                 System.out.println(game.dungeon.playerCharacter.currentTile);
                 KeyboardInput.boolIsMoving = false;
@@ -150,23 +129,16 @@ public class LegacyDungeonPaintTest extends JPanel
                     System.out.println(game.dungeon.tileList[targetTileX][targetTileY].character.currentHealth);
                     if(game.dungeon.tileList[targetTileX][targetTileY].character.currentHealth <= 0)
                     {
-                            if(game.dungeon.tileList[targetTileX][targetTileY].character instanceof Jam)
-                            {
-                                ((Jam)(game.dungeon.tileList[targetTileX][targetTileY].character)).onDeath();
-                            }
+                        if(game.dungeon.tileList[targetTileX][targetTileY].character instanceof Jam)
+                        {
+                            ((Jam)(game.dungeon.tileList[targetTileX][targetTileY].character)).onDeath();        
+                        }
+                        
+                        
                     }
                 }
             }
 
-=======
-                
-                isChange = true;
-                System.out.println(game.dungeon.playerCharacter.currentTile);
-                KeyboardInput.boolIsMoving = false;
-                //game.tileArray = DungeonRunnerV2.tileList;
-            }
-            //Probably a better way to do this but oh well
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
             if(KeyboardInput.boolIsInteracting == true)
             {
                 if (game.dungeon.playerCharacter.currentTile.itemID != 0)
@@ -179,11 +151,7 @@ public class LegacyDungeonPaintTest extends JPanel
                         //THIS LINE MUST CHANGE THE VALUE IN TILEARRAY FROM LDungeon. ACCESSING SAME MEMORY?
                         game.dungeon.playerCharacter.currentTile.itemID = 0;
                         game.dungeon.tileList[game.dungeon.playerCharacter.currentTile.x][game.dungeon.playerCharacter.currentTile.y].itemID = 0;
-<<<<<<< HEAD
                         //isChange = true;
-=======
-                        isChange = true;
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
                             
                     }
                     
@@ -191,11 +159,7 @@ public class LegacyDungeonPaintTest extends JPanel
                     {
                         System.out.println("");
                     }
-<<<<<<< HEAD
                         //game.tileArray = DungeonRunner.tileList;
-=======
-                        //game.tileArray = DungeonRunnerV2.tileList;
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
                 }
                 
                 if(game.dungeon.playerCharacter.currentTile.tileID == 2)
@@ -203,15 +167,9 @@ public class LegacyDungeonPaintTest extends JPanel
                     System.out.println("NEXT LEVEL");
                     //game.superPlayer.goldCount = game.dungeon.playerCharacter.riches;
                     game.dungeon.currentFloor++;                    
-<<<<<<< HEAD
                     game.dungeon = new DungeonRunner(1,1,1,100,100,game.dungeon.currentFloor, game.dungeon.playerCharacter);
                     game.tileArray = DungeonRunner.tileList;
                     //isChange = true;
-=======
-                    game.dungeon = new DungeonRunnerV2(1,1,1,100,100,game.dungeon.currentFloor, game.dungeon.playerCharacter);
-                    game.tileArray = DungeonRunnerV2.tileList;
-                    isChange = true;
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
                     
                     //If this is the last floor, we export stuff from player and set ingame to false;
                     /*
@@ -229,7 +187,6 @@ public class LegacyDungeonPaintTest extends JPanel
                 KeyboardInput.boolIsInteracting = false; 
             }
             
-<<<<<<< HEAD
             while(isEnemyTurn)
             {
                 for (Enemy i: game.dungeon.enemyList)
@@ -251,17 +208,6 @@ public class LegacyDungeonPaintTest extends JPanel
                 //game.repaint();
                 isChange = false;
             } */         
-=======
-            while(isChange)
-            {
-                //game.revalidate();
-                game.repaint();
-                if (game.frameCounterX == 0 && game.frameCounterY == 0)
-                {
-                    isChange = false;
-                }
-            }          
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
         }
     }
         //Insert what you need to test here
@@ -272,13 +218,8 @@ public class LegacyDungeonPaintTest extends JPanel
 /////////////////////////////////////////////////////////////////Method 0: Creating the Window
    public static void createWindow()
    {
-<<<<<<< HEAD
        //window.setSize((int)(100),(int)(100));//Sets size in pixels based on player's screen
        window.setSize((int)(screenRes.getWidth()), (int)(screenRes.getHeight()) );
-=======
-       window.setSize((int)(100),(int)(100));//Sets size in pixels based on player's screen
-       //window.setSize((int)(screenRes.getWidth()), (int)(screenRes.getHeight()) );
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
        int windowX = (int) (window.getWidth());//grabs the width of window made
        int windowY = (int) (window.getHeight());//grabs the height of window made
        int windowPosX = (int) (screenRes.getWidth() - windowX)/2;//obtains width of user screen, divides by two, then subtracts by size of window
@@ -293,7 +234,6 @@ public class LegacyDungeonPaintTest extends JPanel
        window.add(input);
        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//Makes it so the program stops running when the "X" button is pressed
        window.setLocation(windowPosX, windowPosY);//sets location to center
-<<<<<<< HEAD
        //window.setLocationByPlatform(true);
        window.setVisible(true);//Makes it visible...
    }
@@ -314,15 +254,6 @@ public class LegacyDungeonPaintTest extends JPanel
    public void paintComponent(Graphics g)
    {
        visibleCharacters.clear();
-=======
-       window.setVisible(true);//Makes it visible...
-   }
-//Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
-//Calling game.repaint() will update what's in here.
-   @Override
-   public void paint(Graphics g)
-   {
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
        BufferedImage image = null;
        super.paintComponent(g);//we have to do super because magic
        //Graphics2D g2 = (Graphics2D) g;
@@ -331,47 +262,19 @@ public class LegacyDungeonPaintTest extends JPanel
        g.setColor(Color.red);
        final int numTilesX = 16;
        final int numTilesY = 9;
-<<<<<<< HEAD
-=======
-
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
        
        //Needed length and height of tiles in pixels
        int tileLengthX = (int) screenRes.getWidth() / numTilesX;
        int tileLengthY = (int) screenRes.getHeight() / numTilesY;
-<<<<<<< HEAD
        int enemyNumber = 0;
-=======
-       int deltaX = 0;
-       int deltaY = 0;
+       int screenShakeX = 0;
+       int screenShakeY = 0;
        
-       switch(dungeon.playerCharacter.direction)
+       if(recentDeadCharList.size() != 0)
        {
-           case 0: deltaX = 1;
-               break;
-           case 1: deltaY = -1;
-               break;
-           case 2: deltaX = -1;
-               break;
-           case 3: deltaY = 1;
-               break;
-               //Diags. Not implemented yet.
-           /*case 4: deltaX = 1; 
-            *   deltaY = 1;
-            *   break;
-            *   case 5: deltaX = 1; 
-            *   deltaY = -1;
-            *   break;
-            *   case 6: deltaX = -1; 
-            *   deltaY = 1;
-            *   break;
-            *   case 7: deltaX = -1; 
-            *   deltaY = -1;
-            *   break;
-            *   default: break;
-            */
+           screenShakeX = (int)(20 * Math.random() - 10);
+           screenShakeY = (int)(20 * Math.random() - 10);
        }
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
        
        for (int i = 0; i < numTilesX; i++)
        {
@@ -379,12 +282,9 @@ public class LegacyDungeonPaintTest extends JPanel
            {
                //System.out.print(dungeon.playerCharacter.currentTile.x - numTilesX/2 + i + " ");
                //System.out.println(dungeon.playerCharacter.currentTile.y - numTilesY/2 + j);
+               //Draw tiles
                DungeonTile drawnTile = null;
-<<<<<<< HEAD
                if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunner.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunner.yLength)
-=======
-               if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunnerV2.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunnerV2.yLength)
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
                {
                    drawnTile = tileArray[dungeon.playerCharacter.currentTile.x - numTilesX/2 + i][dungeon.playerCharacter.currentTile.y - numTilesY/2 + j];
                }
@@ -408,38 +308,48 @@ public class LegacyDungeonPaintTest extends JPanel
                        image = tileImage0;
                }
                
-<<<<<<< HEAD
-               g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+               g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
                
-=======
-               g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+ 1)* tileLengthX, (j + 1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
+               //Draw bodies
+               if (drawnTile instanceof DungeonTile && drawnTile.deadCharacter instanceof DeadCharacter)
+               {
+                   if (drawnTile.deadCharacter.prevCharacter instanceof Jam)
+                   {
+                       Image slimeImage = null;
+                       switch(drawnTile.deadCharacter.prevCharacter.direction)
+                       {
+                       case 0: slimeImage = slimeImageEastDead;
+                           break;
+                       case 1: slimeImage = slimeImageNorthDead;
+                           break;
+                       case 2: slimeImage = slimeImageWestDead;
+                           break;
+                       case 3: slimeImage = slimeImageSouthDead;
+                           break;
+                       default: slimeImage = slimeImageEastDead;
+                       }
+                       
+                       g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+
+                   }
+               }
+               //Draw money
                if (drawnTile instanceof DungeonTile && drawnTile.itemID != 0)
                {
                    if (drawnTile.itemID == 1)
                    {
                        image = money;
-<<<<<<< HEAD
                        g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (int)((.5+j) * tileLengthY), 0, 0, image.getWidth(null), image.getHeight(null), null);
                    }
                }
                
+               //Draw player
                if (drawnTile instanceof DungeonTile && drawnTile.character instanceof Character)
                {
                    visibleCharacters.add(drawnTile.character);
                    if (drawnTile.character instanceof Player)
                    {    
                        
-=======
-                       g.drawImage(image, i * tileLengthX, j * tileLengthY, (i + 1)* tileLengthX, (j + 1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
-                   }
-               }
-               
-               if (drawnTile instanceof DungeonTile && drawnTile.characterID != 0)
-               {
-                   if (drawnTile.characterID == 1)
-                   {
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
                        Image playerImage;
                        switch(dungeon.playerCharacter.direction)
                        {
@@ -455,12 +365,11 @@ public class LegacyDungeonPaintTest extends JPanel
                        }
                        g.drawImage(playerImage, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX/2 + 1) * tileLengthX, (numTilesY/2 + 1) * tileLengthY, 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
                    }
-<<<<<<< HEAD
-                   
+                   //Draw Jam
                    else if (drawnTile.character instanceof Jam)
                    {
                        Image slimeImage = null;
-                       if (drawnTile.character.imageID == 0)
+                       if (drawnTile.character.imageID == 0 && drawnTile.character.isHit == false)
                        {
                            switch(drawnTile.character.direction)
                            {
@@ -475,7 +384,8 @@ public class LegacyDungeonPaintTest extends JPanel
                            default: slimeImage = slimeImageEast;
                            }
                        }
-                       else if(drawnTile.character.imageID == 1)
+                       //Jam alt. image
+                       else if(drawnTile.character.imageID == 1 && drawnTile.character.isHit == false)
                        {
                            switch(drawnTile.character.direction)
                            {
@@ -490,96 +400,63 @@ public class LegacyDungeonPaintTest extends JPanel
                            default: slimeImage = slimeImageEastWalk;
                            }
                        }
-                       g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
-=======
-               }
-           }      
-       }
-       /*for (int i = 0; i < numTilesX; i++)
-       {
-           for (int j = 0; j < numTilesY; j++)
-           {
-               //System.out.print(dungeon.playerCharacter.currentTile.x - numTilesX/2 + i + " ");
-               //System.out.println(dungeon.playerCharacter.currentTile.y - numTilesY/2 + j);
-               DungeonTile drawnTile = null;
-               if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunnerV2.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunnerV2.yLength)
-               {
-                   drawnTile = tileArray[dungeon.playerCharacter.currentTile.x - numTilesX/2 + i][dungeon.playerCharacter.currentTile.y - numTilesY/2 + j];
-               }
-               // Draws a row of tiles.
-               if (drawnTile instanceof DungeonTile)
-               {
-                   if (drawnTile.tileID == 1)
-                   {
-                       image = tileImage1;
-                   }
-                   else if (drawnTile.tileID == 2)
-                   {
-                       image = tileImage2;
-                   }
-                   
-                   //More variations of tiles here.
-               }       
-               
-               else
-               {           
-                       image = tileImage0;
-               }
-               
-               g.drawImage(image, (i + frameCounterX/100)* tileLengthX, (j + frameCounterY/100)* tileLengthY, (i+ 1 + frameCounterX/10)* tileLengthX, (j + 1 + frameCounterY/10) * tileLengthX, 0, 0, image.getWidth(null), image.getHeight(null), null);
-               if (drawnTile instanceof DungeonTile && drawnTile.itemID != 0)
-               {
-                   if (drawnTile.itemID == 1)
-                   {
-                       image = money;
-                       g.drawImage(image, (i + frameCounterX/100)* tileLengthX, (j + frameCounterY/100)* tileLengthY, (i+ 1 + frameCounterX/10)* tileLengthX, (j + 1 + frameCounterY/10) * tileLengthX, 0, 0, image.getWidth(null), image.getHeight(null), null);
-                   }
-               }
-               
-               if (drawnTile instanceof DungeonTile && drawnTile.characterID != 0)
-               {
-                   if (drawnTile.characterID == 1)
-                   {
-                       Image playerImage;
-                       switch(dungeon.playerCharacter.direction)
+                       
+                       else if(drawnTile.character.isHit == true)
                        {
-                           case 0: playerImage = playerImageEast;
+                           switch(drawnTile.character.direction)
+                           {
+                           case 0: slimeImage = slimeImageEastHit;
                                break;
-                           case 1: playerImage = playerImageNorth;
+                           case 1: slimeImage = slimeImageNorthHit;
                                break;
-                           case 2: playerImage = playerImageWest;
+                           case 2: slimeImage = slimeImageWestHit;
                                break;
-                           case 3: playerImage = playerImageSouth;
+                           case 3: slimeImage = slimeImageSouthHit;
                                break;
-                           default: playerImage = playerImageEast;
+                           default: slimeImage = slimeImageEastHit;
+                           }
                        }
-                       g.drawImage(playerImage, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX/2 + 1) * tileLengthX, (numTilesY/2 + 1) * tileLengthY, 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
+                       
+                       
+                       g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                    }
                }
            }      
        }
-<<<<<<< HEAD
+       
+       //Death animations
+       for (DeadCharacter i : recentDeadCharList)
+       {
+           if (i.prevCharacter instanceof Jam)
+           {
+               Image slimeImage = null;
+               switch(i.prevCharacter.direction)
+               {
+               case 0: slimeImage = slimeImageEastHit;
+                   break;
+               case 1: slimeImage = slimeImageNorthHit;
+                   break;
+               case 2: slimeImage = slimeImageWestHit;
+                   break;
+               case 3: slimeImage = slimeImageSouthHit;
+                   break;
+               default: slimeImage = slimeImageEastHit;
+               }
+               
+               if (i.deathTimer <= 0)
+               {
+                   recentDeadCharList.remove(i);
+               }
+               
+               g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+               
+               
+           }
+       }
 
        
        
        //UI is drawn last so it's on top of everything else.
-=======
-       
-       frameCounterX += deltaX;
-       frameCounterY += deltaY;
-       
-       if (frameCounterX == 10 || frameCounterX == -10)
-       {
-           frameCounterX = 0;
-       }
-       
-       if (frameCounterY == 10 || frameCounterY == -10)
-       {
-           frameCounterY = 0;
-       }*/
-
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
        int floorNum = dungeon.currentFloor;
        int numCounter = 0;
        int oneDigit = 0;
@@ -758,7 +635,6 @@ public class LegacyDungeonPaintTest extends JPanel
       }
       */
    }
-<<<<<<< HEAD
 @Override
     public void run()
     {
@@ -801,9 +677,26 @@ public class LegacyDungeonPaintTest extends JPanel
                         i.imageID = 0;
                     }
                 }
+                
+                if (i.isHit == true)
+                {
+                    i.currentHitTime--;
+                    
+                    if(i.currentHitTime <= 0 )
+                    {
+                        i.isHit = false;
+                        i.currentHitTime = i.hitTimer;
+                    }   
+                }
+            }
+            //Complains about multiple modifications. Need to fix.
+            if(recentDeadCharList.size() != 0)
+            {
+                for(DeadCharacter j : recentDeadCharList)
+                {
+                    j.deathTimer--;
+                }
             }
         }
     }
-=======
->>>>>>> f1612bbd381f2368a9b40f5c45aaed69ca676344
 }

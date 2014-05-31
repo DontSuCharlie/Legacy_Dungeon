@@ -40,27 +40,4 @@ public class Jam extends Enemy
         charMove(deltaX, deltaY, this, dungeon);
         
     }
-    
-    public void onDeath()
-    {
-        System.out.println(":<");
-        DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
-        DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].character = null;
-        System.out.println(this.enemyID);
-        DungeonRunner.enemyList.remove(this.enemyID);
-        for (Enemy i : DungeonRunner.enemyList)
-        {
-            if (i.enemyID > this.enemyID)
-            {
-                i.enemyID--;
-            }
-        }
-        System.out.println(this.enemyID);
-        //Sound
-        //Animation
-        //Remnant on Tile
-    }
-    
-    
-    
 }
