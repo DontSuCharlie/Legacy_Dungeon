@@ -9,11 +9,14 @@ public class DungeonTile
     int numConnections;
     int itemID; //0 = nothing, 1 = money, 2 = ?
     int goldAmount;
-    int characterID; //0 = nothing, 1 = player, 2 = enemy
+    //int characterID; //0 = nothing, 1 = player, 2 = enemy
+    Character character;
+    DeadCharacter deadCharacter;
     public BufferedImage tileImage;
     public BufferedImage itemImage;
     public BufferedImage charImage;
     ImageLoader imageLoader;
+    
     
     //Test for improvement for generation
     boolean tileToLeft;
@@ -40,7 +43,7 @@ public class DungeonTile
         tileID = inputTileID;
         connectionCap = 2;
         itemID = 0;
-        characterID = 0;
+        //characterID = 0;
         //Not enough memory to do this for 1000 tiles. 
         //tileImage = loadTileImage(tileID);
     }

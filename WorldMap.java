@@ -83,6 +83,7 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 				*/
 	
 	//Method 1: Creates nodes and assigns different positions
+<<<<<<< HEAD
 	public void assignNodePos()
 	{
 		//Generate Heart Node
@@ -101,6 +102,22 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 					int dontWantY = Math.abs(nodeList.get(i).y - nodeList.get(j).y);
 					// Checking a range if far enough from other nodes. Basically, the range from (x - 20) to (x + 20) must be both less or both greater than the other nodes available.
 					if(dontWantX <= 50 && dontWantY <= 50)
+=======
+	public void assignNodePos(){
+		for(int i = 0; i < numNodes; i++)
+		{
+			nodeList.add(i, new NodeWorld((int)(Math.random()*screenRes1X1), (int)(Math.random()*screenRes1Y1), 0, 0));//will change the skillID/theme parameter inputs later
+			boolean check = true; //for checking purposes
+			for(int j = 0; j < i; j++)
+			{
+				int counter = 0;
+				while(check)//if check is true, retry because that means the nodes are on top of another
+				{
+					int dontWantX = Math.abs(nodeList.get(i).x - nodeList.get(j).x);
+					int dontWantY = Math.abs(nodeList.get(i).y - nodeList.get(j).y);
+					// Checking a range if far enough from other nodes. Basically, the range from (xPos - 20) to (xPos + 20) must be both less or both greater than the other nodes available.
+					if(dontWantX <= 10 && dontWantY <= 10)
+>>>>>>> 9bf573ad7a352036b1cda76e901933589d760242
 					{
 						nodeList.get(i).x = (int)(Math.random()*Window.windowX*2);
 						nodeList.get(i).y = (int)(Math.random()*Window.windowY*2);
@@ -110,7 +127,11 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 						check = true;
 					else
 						check = false;
+<<<<<<< HEAD
 				System.out.println("Node " + i + ": " + nodeList.get(i).x + ", " + nodeList.get(i).y + "Status" + nodeList.get(i).status);
+=======
+				System.out.println("Node " + i + ": " + nodeList.get(i).x + ", " + nodeList.get(i).y);
+>>>>>>> 9bf573ad7a352036b1cda76e901933589d760242
 				}
 			}
 		}
@@ -177,4 +198,24 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 			//Look for the most predomininat x/y node, assign node value??
 			//actually, we could just assign each point a "turn". If within x proximity, then movement equals 1 turn. You can just choose whichever one you want. idk, we'll see
 	}
+<<<<<<< HEAD
 }
+=======
+	public static void lineMaker()
+	{
+		//Grab node player is on
+		//Grab arraylist of available nodes
+		//Look for the one closest to the LEFT
+		//Look for the one closest to the RIGHT
+		//Look for the one closest to the TOP
+		//Look for the one closest to the BOTTOM
+		//WHAT IF THE ONE CLOSEST TO TOP AND RIGHT?
+			//WELL, BC IT IS A CIRCULAR RADIUS, AND BC THE CIRCLE INCREASES BY 5 (LESS THAN 20), THEN IT IS UNLIKELY, IF AT ALL POSSIBLE, FOR TWO NODES TO HAVE EQUAL LEFT/RIGHT/TOP/BOTTOM
+		//Detect input
+		//Find difference in x and y
+		//VECTORS?!
+		//Move the character at a rate of y/x until it reaches the point. Then stop
+	}
+*/
+}
+>>>>>>> 9bf573ad7a352036b1cda76e901933589d760242

@@ -10,11 +10,13 @@ import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public class LegacyDungeonCopy extends JPanel implements Runnable
+public class LegacyDungeonPaintTest extends JPanel implements Runnable
 {
     static Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();//gets size of screen
     ArrayList<NodeWorld> nodeList;
     ArrayList<Character> visibleCharacters = new ArrayList<Character>();
+    static ArrayList<DeadCharacter> recentDeadCharList = new ArrayList<DeadCharacter>();
+    
     DungeonTile[][] tileArray;
     static JFrame window;
     WorldMap world;
@@ -41,6 +43,14 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
     BufferedImage slimeImageWestWalk = imageLoader.loadImage("slimeWestWalk.png");
     BufferedImage slimeImageNorthWalk = imageLoader.loadImage("slimeNorthWalk.png");
     BufferedImage slimeImageSouthWalk = imageLoader.loadImage("slimeSouthWalk.png");
+    BufferedImage slimeImageEastDead = imageLoader.loadImage("slimeEastDead.png");
+    BufferedImage slimeImageWestDead = imageLoader.loadImage("slimeWestDead.png");
+    BufferedImage slimeImageNorthDead = imageLoader.loadImage("slimeNorthDead.png");
+    BufferedImage slimeImageSouthDead = imageLoader.loadImage("slimeSouthDead.png");
+    BufferedImage slimeImageEastHit = imageLoader.loadImage("slimeEastHit.png");
+    BufferedImage slimeImageWestHit = imageLoader.loadImage("slimeWestHit.png");
+    BufferedImage slimeImageNorthHit = imageLoader.loadImage("slimeNorthHit.png");
+    BufferedImage slimeImageSouthHit = imageLoader.loadImage("slimeSouthHit.png");
     BufferedImage num0 = imageLoader.loadImage("0.png");
     BufferedImage num1 = imageLoader.loadImage("1.png");
     BufferedImage num2 = imageLoader.loadImage("2.png");
@@ -52,7 +62,7 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
     BufferedImage num8 = imageLoader.loadImage("8.png");
     BufferedImage num9 = imageLoader.loadImage("9.png");
         
-    public LegacyDungeonCopy() throws InstantiationException, IllegalAccessException
+    public LegacyDungeonPaintTest() throws InstantiationException, IllegalAccessException
     {
         window = new JFrame("Hazardous Laboratory");
         world = new WorldMap();
@@ -64,7 +74,7 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
     }
     public static void main(String[] args) throws InstantiationException, IllegalAccessException, InterruptedException
     {
-        LegacyDungeonCopy game = new LegacyDungeonCopy();
+        LegacyDungeonPaintTest game = new LegacyDungeonPaintTest();
         createWindow();
         window.add(game);
         
@@ -119,10 +129,12 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
                     System.out.println(game.dungeon.tileList[targetTileX][targetTileY].character.currentHealth);
                     if(game.dungeon.tileList[targetTileX][targetTileY].character.currentHealth <= 0)
                     {
-                            if(game.dungeon.tileList[targetTileX][targetTileY].character instanceof Jam)
-                            {
-                                ((Jam)(game.dungeon.tileList[targetTileX][targetTileY].character)).onDeath();
-                            }
+                        if(game.dungeon.tileList[targetTileX][targetTileY].character instanceof Jam)
+                        {
+                            ((Jam)(game.dungeon.tileList[targetTileX][targetTileY].character)).onDeath();        
+                        }
+                        
+                        
                     }
                 }
             }
@@ -255,6 +267,14 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
        int tileLengthX = (int) screenRes.getWidth() / numTilesX;
        int tileLengthY = (int) screenRes.getHeight() / numTilesY;
        int enemyNumber = 0;
+       int screenShakeX = 0;
+       int screenShakeY = 0;
+       
+       if(recentDeadCharList.size() != 0)
+       {
+           screenShakeX = (int)(20 * Math.random() - 10);
+           screenShakeY = (int)(20 * Math.random() - 10);
+       }
        
        for (int i = 0; i < numTilesX; i++)
        {
@@ -262,6 +282,7 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
            {
                //System.out.print(dungeon.playerCharacter.currentTile.x - numTilesX/2 + i + " ");
                //System.out.println(dungeon.playerCharacter.currentTile.y - numTilesY/2 + j);
+               //Draw tiles
                DungeonTile drawnTile = null;
                if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i  >= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonRunner.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonRunner.yLength)
                {
@@ -287,8 +308,32 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
                        image = tileImage0;
                }
                
-               g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+               g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
                
+               //Draw bodies
+               if (drawnTile instanceof DungeonTile && drawnTile.deadCharacter instanceof DeadCharacter)
+               {
+                   if (drawnTile.deadCharacter.prevCharacter instanceof Jam)
+                   {
+                       Image slimeImage = null;
+                       switch(drawnTile.deadCharacter.prevCharacter.direction)
+                       {
+                       case 0: slimeImage = slimeImageEastDead;
+                           break;
+                       case 1: slimeImage = slimeImageNorthDead;
+                           break;
+                       case 2: slimeImage = slimeImageWestDead;
+                           break;
+                       case 3: slimeImage = slimeImageSouthDead;
+                           break;
+                       default: slimeImage = slimeImageEastDead;
+                       }
+                       
+                       g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+
+                   }
+               }
+               //Draw money
                if (drawnTile instanceof DungeonTile && drawnTile.itemID != 0)
                {
                    if (drawnTile.itemID == 1)
@@ -298,6 +343,7 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
                    }
                }
                
+               //Draw player
                if (drawnTile instanceof DungeonTile && drawnTile.character instanceof Character)
                {
                    visibleCharacters.add(drawnTile.character);
@@ -319,11 +365,11 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
                        }
                        g.drawImage(playerImage, numTilesX/2 * tileLengthX, numTilesY/2 * tileLengthY, (numTilesX/2 + 1) * tileLengthX, (numTilesY/2 + 1) * tileLengthY, 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
                    }
-                   
+                   //Draw Jam
                    else if (drawnTile.character instanceof Jam)
                    {
                        Image slimeImage = null;
-                       if (drawnTile.character.imageID == 0)
+                       if (drawnTile.character.imageID == 0 && drawnTile.character.isHit == false)
                        {
                            switch(drawnTile.character.direction)
                            {
@@ -338,7 +384,8 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
                            default: slimeImage = slimeImageEast;
                            }
                        }
-                       else if(drawnTile.character.imageID == 1)
+                       //Jam alt. image
+                       else if(drawnTile.character.imageID == 1 && drawnTile.character.isHit == false)
                        {
                            switch(drawnTile.character.direction)
                            {
@@ -353,10 +400,58 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
                            default: slimeImage = slimeImageEastWalk;
                            }
                        }
+                       
+                       else if(drawnTile.character.isHit == true)
+                       {
+                           switch(drawnTile.character.direction)
+                           {
+                           case 0: slimeImage = slimeImageEastHit;
+                               break;
+                           case 1: slimeImage = slimeImageNorthHit;
+                               break;
+                           case 2: slimeImage = slimeImageWestHit;
+                               break;
+                           case 3: slimeImage = slimeImageSouthHit;
+                               break;
+                           default: slimeImage = slimeImageEastHit;
+                           }
+                       }
+                       
+                       
                        g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                    }
                }
            }      
+       }
+       
+       //Death animations
+       for (DeadCharacter i : recentDeadCharList)
+       {
+           if (i.prevCharacter instanceof Jam)
+           {
+               Image slimeImage = null;
+               switch(i.prevCharacter.direction)
+               {
+               case 0: slimeImage = slimeImageEastHit;
+                   break;
+               case 1: slimeImage = slimeImageNorthHit;
+                   break;
+               case 2: slimeImage = slimeImageWestHit;
+                   break;
+               case 3: slimeImage = slimeImageSouthHit;
+                   break;
+               default: slimeImage = slimeImageEastHit;
+               }
+               
+               if (i.deathTimer <= 0)
+               {
+                   recentDeadCharList.remove(i);
+               }
+               
+               g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+               
+               
+           }
        }
 
        
@@ -581,6 +676,25 @@ public class LegacyDungeonCopy extends JPanel implements Runnable
                     {
                         i.imageID = 0;
                     }
+                }
+                
+                if (i.isHit == true)
+                {
+                    i.currentHitTime--;
+                    
+                    if(i.currentHitTime <= 0 )
+                    {
+                        i.isHit = false;
+                        i.currentHitTime = i.hitTimer;
+                    }   
+                }
+            }
+            //Complains about multiple modifications. Need to fix.
+            if(recentDeadCharList.size() != 0)
+            {
+                for(DeadCharacter j : recentDeadCharList)
+                {
+                    j.deathTimer--;
                 }
             }
         }

@@ -5,17 +5,24 @@ import javax.swing.*;//part of UI, includes JPanel
 public class Player extends Character{
     int xMovement;
     int yMovement;
-    int riches;
+    int goldAmount;
     
     public Player(int inputRiches)
     {
         xMovement = 0;
         yMovement = 0;
-        characterID = 1;
-        riches = inputRiches;
-
+        //characterID = 1;
+        goldAmount = inputRiches;
+        description = "You";
 
     }
+    
+    //Basic punch
+    public void punch()
+    {
+
+    }
+    
     
     public int playerMoveY()
     {
