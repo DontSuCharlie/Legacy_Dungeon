@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 
 //Used to get keyboard input, similar in use to imageLoader
-public class KeyboardInput extends JPanel
+public class KeyboardInput
 {
     public static boolean boolIsUp;
     public static boolean boolIsDown;
@@ -29,18 +29,7 @@ public class KeyboardInput extends JPanel
     public static boolean boolIs10;
     //condense to array might make it faster
     public static int key;
-    //Note: remove this main when done testing.
-    
-    public static void main(String[] args)
-    {
-        JFrame frame = new JFrame("Test");
-        KeyboardInput input = new KeyboardInput();
-        frame.add(input);
-        frame.setSize(200, 200);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-    
+
     public KeyboardInput()
     {
         KeyListener listener = new KeyboardListener();

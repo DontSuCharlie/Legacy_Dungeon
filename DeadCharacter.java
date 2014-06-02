@@ -1,10 +1,14 @@
 
-public class DeadCharacter {
+public class DeadCharacter{
 
-    Character deadCharacter;
+    Character prevCharacter;
+    boolean justDied;
+    int deathTimer = 250/LegacyDungeonPaintTest.DELAY;
+    
     public DeadCharacter(Character character)
     {
-        deadCharacter = character;
+        prevCharacter = character;
+        justDied = true;
     }
     
     

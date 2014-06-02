@@ -1,7 +1,6 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import javax.swing.JFrame;
 
 /*
@@ -34,7 +33,11 @@ public class Character extends JFrame
     public int altTimer = (int)((1200/LegacyDungeonPaintTest.DELAY - 800/LegacyDungeonPaintTest.DELAY)*Math.random() + 800/LegacyDungeonPaintTest.DELAY); //Ranges from .8 to 1.2 seconds for alt. image. Counter occurs every 25 ms.
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
     public int direction; // Used for direction of sprite and attacks 0=east, 1=north, 2=west, 3=south
-    public boolean isHit;
+    public boolean isHit = false;
+    //Used for length of hit animation. Currently set to 250 ms delay.
+    public int hitTimer = (int) (100/LegacyDungeonPaintTest.DELAY);
+    public int currentHitTime = hitTimer;
+    
    //Constructor
     
 /*
@@ -118,6 +121,17 @@ public class Character extends JFrame
            
            System.out.println("Oh no a wall");
            return character.currentTile;
+    }
+    
+    public void onDeath()
+    {
+        System.out.println(":<");
+        DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
+        DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].character = null;
+        LegacyDungeonPaintTest.recentDeadCharList.add(new DeadCharacter(this));
+        //Sound
+        //Animation
+        //Remnant on Tile
     }
     
 /*    
