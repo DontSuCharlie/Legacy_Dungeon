@@ -10,9 +10,11 @@ import java.awt.Polygon;
 
 public class LegacyDungeon extends JPanel
 {
-	/*game loop related vaiables*/
+	/*other threads*/
 	static musicPlayer musicPlayer = new musicPlayer("menu0.wav");
-	/*menu related variables*/
+	static soundPlayer soundPlayer;
+	static 
+	/*main thread*/
 	static Menu menu;
 	static Window window;
 	static WorldMap world;
@@ -178,42 +180,43 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 			g.drawString("Pre-Alpha Stage", Window.windowX-100, Window.windowY-100);
 		}
 		/*world map related painting*/
-		if(inWorldMap)
+		else
 		{
-			//Basically, to make it so that we can scroll (as opposed to remaining stuck in an unmoving screen), I have to move the background as opposed to the character itself. The character itself will always remain at the center of the screen. originPoint is the point we'll be subtracting from the position of the current node to get the AMOUNT MOVED. We then apply the AMOUNT MOVED to the background image instead. It is windowX/2 - char.width/2 because we want to draw the character in the middle, and the window is ifuck I can't explain clearly
-			int originPointX = Window.windowX/2 - world.character.width/2;
-			int originPointY = Window.windowY/2 - world.character.height/2;
-			
-			//Most back layer first
-			//1: Background						
-			int elseX = Window.windowX - 2*world.playerX;
-			int elseY = Window.windowY - 2*world.playerY;
-			//Most back layer first
-			//1
-			g.drawImage(world.map, elseX, elseY, (int)(Window.windowX*2), (int)(Window.windowY*2), null);
-			//2
-			for(int i = 0; i< world.nodeList.size(); i++)
+			if(inWorldMap)
 			{
-				g.drawImage(world.nodeList.get(i).image, world.nodeList.get(i).x-25, world.nodeList.get(i).y-25, 50, 50, null);
-			}
-			//3
-			g.drawImage(world.character.image, world.character.x, world.character.y, 100, 100, null);
-			//4
-			for(int i = 0; i < world.nodeList.size(); i++)
-			{
-				if(world.nodeList.get(i).status == 2)
-					validList.add(world.nodeList.get(i));
-			}
-			int currentSize = validList.size();
-			float red = 1, green = 1, blue = 1, alpha = 0.8f;
-			if(currentSize != maxAreaPolygon.refVar && currentSize >= 3)
-			{
-				thePolygon = maxAreaPolygon.makePolygon(validList);
-				System.out.println(XFactor);
-				System.out.println(red + " " + blue + " " + green + " " + alpha);
-				//repaint = true;
-				//this filter is not working..
-			}	
+				//Basically, to make it so that we can scroll (as opposed to remaining stuck in an unmoving screen), I have to move the background as opposed to the character itself. The character itself will always remain at the center of the screen. originPoint is the point we'll be subtracting from the position of the current node to get the AMOUNT MOVED. We then apply the AMOUNT MOVED to the background image instead. It is windowX/2 - char.width/2 because we want to draw the character in the middle, and the window is ifuck I can't explain clearly
+				int originPointX = Window.windowX/2 - world.character.width/2;
+				int originPointY = Window.windowY/2 - world.character.height/2;			
+				//Most back layer first
+				//1: Background						
+				int elseX = Window.windowX - 2*world.playerX;
+				int elseY = Window.windowY - 2*world.playerY;
+				//Most back layer first
+				//1
+				g.drawImage(world.map, elseX, elseY, (int)(Window.windowX*2), (int)(Window.windowY*2), null);
+				//2
+				for(int i = 0; i< world.nodeList.size(); i++)
+				{
+					g.drawImage(world.nodeList.get(i).image, world.nodeList.get(i).x-25, world.nodeList.get(i).y-25, 50, 50, null);
+				}
+				//3
+				g.drawImage(world.character.image, world.character.x, world.character.y, 100, 100, null);
+				//4
+				for(int i = 0; i < world.nodeList.size(); i++)
+				{
+					if(world.nodeList.get(i).status == 2)
+						validList.add(world.nodeList.get(i));
+				}
+				int currentSize = validList.size();
+				float red = 1, green = 1, blue = 1, alpha = 0.8f;
+				if(currentSize != maxAreaPolygon.refVar && currentSize >= 3)
+				{
+					thePolygon = maxAreaPolygon.makePolygon(validList);
+					System.out.println(XFactor);
+					System.out.println(red + " " + blue + " " + green + " " + alpha);
+					//repaint = true;
+					//this filter is not working..
+				}	
 				XFactor = maxAreaPolygon.refVar;
 				//0.3, 0.6, 1.0, 0.8 are original rgba
 				red = 0.15f*(float)XFactor;
@@ -232,13 +235,14 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 				g.setColor(forceField);
 				if(thePolygon != null)
 					g.fillPolygon(thePolygon);
-			validList.clear();
-		}
-		else
-		{
-			if(inDungeon)//Only paint if within dungeon
+				validList.clear();
+			}
+			else
 			{
-				//paint stuff herez
+				if(inDungeon)//Only paint if within dungeon
+				{
+					//paint stuff herez
+				}
 			}
 		}
     }
