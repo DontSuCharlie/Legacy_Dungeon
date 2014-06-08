@@ -65,8 +65,8 @@ public class dungeonMain extends JPanel implements Runnable
     public dungeonMain() throws InstantiationException, IllegalAccessException
     {
         window = new JFrame("Hazardous Laboratory");
-        world = new WorldMap();
-        nodeList = world.nodeList;
+        //world = new WorldMap();
+        //nodeList = world.getNodeList();
         dungeon = new DungeonRunner(1,1,1,100,100,1,null);
         tileArray = DungeonRunner.tileList;
         //superPlayer = new PlayerLegacyDungeon();
