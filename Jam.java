@@ -1,4 +1,3 @@
-
 public class Jam extends Enemy
 {
     //lol gridworld's revenge
@@ -9,9 +8,7 @@ public class Jam extends Enemy
         //characterID = 2;
         maxHealth = 5;
         currentHealth = 5;
-        
     }
-    
     public void act(DungeonRunner dungeon)
     {
         //Picks random spot to go to. Including walls.
@@ -37,7 +34,6 @@ public class Jam extends Enemy
             deltaY = -1;
         }
         
-        charMove(deltaX, deltaY, this, dungeon);
-        
+        charMove(deltaX, deltaY, this, dungeon);      
     }
 }

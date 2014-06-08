@@ -1,218 +1,72 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.*;
-import javax.swing.JPanel;
-import javax.swing.JFrame;
 
 //Used to get keyboard input, similar in use to imageLoader
-public class KeyboardInput
+public class KeyboardInput implements KeyListener
 {
-    public static boolean boolIsUp;
-    public static boolean boolIsDown;
-    public static boolean boolIsLeft;
-    public static boolean boolIsRight;
-    public static boolean boolIsAim;
-    public static boolean boolIsHeal;
-    public static boolean boolIsInventory;
-    public static boolean boolIsMoving;
-    public static boolean boolIsInteracting;
-    public static boolean boolIsAttack;
-    public static boolean boolIs1;
-    public static boolean boolIs2;
-    public static boolean boolIs3;
-    public static boolean boolIs4;
-    public static boolean boolIs5;
-    public static boolean boolIs6;
-    public static boolean boolIs7;
-    public static boolean boolIs8;
-    public static boolean boolIs9;
-    public static boolean boolIs10;
-    //condense to array might make it faster
+	public static boolean boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIsMoving;
+	static boolean[] actionArray = {boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting};
+	int[] keyArray = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE, KeyEvent.VK_SHIFT};
     public static int key;
-
-    public KeyboardInput()
-    {
-        KeyListener listener = new KeyboardListener();
-        addKeyListener(listener);
-        setFocusable(true);
-    }
-
-    public class KeyboardListener implements KeyListener
-    {
-       Config config = new Config();
-    
-        public void keyTyped(KeyEvent e)   
-        {
-        }
-        public void keyPressed(KeyEvent e)
-        {
-            key = e.getKeyCode();        
-            System.out.println("keyPressed: " + key);
-            if (key == config.up)
-            {
-                boolIsMoving = true;
-                boolIsUp = true;
-            }
-            else if (key == config.down)
-            {
-                boolIsMoving = true;
-               boolIsDown = true;
-            }
-            else if (key == config.left)
-            {
-                boolIsMoving = true;
-               boolIsLeft = true;
-            }
-            else if (key == config.right)
-            {
-                boolIsMoving = true;
-               boolIsRight = true;
-            }
-            else if (key == config.aimMode)
-            {
-               boolIsAim = true;
-            }
-            else if (key == config.attack)
-            {
-               boolIsAttack = true;
-            }
-            else if (key == config.hotKeyHeal)
-            {
-               boolIsHeal = true;
-            }
-            else if (key == config.inventory)
-            {
-               boolIsInventory = true;
-            }
-            else if (key == config.interact)
-            {
-               boolIsInteracting = true;
-            }
-            else if (key == config.hotKey1)
-            {
-               boolIs1 = true;
-            }
-            else if (key == config.hotKey2)
-            {
-               boolIs2 = true;
-            }
-            else if (key == config.hotKey3)
-            {
-               boolIs3 = true;
-            }
-            else if (key == config.hotKey4)
-            {
-               boolIs4 = true;
-            }
-            
-            else if (key == config.hotKey5)
-            {
-               boolIs5 = true;
-            }
-            else if (key == config.hotKey6)
-            {
-               boolIs6 = true;
-            }
-            else if (key == config.hotKey7)
-            {
-               boolIs7 = true;
-            }
-            else if (key == config.hotKey8)
-            {
-               boolIs8 = true;
-            }
-            else if (key == config.hotKey9)
-            {
-               boolIs9 = true;
-            }
-            else if (key == config.hotKey10)
-            {
-               boolIs10 = true;
-            }
-        }
-    
-        public void keyReleased(KeyEvent e)
-        {
-            
-            key = e.getKeyCode();        
-            System.out.println("keyPressed: " + key);
-            /*
-            if (key == config.up)
-            {
-               boolIsUp = false;
-            }
-            else if (key == config.down)
-            {
-               boolIsDown = false;
-            }
-            else if (key == config.left)
-            {
-               boolIsLeft = false;
-            }
-            else if (key == config.right)
-            {
-               boolIsRight = false;
-            }
-            */
-            if (key == config.aimMode)
-            {
-               boolIsAim = false;
-            }
-            else if (key == config.hotKeyHeal)
-            {
-               boolIsHeal = false;
-            }
-            else if (key == config.inventory)
-            {
-               boolIsInventory = false;
-            }
-            /*else if (key == config.interact)
-            {
-               boolIsInteracting = false;
-            } 
-            */ 
-            else if (key == config.hotKey1)
-            {
-               boolIs1 = false;
-            }
-            else if (key == config.hotKey2)
-            {
-               boolIs2 = false;
-            }
-            else if (key == config.hotKey3)
-            {
-               boolIs3 = false;
-            }
-            else if (key == config.hotKey4)
-            {
-               boolIs4 = false;
-            }
-            else if (key == config.hotKey5)
-            {
-               boolIs5 = false;
-            }
-            else if (key == config.hotKey6)
-            {
-               boolIs6 = false;
-            }
-            else if (key == config.hotKey7)
-            {
-               boolIs7 = false;
-            }
-            else if (key == config.hotKey8)
-            {
-               boolIs8 = false;
-            }
-            else if (key == config.hotKey9)
-            {
-               boolIs9 = false;
-            }
-            else if (key == config.hotKey10)
-            {
-               boolIs10 = false;
-            }  
-            
-            
-        }
-    }
+	
+	public static void update(boolean[] actionArray)
+	{
+		if(actionArray[0])
+			boolIsUp = true;
+		if(actionArray[1])
+			boolIsDown = true;
+		if(actionArray[2])
+			boolIsLeft = true;
+		if(actionArray[3])
+			boolIsRight = true;
+		if(actionArray[4])
+			boolIsAttack = true;
+		if(actionArray[5])
+			boolIsInteracting = true;
+	}
+	
+	public static void main(String[] args)
+	{
+		Window window = new Window();
+		Window.createWindow();
+		Window.window.addKeyListener(new KeyboardInput());
+	}
+	
+	public void keyTyped(KeyEvent e)
+	{
+		//useless, don't need
+	}
+	public void keyPressed(KeyEvent e)
+	{
+		key = e.getKeyCode();
+		for(int i = 0; i < keyArray.length; i++)
+		{
+			if(keyArray[i] == key)
+			{
+				actionArray[i] = true;
+				update(actionArray);
+				if(i <4)//all arrow keys have indices less than 4
+					boolIsMoving = true;
+				break;
+			}
+		}
+       System.out.println("keyPressed: " + key);
+	 }
+	   
+	public void keyReleased(KeyEvent e)
+	{
+		key = e.getKeyCode();
+		for(int i = 0; i < keyArray.length; i++)
+		{
+			if(keyArray[i] == key)
+			{
+				actionArray[i] = false;
+				//update();
+				System.out.println(boolIsAttack);
+				break;
+			}
+		}
+		System.out.println("keyReleased: " + key);
+	}
 }

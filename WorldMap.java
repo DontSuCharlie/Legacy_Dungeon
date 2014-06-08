@@ -9,7 +9,7 @@ public class WorldMap extends JPanel
 {
 	Character0 character;
 	ImageLoader imageLoader = new ImageLoader();
-	BufferedImage map = imageLoader.loadImage("TempWorldMap.jpg");
+	BufferedImage map = imageLoader.loadImage("images/map.png");
 	BufferedImage[] numImage = new BufferedImage[10];
 	String[] imageDirectory = {"0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png"}; 
 	static ArrayList<Node> nodeList = new ArrayList<Node>();//array list of nodes
@@ -22,7 +22,7 @@ public class WorldMap extends JPanel
 	{
 		System.out.println(playerX);
 		character = new Character0();
-		numNodes = (int) (Math.random() * 20) + 20;//generates a random # of nodes (20-40)
+		numNodes = (int) (Math.random() * 20) + 10;//generates a random # of nodes (10-30)
 		//imageLoader = new ImageLoader();
 		//map = imageLoader.loadImage("TempWorldMap.jpg");
 		for(int i = 0; i < 10; i++)
@@ -90,17 +90,17 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 		nodeList.get(0).status = 5;//Heart Node Status
 		for(int i = 1; i < numNodes; i++)
 		{
-			nodeList.add(i, new Node((int)(Math.random()*Window.windowX*2), (int)(Math.random()*Window.windowY*2), 0, 0));//will change the skillID/theme parameter inputs later
+			nodeList.add(i, new Node((int)(Math.random()*Window.windowX), (int)(Math.random()*Window.windowY/2+Window.windowY/2), 0, 0));//will change the skillID/theme parameter inputs later
 			boolean check = true; //to check whether or not any nodes are on top of another
 			for(int j = 0; j < i; j++)
 			{
-				int counter = 0;
 				while(check)
 				{
+					int counter = 0;
 					int dontWantX = Math.abs(nodeList.get(i).x - nodeList.get(j).x);
 					int dontWantY = Math.abs(nodeList.get(i).y - nodeList.get(j).y);
 					// Checking a range if far enough from other nodes. Basically, the range from (x - 20) to (x + 20) must be both less or both greater than the other nodes available.
-					if(dontWantX <= 50 && dontWantY <= 50)
+					if(dontWantX <= 30 && dontWantY <= 30)
 					{
 						nodeList.get(i).x = (int)(Math.random()*Window.windowX*2);
 						nodeList.get(i).y = (int)(Math.random()*Window.windowY*2);
@@ -110,7 +110,7 @@ Method 5: .enemyMovement() - will implement later, AI so scarrr
 						check = true;
 					else
 						check = false;
-				System.out.println("Node " + i + ": " + nodeList.get(i).x + ", " + nodeList.get(i).y + "Status" + nodeList.get(i).status);
+				System.out.println("Node " + i + ": " + nodeList.get(i).x + ", " + nodeList.get(i).y + "Status" + nodeList.get(i).status + "Counter" + counter);
 				}
 			}
 		}

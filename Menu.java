@@ -15,6 +15,7 @@ public class Menu
 	static Button creditsButton;
 	//BACKGROUND
 	static BufferedImage background;
+	static BufferedImage message1;
 	ImageLoader imageLoader = new ImageLoader();
 	public Menu()
 	{
@@ -31,6 +32,7 @@ public class Menu
 		settingsButton = new Button("/images/SettingsOrig.png","/images/SettingsMoused.png","/images/SettingsClicked.png",xAlign, yAlign,400, 100);
 		yAlign+=120;
 		creditsButton = new Button("/images/CreditsOrig.png", "/images/CreditsMoused.png", "/images/CreditsClicked.png", xAlign, yAlign, 400, 100);
-		background = imageLoader.loadImage("CuteCuriousPikachu.jpg");
+		background = imageLoader.loadImage("/images/menu.png");
+		message1 = imageLoader.loadImage("/images/message1.png");
 	}
 }

@@ -10,64 +10,60 @@ import java.awt.Polygon;
 
 public class LegacyDungeon extends JPanel
 {
-	/*other threads*/
-	static musicPlayer musicPlayer = new musicPlayer("menu0.wav");
-	static soundPlayer soundPlayer;
-	static 
-	/*main thread*/
+	/*variables that'll be used everywhere*/
+	static musicPlayer musicPlayer = new musicPlayer();//musicPlayer class plays music
 	static Menu menu;
 	static Window window;
 	static WorldMap world;
-	MaxAreaPolygon maxAreaPolygon;
-	//Character0 character;
-	//DungeonRunner dungeon;
 	static int turnCounter;
 	static boolean running;
 	static boolean inGame;
 	static boolean inMenu;
 	static boolean inWorldMap;
-	static boolean inDungeon;
-	static ArrayList<Node> validList;
-	static int validListSize;
+	static boolean inDungeon;	
 	static LegacyDungeon game;
-	static boolean repaint;
+
+	/*menu related variables*/
+	static Button button;
+
+	/*world map related variables*/
+	static Button OKButton;
+	static boolean message1;
+	MaxAreaPolygon maxAreaPolygon;
+	static ArrayList<Node> validList;
+	static int validListSize;	
+	int xPosition = Window.windowX - 150;//position of the moon in
+	int yPosition = 0;
 	static float XFactor;//opacity of force field
 	Polygon thePolygon;
-	static Button button;
-	//static Font gameFont = new Font("Times New Roman", Font.BOLD, 14);
+
+	/*in dungeon related variables*/
 	
 	public LegacyDungeon()
 	{
-		window = new Window();
-		world = new WorldMap();
-		//character = new Character0();
-		//dungeon = new DungeonRunner();
-		turnCounter = 0;//will read save file first. If empty/corrupt, defaults to 0. Implement later
-		maxAreaPolygon = new MaxAreaPolygon();
-		validList = new ArrayList<Node>();
+		window = new Window();//creates a window object, which generates the window
+		world = new WorldMap();//creates a worldmap object, which generates the world map
+		turnCounter = 0;//will read save file first. If empty/corrupt, defaults to 0. Implement after project is done
+		maxAreaPolygon = new MaxAreaPolygon();//in charge of drawing the polygon in worldmap
+		validList = new ArrayList<Node>();//list of nodes that will be fed into maxareapolygon to draw the polygon int he worldmap
 	}
-	
 	public static void main(String[] args)
 	{
-		running = true;
+		running = true;//means the game is running
 		game = new LegacyDungeon();
-		Window.createWindow();
-		world.playerX = Window.windowX;
-		world.playerY = Window.windowY;
-		Window.window.add(game);
+		Window.createWindow();//creates window
+		Window.window.add(game);//adds game file to the window
 
 		while(running)
 		{
 			loadMenu();//loads menu screen
-			inGame = true;
+			inGame = true;//means in game (out of menu screen)
 			while(inGame)
 			{
-				loadDungeon(createWorld(turnCounter));
+				loadDungeon(createWorld(turnCounter));//createWorld loads world map. if turn is first turn, make new nodes, else don't. createWorld returns true if we're in the dungeon
 			}
 		}
-		//rewrite save file here (might need to save periodically, would consider later)
-		//close all threads here
-		//
+		//rewrite save file here (might need to save periodically, would consider after project is done) + close threads
 	}
 ////////////////////////////////////LIST OF METHODS///////////////////////////////////////////
 /*
@@ -85,7 +81,8 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 	public static void loadMenu()
 	{
 		//game.setFont(gameFont);
-		musicPlayer.start();
+		//musicPlayer.start();
+		musicPlayer.playMusic("menu.wav");
 		menu = new Menu();
 		Window.window.add(menu.newGameButton);
 		Window.window.add(menu.loadGameButton);
@@ -113,28 +110,43 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 /*////////////////////////////////////////////////////////Method 2: Creating and loading the World Map*/
     public static boolean createWorld(int turnCounter)
     {
+		musicPlayer.stop();
+		//musicPlayer.musicThread.interrupt();
+		musicPlayer.playMusic("sounds/Worldmap1.wav");
         inWorldMap = true;//when this turns false, createWorld stops running
         if(turnCounter == 0)//when game begins, we generate nodes and set character to heart node
         {
             world.assignNodePos();//creates nodes
-            //nodeList = world.getNodeList();
 			for(int i = 0; i < world.nodeList.size(); i++)
 			{
 				Window.window.add(world.nodeList.get(i));
+			}
+			OKButton = new Button("images/OKOrig.png", "images/OKMoused.png", "images/OKPressed.png", (int)(Window.windowX/2 + 300) , (int)(Window.windowY/2 - 10), 100, 50);
+			Window.window.add(OKButton);
+			message1 = true;
+			if(OKButton.clicked)
+			{
+				message1 = false;
+				Window.window.remove(OKButton);
 			}
         }
 		//Else, continue on normally
 		while(inWorldMap)
 		{
-			//world.playerMove(world.playerX, world.playerY);
+			if(OKButton.clicked)
+				message1 = false;
 			world.nodeDetector();
 			game.repaint();
-			//if(playerPressYes)
-			//{
-				//return true;
-			//}
-			//Take mouse input
-			//if player moves
+			try
+			{
+				Thread.sleep(1000);
+				if(inDungeon)
+					return true;
+			}
+			catch(InterruptedException e)
+			{
+				System.out.println(e);
+			}
 			//A pop-up appears that asks the user whether or not he wants to enter the dungeon
 			//if the player selects yes, turnCounter++; inWorldMap = false; this method ends by returning true;
 			//if the player selects no, move player back to original position, wait for response
@@ -146,8 +158,35 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 /*////////////////////////////////////////////////////////Method 3: Creating, loading, and updating Dungeon*/
 	public static void loadDungeon(boolean inDungeon)
 	{
+		musicPlayer.stop();
+		musicPlayer.playMusic("sounds/Worldmap2.wav");
 		if(inDungeon)
+		{
 			System.out.println("You're in the dungeon!");
+			try
+			{
+				dungeonMain runDungeon = new dungeonMain();
+				runDungeon.main(new String[1]);
+				inWorldMap = false;
+				//Window.window.remove(game);
+				//runDungeon.runThisMofo();
+				//System.out.println("yea");
+				//Window.window.add(runDungeon);
+				//runDungeon.repaint();
+			}
+			catch(InstantiationException e)
+			{
+				System.out.println("Did not instantiate");
+			}
+			catch(IllegalAccessException e)
+			{
+				System.out.println("Illegal Accesss");
+			}
+			catch(InterruptedException e)
+			{
+				System.out.println("interrupt");
+			}
+		}
 	}
 /*////////////////////////////////////////////////////////Method 4: paintComponent does the painting. According to Java, everything we want to paint should be placed in this method. Making something alternate between visibility requires the use of ArrayLists, if statements, etc. For example, if we want to spawn enemies, we'll have paintComponent paint images of an ArrayList. When a new enemy is spawned, our ArrayList grows, which results in the new enemy being painted every time we call repaint().*/
     @Override
@@ -164,8 +203,8 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 		{
 			//Most back layer first
 			//1: Background
-			game.setBackground(Color.WHITE);
-			g.drawImage(menu.background, 150, 0, Window.windowX, Window.windowY, null);
+			game.setBackground(Color.BLACK);
+			g.drawImage(menu.background, 0, 0, Window.windowX, Window.windowY, null);
 			//2: Title
 			g.drawString("I NEED A BETTER TITLE QQ", (Window.windowX/2-100), (100));
 			//3: New Game Button //will add String later
@@ -193,14 +232,20 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 				int elseY = Window.windowY - 2*world.playerY;
 				//Most back layer first
 				//1
-				g.drawImage(world.map, elseX, elseY, (int)(Window.windowX*2), (int)(Window.windowY*2), null);
+				g.drawImage(world.map, 0, 0, (int)(Window.windowX), (int)(Window.windowY), null);
 				//2
 				for(int i = 0; i< world.nodeList.size(); i++)
 				{
-					g.drawImage(world.nodeList.get(i).image, world.nodeList.get(i).x-25, world.nodeList.get(i).y-25, 50, 50, null);
+					g.drawImage(world.nodeList.get(i).image, world.nodeList.get(i).x-25, world.nodeList.get(i).y-25, 30, 30, null);
 				}
 				//3
-				g.drawImage(world.character.image, world.character.x, world.character.y, 100, 100, null);
+				if(yPosition <50)
+					yPosition++;
+				if(yPosition > 50)
+					yPosition--;							
+				g.setColor(new Color(255, 255, 255));
+				g.fillOval(xPosition, yPosition, 100, 100);
+
 				//4
 				for(int i = 0; i < world.nodeList.size(); i++)
 				{
@@ -214,8 +259,6 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 					thePolygon = maxAreaPolygon.makePolygon(validList);
 					System.out.println(XFactor);
 					System.out.println(red + " " + blue + " " + green + " " + alpha);
-					//repaint = true;
-					//this filter is not working..
 				}	
 				XFactor = maxAreaPolygon.refVar;
 				//0.3, 0.6, 1.0, 0.8 are original rgba
@@ -236,14 +279,19 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 				if(thePolygon != null)
 					g.fillPolygon(thePolygon);
 				validList.clear();
+				if(message1)
+				{
+					g.drawImage(menu.message1, (int)(Window.windowX/4), (int)(Window.windowY/4), (int)(Window.windowX/1.5), (int)(Window.windowY/3), null);
+					g.drawImage(OKButton.currentImage, (int)(Window.windowX/2 + 300) , (int)(Window.windowY/2 - 10), 90, 50, null);
+				}
+				
 			}
 			else
 			{
 				if(inDungeon)//Only paint if within dungeon
 				{
-					//paint stuff herez
 				}
 			}
 		}
-    }
+	}
 }

@@ -95,7 +95,7 @@ public class Player extends Character{
             JFrame frame = new JFrame("Test");
             KeyboardInput input = new KeyboardInput();
             Player player = new Player(1);
-            frame.add(input);
+            frame.addKeyListener(input);
             frame.setSize(200, 200);
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

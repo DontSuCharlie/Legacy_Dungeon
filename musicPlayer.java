@@ -5,24 +5,36 @@ import java.io.File;
 import javax.sound.sampled.*;
 import java.io.*;
 
-public class musicPlayer implements Runnable
+/*
+Using this is easy!
+make a new MusicPlayer object
+MusicPlayer musicPlayer = new MusicPlayer();
+
+When you want to play a sound that doesn't loop, do musicPlayer.playSound("nameOfSoundfile.wav");
+When you want to play music (or a looping sound), do musicPlayer.playMusic("nameOfSoundfile.wav");
+When you want to CHANGE the music, simple do
+
+musicPlayer.stop();//stops playing current song
+musicPlayer.playMusic("nameofSoundfile2.wav");//starts playing new song
+
+If you want to play multiple songs at once, do above^ w/o .stop().
+
+*/
+
+public class musicPlayer
 {
 	private String songPath;
-	private Thread musicThread;
-	public musicPlayer(String song)
-	{
-		songPath = song;
-	}
-	public void run()//this is what the thread will do. It's like a second main function
+	boolean playing = true;
+	AudioInputStream audio;
+	Clip clip;
+	public void playSound(String songPath)
 	{
 		try
 		{
-			AudioInputStream menu = AudioSystem.getAudioInputStream(new File(songPath));
-			Clip clip = AudioSystem.getClip();
-			clip.open(menu);
-			clip.loop(10);
-			//AudioClip menuTheme = Applet.newAudioClip(new URL("menu.wav"));
-			//menuTheme.play();
+			audio = AudioSystem.getAudioInputStream(new File(songPath));
+			clip = AudioSystem.getClip();
+			clip.open(audio);
+			clip.loop(0);
 		}
 		catch (UnsupportedAudioFileException e)
 		{
@@ -37,12 +49,30 @@ public class musicPlayer implements Runnable
 			System.out.println(e);
 		}
 	}
-	public void start()
+	public void stop()
 	{
-		if(musicThread == null)
+		clip.stop();
+	}
+	public void playMusic(String songPath)
+	{
+		try
 		{
-			musicThread = new Thread (this, "musicThread");
-			musicThread.start();
+			audio = AudioSystem.getAudioInputStream(new File(songPath));
+			clip = AudioSystem.getClip();
+			clip.open(audio);
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
+		}
+		catch (UnsupportedAudioFileException e)
+		{
+			System.out.println(e);
+		}
+		catch(LineUnavailableException e)
+		{
+			System.out.println(e);
+		}
+		catch(IOException e)
+		{
+			System.out.println(e);
 		}
 	}
 }

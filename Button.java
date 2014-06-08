@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 public class Button extends JComponent implements MouseListener
 {
+	musicPlayer musicPlayer = new musicPlayer();
 	BufferedImage notPressed;
 	BufferedImage mouseOver;
 	BufferedImage isPressed;
@@ -62,11 +63,14 @@ public class Button extends JComponent implements MouseListener
 	public void mousePressed(MouseEvent e)
 	{
 		currentImage = isPressed;
+		musicPlayer.playSound("sounds/button.wav");
 		pressed = true;
 		clicked = false;
 		repaint();
 	}
 	public void mouseReleased(MouseEvent e)
 	{
+		currentImage = notPressed;
+		repaint();
 	}
 }

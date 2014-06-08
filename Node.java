@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 public class Node extends JComponent implements MouseListener
 {	
+	musicPlayer musicPlayer = new musicPlayer();
 	boolean isClicked;
 	Mouse mouse;
 	int x;
@@ -16,8 +17,8 @@ public class Node extends JComponent implements MouseListener
 	static int difficulty;//Static because difficulty increases as game progresses
 	BufferedImage image;
 	ImageLoader imageLoader;
-	static int yLength = 20;//length of images of nodes
-	static int xLength = 20;//^
+	static int yLength = 10;//length of images of nodes
+	static int xLength = 10;//^
 	boolean inRange;
     public Node(int x, int y, int inputSkill, int inputTheme)
 	{
@@ -34,7 +35,7 @@ public class Node extends JComponent implements MouseListener
 		mouse = new Mouse();
 		//this.setSize(100, 100);
 		//this.setLocation(x, y);
-		setBounds(x-50, y-50, 100, 100);
+		setBounds(x-30, y-30, 30, 30);
 		addMouseListener(this);
 	}
 /*
@@ -85,7 +86,9 @@ Implementing Mouse Listener
 			status = 2;
 			image = loadNodeImage(status);
 			isClicked = true;
+			musicPlayer.playSound("sounds/button.wav");
 			LegacyDungeon.turnCounter++;
+			LegacyDungeon.inDungeon = true;
 			repaint();
 			
 	}
