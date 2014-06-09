@@ -1,6 +1,7 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
 import javax.swing.JFrame;
 
 /*
@@ -12,7 +13,7 @@ Character.java is the superclass of NPC.java, Player.java, and Enemy.java. All c
 5] Inventory
 6] Skills
 */
-public class Character extends JFrame
+public abstract class Character extends JFrame
 {
 //Note to self: Remember to update public or not based on how you want other classes to access this file
     //Field
@@ -30,13 +31,14 @@ public class Character extends JFrame
     //public int characterID;// Used to check between player or enemy.
     public String description;
     public DungeonTile currentTile;
-    public int altTimer = (int)((1200/LegacyDungeonPaintTest.DELAY - 800/LegacyDungeonPaintTest.DELAY)*Math.random() + 800/LegacyDungeonPaintTest.DELAY); //Ranges from .8 to 1.2 seconds for alt. image. Counter occurs every 25 ms.
+    public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
-    public int direction; // Used for direction of sprite and attacks 0=east, 1=north, 2=west, 3=south
+    public int direction; // Used for direction of sprite and attacks 0=east, 1=north, 2=west, 3=south, 4=NE, 5=NW, 6=SE, 7=SW
     public boolean isHit = false;
     //Used for length of hit animation. Currently set to 250 ms delay.
-    public int hitTimer = (int) (100/LegacyDungeonPaintTest.DELAY);
+    public int hitTimer = (int) (100/DungeonMain.DELAY);
     public int currentHitTime = hitTimer;
+    public boolean isFriendly;
     
    //Constructor
     
@@ -128,10 +130,188 @@ public class Character extends JFrame
         System.out.println(":<");
         DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
         DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].character = null;
-        LegacyDungeonPaintTest.recentDeadCharList.add(new DeadCharacter(this));
+        DungeonMain.recentDeadCharList.add(new DeadCharacter(this));
         //Sound
         //Animation
         //Remnant on Tile
+    }
+    
+    public void dealDamage(int damage, int targetX, int targetY, DungeonMain lDungeon)
+    {
+        HitNumber temp = new HitNumber(damage, targetX, targetY, lDungeon.dungeon.tileList[targetX][targetY].character.isFriendly);
+        DungeonMain.NumberList.add(temp);
+        lDungeon.dungeon.tileList[targetX][targetY].number = temp;
+        lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth -= damage;
+        lDungeon.dungeon.tileList[targetX][targetY].character.isHit = true;
+        //System.out.println(DungeonMain.dungeon.tileList[targetTileX][targetTileY].character.currentHealth);
+        if(lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth <= 0)
+        {
+            if(lDungeon.dungeon.tileList[targetX][targetY].character instanceof Jam)
+            {
+                ((Jam)(lDungeon.dungeon.tileList[targetX][targetY].character)).onDeath();        
+            }        
+        }
+    }
+    
+    public void AIRandom(DungeonMain lDungeon)
+    {
+        //Picks random spot to go to. Including walls.
+        double directionChoice = Math.random();
+        int deltaX = 0;
+        int deltaY = 0;
+        if (directionChoice < .25)
+        {
+            deltaX = 1;
+        }
+        else if(directionChoice < .5)
+        {
+            deltaX = -1;
+        }
+        
+        else if(directionChoice < .75)
+        {
+            deltaY = 1;
+        }
+        
+        else
+        {
+            deltaY = -1;
+        }
+        
+        charMove(deltaX, deltaY, this, lDungeon.dungeon);
+    }
+    
+    //Player can be replaced by an input target if allies become viable.
+    public void AIAggressiveSemiRandom(DungeonMain lDungeon)
+    {
+        //Attack player if in range. Only attacks if diagonal. (It's not a bug, it's a feature :>) Correct code commented.
+        //Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 || Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 
+        if (Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 && Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 )
+        {
+            System.out.println("punched!");
+            int damage = (int) (2 * Math.random()) + 1;
+            int targetTileX = lDungeon.dungeon.playerCharacter.currentTile.x;
+            int targetTileY = lDungeon.dungeon.playerCharacter.currentTile.y;
+            
+            //Set direction of this creature
+            //East
+            if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
+            {
+                this.direction = 0;
+            }
+            
+            //North
+            else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y == 1)
+            {
+                this.direction = 1;
+            }
+            
+            //West
+            else if(targetTileX - this.currentTile.x == -1 && targetTileY == this.currentTile.y )
+            {
+                this.direction = 2;
+            }
+            
+            //South
+            else if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
+            {
+                this.direction = 3;
+            }
+            
+            if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
+            {
+                this.direction = 4;
+            }
+            
+            if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == 1)
+            {
+                this.direction = 5;
+            }
+            
+            if(targetTileX - this.currentTile.x == 1 && targetTileY - this.currentTile.y == -1)
+            {
+                this.direction = 6;
+            }
+            
+            if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == -1)
+            {
+                this.direction = 7;
+            }
+            
+            dealDamage(damage, targetTileX, targetTileY, lDungeon);
+        }
+
+        
+        //Pursue target
+        else
+        {
+            double directionChoice = Math.random();
+            int deltaX = 0;
+            int deltaY = 0;
+            //Get closer in x axis.
+            if(directionChoice < .40)
+            {
+                int temp = lDungeon.dungeon.playerCharacter.currentTile.x - this.currentTile.x;
+                //If the player is further to the right, then go right.
+                if (temp > 0)
+                {
+                deltaX = 1;
+                }
+                
+                else if (temp < 0)
+                {
+                deltaX = -1;
+                }
+                
+                else if (temp == 0)
+                {
+                    //If on same x level, then randomly decide to left or right.
+                    deltaX = (int) (2* Math.random() - 1);
+                }
+                
+            }
+            
+            else if(directionChoice < .80)
+            {
+                int temp = lDungeon.dungeon.playerCharacter.currentTile.y - this.currentTile.y;
+                //If the player is further to the right, then go right.
+                if (temp > 0)
+                {
+                    deltaY = 1;
+                }
+                
+                else if (temp < 0)
+                {
+                    deltaY = -1;
+                }
+                
+                else if (temp == 0)
+                {
+                    //If on same x level, then randomly decide to left or right.
+                    deltaY = (int) (2 * Math.random() - 1);
+                }
+            }
+            
+            //20% chance of moving randomly
+            else if(directionChoice < .85)
+            {
+                deltaX = -1;
+            }
+            else if(directionChoice < .90)
+            {
+                deltaX = 1;
+            }
+            else if(directionChoice < .95)
+            {
+                deltaX = -1;
+            }
+            else if(directionChoice < 1)
+            {
+                deltaX = 1;
+            }
+            
+            charMove(deltaX, deltaY, this, lDungeon.dungeon);
+        }
     }
     
 /*    

@@ -11,7 +11,7 @@ public class WorldMap extends JPanel
 	ImageLoader imageLoader = new ImageLoader();
 	BufferedImage map = imageLoader.loadImage("images/map.png");
 	BufferedImage[] numImage = new BufferedImage[10];
-	String[] imageDirectory = {"0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png"}; 
+	String[] imageDirectory = {"images/0.png", "images/1.png", "images/2.png", "images/3.png", "images/4.png", "images/5.png", "images/6.png", "images/7.png", "images/8.png", "images/9.png"}; 
 	static ArrayList<Node> nodeList = new ArrayList<Node>();//array list of nodes
 	int numNodes, innerNodes, midNodes, outerNodes, nodesLeft;//number of nodes to be made
 	boolean concentrateNodes;

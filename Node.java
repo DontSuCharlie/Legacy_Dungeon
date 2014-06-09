@@ -43,7 +43,7 @@ Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 */
 	public BufferedImage loadNodeImage(int nodeStatus)
 	{
-		BufferedImage node = imageLoader.loadImage("Node" + nodeStatus + ".png");
+		BufferedImage node = imageLoader.loadImage("images/Node" + nodeStatus + ".png");
 		return node;
 	}
 /*

@@ -47,6 +47,7 @@ public class LegacyDungeon extends JPanel
 		maxAreaPolygon = new MaxAreaPolygon();//in charge of drawing the polygon in worldmap
 		validList = new ArrayList<Node>();//list of nodes that will be fed into maxareapolygon to draw the polygon int he worldmap
 	}
+	
 	public static void main(String[] args)
 	{
 		running = true;//means the game is running
@@ -82,7 +83,7 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 	{
 		//game.setFont(gameFont);
 		//musicPlayer.start();
-		musicPlayer.playMusic("menu.wav");
+		musicPlayer.playMusic("sounds/menu.wav");
 		menu = new Menu();
 		Window.window.add(menu.newGameButton);
 		Window.window.add(menu.loadGameButton);
@@ -165,9 +166,11 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 			System.out.println("You're in the dungeon!");
 			try
 			{
-				dungeonMain runDungeon = new dungeonMain();
-				runDungeon.main(new String[1]);
+				DungeonMain runDungeon = new DungeonMain();
+				//window.window.add(runDungeon);
 				inWorldMap = false;
+				runDungeon.dungeonLoop();
+
 				//Window.window.remove(game);
 				//runDungeon.runThisMofo();
 				//System.out.println("yea");
@@ -181,10 +184,6 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 			catch(IllegalAccessException e)
 			{
 				System.out.println("Illegal Accesss");
-			}
-			catch(InterruptedException e)
-			{
-				System.out.println("interrupt");
 			}
 		}
 	}

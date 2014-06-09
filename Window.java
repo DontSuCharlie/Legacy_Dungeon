@@ -44,8 +44,11 @@ public class Window extends JPanel
 	public static void createWindow()
 	{
 		//Reads save file to see current resolution; otherwise goes to default size
-		windowX = (int)(screenRes.getWidth()/2);
-		windowY = (int)(screenRes.getWidth()/2.2);//set Y to width because I wanted a square
+		//windowX = (int)(screenRes.getWidth()/2);
+		//windowY = (int)(screenRes.getWidth()/2.2);//set Y to width because I wanted a square
+		
+	    windowX = (int)(screenRes.getWidth());
+	    windowY = (int)(screenRes.getHeight());//No, I like it fitting the screen.
 		window.setSize(windowX, windowY);
 		
 		//Set default to center
@@ -59,5 +62,7 @@ public class Window extends JPanel
 		window.setLocation(windowXPos, windowYPos);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//closes program when "X" button is pressed
 		window.setVisible(true);
+	    KeyboardInput input = new KeyboardInput(); //Used for keyboard input
+	    window.addKeyListener(input);
     }
 }

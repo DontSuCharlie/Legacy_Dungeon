@@ -1,8 +1,11 @@
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.AudioSystem;
+
 import java.io.File;
+
 import javax.sound.sampled.*;
+
 import java.io.*;
 
 /*
@@ -27,6 +30,7 @@ public class musicPlayer
 	boolean playing = true;
 	AudioInputStream audio;
 	Clip clip;
+	
 	public void playSound(String songPath)
 	{
 		try

@@ -68,6 +68,7 @@ public class DungeonRunner extends JPanel
        enemyList = new ArrayList<Enemy>();
        spawningEnemyList = new ArrayList<Enemy>();
        spawningEnemyList.add(new Jam());
+       spawningEnemyList.add(new CombatJam());
        this.assignTilePos(numTiles);
        this.spawnPlayer();       
        this.spawnStairs();
@@ -76,6 +77,7 @@ public class DungeonRunner extends JPanel
       
        //Number of floors is based on the difficulty level
    }
+   
 //////////////////////////////////METHODS HERE///////////////////////////////////////
 /* List of Methods:
 Method 0: .checkSpace() runs every time the character moves. It makes sure the player doesn't sit on the same tile as a monster.
@@ -94,7 +96,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //Remove when done testing.
         DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100,1,null);
         //generateItems();
-    
     
     }
 
