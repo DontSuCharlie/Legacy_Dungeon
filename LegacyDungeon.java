@@ -242,8 +242,8 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 					yPosition++;
 				if(yPosition > 50)
 					yPosition--;							
-				g.setColor(new Color(255, 255, 255));
-				g.fillOval(xPosition, yPosition, 100, 100);
+				g.setColor(Color.WHITE);
+				g.fillOval(0, 0 , 100, 100);
 
 				//4
 				for(int i = 0; i < world.nodeList.size(); i++)

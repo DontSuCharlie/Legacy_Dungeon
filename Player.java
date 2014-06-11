@@ -8,7 +8,8 @@ public class Player extends Character{
     int xMovement;
     int yMovement;
     int goldAmount;
-    
+    public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
+
     
     public Player(int inputRiches)
     {
@@ -18,6 +19,8 @@ public class Player extends Character{
         goldAmount = inputRiches;
         description = "You";
         isFriendly = true;
+        maxHealth = 100;
+        currentHealth = maxHealth;
     }
     
     //Basic punch
@@ -94,14 +97,46 @@ public class Player extends Character{
     
     public BufferedImage getImage()
     {
-        switch(this.direction)
-        {
-            case 0: return DungeonMain.playerImageEast;
-            case 1: return DungeonMain.playerImageNorth;
-            case 2: return DungeonMain.playerImageWest;
-            case 3: return DungeonMain.playerImageSouth;
-            default: return DungeonMain.playerImageEast;
-        }
+            Image slimeImage = null;
+            if (this.imageID == 0 && this.isHit == false)
+            {
+                switch(this.direction)
+                {
+                case 0: return DungeonMain.playerImageEast;
+                case 1: return DungeonMain.playerImageNorth;
+                case 2: return DungeonMain.playerImageWest;
+                case 3: return DungeonMain.playerImageSouth;
+                default: return DungeonMain.playerImageEast;
+                }
+            }
+            //Jam alt. image
+            else if(this.imageID == 1 && this.isHit == false)
+            {
+                switch(this.direction)
+                {
+                case 0: return DungeonMain.playerImageEastAlt;
+                case 1: return DungeonMain.playerImageNorthAlt;
+                case 2: return DungeonMain.playerImageWestAlt;
+                case 3: return DungeonMain.playerImageSouthAlt;
+                default: return DungeonMain.playerImageEastAlt;
+                }
+            }
+            
+            else if(this.isHit == true)
+            {
+                switch(this.direction)
+                {
+                case 0: return DungeonMain.playerImageEastHit;
+                //case 1: return DungeonMain.playerImageNorthHit;
+                case 2: return DungeonMain.playerImageWestHit;
+                //case 3: return DungeonMain.playerImageSouthHit;
+                default: return DungeonMain.playerImageEastHit;
+                }
+            }
+            else 
+            {
+                return DungeonMain.playerImageEast;
+            }
     }
     
     public void attack(DungeonMain lDungeon)
@@ -165,7 +200,9 @@ public class Player extends Character{
             System.out.println("NEXT LEVEL");
             //lDungeon.superPlayer.goldCount = lDungeon.dungeon.playerCharacter.riches;
             lDungeon.dungeon.currentFloor++;                    
-            lDungeon.dungeon = new DungeonRunner(1,1,1,100,100,lDungeon.dungeon.currentFloor, lDungeon.dungeon.playerCharacter);
+            lDungeon.dungeon.spawningEnemyList.get(0).spawnRate -= .1;
+            lDungeon.dungeon.spawningEnemyList.get(1).spawnRate += .1;
+            lDungeon.dungeon = new DungeonRunner(1,1,1,100,100,lDungeon.dungeon.currentFloor, lDungeon.dungeon.playerCharacter, lDungeon.dungeon.spawningEnemyList);
             lDungeon.tileArray = DungeonRunner.tileList;
             //isChange = true;
             

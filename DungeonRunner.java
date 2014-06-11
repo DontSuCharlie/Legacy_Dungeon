@@ -37,10 +37,10 @@ public class DungeonRunner extends JPanel
     //Used to pick a tile for enemy generation, player generation, item generation, etc. Random tile should be found in DRunner
     private ArrayList<DungeonTile> checkList;
     static public ArrayList<Enemy> enemyList;
-    private ArrayList<Enemy> spawningEnemyList;
+    ArrayList<Enemy> spawningEnemyList = new ArrayList<Enemy>();
     
    //Constructor
-   public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput, int currentFloorInput, Player playerCharacterInput) throws InstantiationException, IllegalAccessException//Takes in the following parameters from NodeWorld.java
+   public DungeonRunner(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput, int currentFloorInput, Player playerCharacterInput, ArrayList<Enemy> oldEnemySpawningList) throws InstantiationException, IllegalAccessException//Takes in the following parameters from NodeWorld.java
    {
        this.theme = theme;
        this.skillID = skillID;
@@ -66,9 +66,17 @@ public class DungeonRunner extends JPanel
        connectorList = new ArrayList<DungeonTile>();
        checkList = new ArrayList<DungeonTile>();
        enemyList = new ArrayList<Enemy>();
-       spawningEnemyList = new ArrayList<Enemy>();
-       spawningEnemyList.add(new Jam());
-       spawningEnemyList.add(new CombatJam());
+       if (oldEnemySpawningList instanceof ArrayList)
+       {
+           spawningEnemyList = oldEnemySpawningList;
+       }
+       
+       else
+       {
+           spawningEnemyList = new ArrayList<Enemy>();
+           spawningEnemyList.add(new Jam());
+           spawningEnemyList.add(new CombatJam());
+       }
        this.assignTilePos(numTiles);
        this.spawnPlayer();       
        this.spawnStairs();
@@ -94,7 +102,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     public static void main(String[] args) throws InstantiationException, IllegalAccessException
     {
         //Remove when done testing.
-        DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100,1,null);
+        DungeonRunner dungeon = new DungeonRunner(1,1,1,100,100,1,null, null);
         //generateItems();
     
     }
