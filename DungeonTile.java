@@ -12,7 +12,6 @@ public class DungeonTile
     //int characterID; //0 = nothing, 1 = player, 2 = enemy
     Character character;
     DeadCharacter deadCharacter;
-    Projectile projectile;
     public BufferedImage tileImage;
     public BufferedImage itemImage;
     public BufferedImage charImage;
@@ -46,7 +45,8 @@ public class DungeonTile
         connectionCap = 2;
         itemID = 0;
         //characterID = 0;
-
+        //Not enough memory to do this for 1000 tiles. 
+        //tileImage = loadTileImage(tileID);
     }
 
     // main class for testing only.

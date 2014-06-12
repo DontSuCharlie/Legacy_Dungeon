@@ -22,10 +22,10 @@ public class CombatJam extends Jam{
         {
             switch(this.direction)
             {
-            case 6: return DungeonMain.combatSlimeImageEast;
-            case 8: return DungeonMain.combatSlimeImageNorth;
-            case 4: return DungeonMain.combatSlimeImageWest;
-            case 2: return DungeonMain.combatSlimeImageSouth;
+            case 0: return DungeonMain.combatSlimeImageEast;
+            case 1: return DungeonMain.combatSlimeImageNorth;
+            case 2: return DungeonMain.combatSlimeImageWest;
+            case 3: return DungeonMain.combatSlimeImageSouth;
             default: return DungeonMain.combatSlimeImageEast;
             }
         }
@@ -34,10 +34,10 @@ public class CombatJam extends Jam{
         {
             switch(this.direction)
             {
-            case 6: return DungeonMain.combatSlimeImageEastWalk;
-            case 8: return DungeonMain.combatSlimeImageNorthWalk;
-            case 4: return DungeonMain.combatSlimeImageWestWalk;
-            case 2: return DungeonMain.combatSlimeImageSouthWalk;
+            case 0: return DungeonMain.combatSlimeImageEastWalk;
+            case 1: return DungeonMain.combatSlimeImageNorthWalk;
+            case 2: return DungeonMain.combatSlimeImageWestWalk;
+            case 3: return DungeonMain.combatSlimeImageSouthWalk;
             default: return DungeonMain.combatSlimeImageEastWalk;
             }
         }
@@ -46,10 +46,10 @@ public class CombatJam extends Jam{
         {
             switch(this.direction)
             {
-            case 6: return DungeonMain.slimeImageEastHit;
-            case 8: return DungeonMain.slimeImageNorthHit;
-            case 4: return DungeonMain.slimeImageWestHit;
-            case 2: return DungeonMain.slimeImageSouthHit;
+            case 0: return DungeonMain.slimeImageEastHit;
+            case 1: return DungeonMain.slimeImageNorthHit;
+            case 2: return DungeonMain.slimeImageWestHit;
+            case 3: return DungeonMain.slimeImageSouthHit;
             default: return DungeonMain.slimeImageEastHit;
             }
         }

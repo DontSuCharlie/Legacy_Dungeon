@@ -13,8 +13,7 @@ Character.java is the superclass of NPC.java, Player.java, and Enemy.java. All c
 5] Inventory
 6] Skills
 */
-//lol probably should not extend skills
-public abstract class Character extends Skills
+public abstract class Character extends JFrame
 {
 //Note to self: Remember to update public or not based on how you want other classes to access this file
     //Field
@@ -34,7 +33,7 @@ public abstract class Character extends Skills
     public DungeonTile currentTile;
     public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
-    public int direction; // Used for direction of sprite and attacks 6=east, 8=north, 4=west, 2=south, 9=NE, 7=NW, 3=SE, 1=SW
+    public int direction; // Used for direction of sprite and attacks 0=east, 1=north, 2=west, 3=south, 4=NE, 5=NW, 6=SE, 7=SW
     public boolean isHit = false;
     //Used for length of hit animation. Currently set to 250 ms delay.
     public int hitTimer = (int) (100/DungeonMain.DELAY);
@@ -79,19 +78,19 @@ public abstract class Character extends Skills
     {    
         if(deltaX > 0)
         {
-            direction = 6;
+            direction = 0;
         }
         else if(deltaX < 0)
         {
-            direction = 4;
+            direction = 2;
         }
         else if(deltaY > 0)
         {
-            direction = 2;
+            direction = 3;
         }
         else if(deltaY < 0)
         {
-            direction = 8;
+            direction = 1;
         }
         else
         {
@@ -116,7 +115,7 @@ public abstract class Character extends Skills
                    dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].character = character;
                    character.currentTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
            
-                   //HMMMM. IS THIS CAUSING THE ERROR?  nop
+
                    System.out.println(character.getClass().getName()+ " moved to " + character.currentTile);
                    //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
                }
@@ -147,15 +146,13 @@ public abstract class Character extends Skills
         //System.out.println(DungeonMain.dungeon.tileList[targetTileX][targetTileY].character.currentHealth);
         if(lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth <= 0)
         {
-            lDungeon.dungeon.tileList[targetX][targetY].character.onDeath();
-            /*
             if(lDungeon.dungeon.tileList[targetX][targetY].character instanceof Jam)
             {
                 ((Jam)(lDungeon.dungeon.tileList[targetX][targetY].character)).onDeath();        
-            } */       
+            }        
         }
     }
-    ////////////////////////////////////////////////AI Types/////////////////////////////////////////////
+    
     public void AIRandom(DungeonMain lDungeon)
     {
         //Picks random spot to go to. Including walls.
