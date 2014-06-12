@@ -17,7 +17,7 @@ public class Player extends Character{
         yMovement = 0;
         //characterID = 1;
         goldAmount = inputRiches;
-        description = "You";
+        String description = "You";
         isFriendly = true;
         maxHealth = 100;
         currentHealth = maxHealth;
@@ -43,7 +43,6 @@ public class Player extends Character{
        //PLEASE NOTE THAT UP HAS LOWER Y VALUE. DOWN HAS GREATER Y VALUE.
        else if (KeyboardInput.boolIsUp == true)
        {
-           System.out.println("Going up?");
            KeyboardInput.boolIsUp = false;
            return -1;        
        }
@@ -102,10 +101,10 @@ public class Player extends Character{
             {
                 switch(this.direction)
                 {
-                case 0: return DungeonMain.playerImageEast;
-                case 1: return DungeonMain.playerImageNorth;
-                case 2: return DungeonMain.playerImageWest;
-                case 3: return DungeonMain.playerImageSouth;
+                case 6: return DungeonMain.playerImageEast;
+                case 8: return DungeonMain.playerImageNorth;
+                case 4: return DungeonMain.playerImageWest;
+                case 2: return DungeonMain.playerImageSouth;
                 default: return DungeonMain.playerImageEast;
                 }
             }
@@ -114,10 +113,10 @@ public class Player extends Character{
             {
                 switch(this.direction)
                 {
-                case 0: return DungeonMain.playerImageEastAlt;
-                case 1: return DungeonMain.playerImageNorthAlt;
-                case 2: return DungeonMain.playerImageWestAlt;
-                case 3: return DungeonMain.playerImageSouthAlt;
+                case 6: return DungeonMain.playerImageEastAlt;
+                case 8: return DungeonMain.playerImageNorthAlt;
+                case 4: return DungeonMain.playerImageWestAlt;
+                case 2: return DungeonMain.playerImageSouthAlt;
                 default: return DungeonMain.playerImageEastAlt;
                 }
             }
@@ -126,9 +125,9 @@ public class Player extends Character{
             {
                 switch(this.direction)
                 {
-                case 0: return DungeonMain.playerImageEastHit;
+                case 6: return DungeonMain.playerImageEastHit;
                 //case 1: return DungeonMain.playerImageNorthHit;
-                case 2: return DungeonMain.playerImageWestHit;
+                case 4: return DungeonMain.playerImageWestHit;
                 //case 3: return DungeonMain.playerImageSouthHit;
                 default: return DungeonMain.playerImageEastHit;
                 }
@@ -151,13 +150,13 @@ public class Player extends Character{
     
         switch(lDungeon.dungeon.playerCharacter.direction)
         {
-            case 0: targetTileX += 1;
+            case 6: targetTileX += 1;
                 break;
-            case 1: targetTileY -= 1;
+            case 8: targetTileY -= 1;
                 break;
-            case 2: targetTileX -= 1;
+            case 4: targetTileX -= 1;
                 break;
-            case 3: targetTileY += 1;
+            case 2: targetTileY += 1;
                 break;
             default: targetTileX += 1;
         }
@@ -229,6 +228,11 @@ public class Player extends Character{
         System.out.println(lDungeon.dungeon.playerCharacter.currentTile);
         KeyboardInput.boolIsMoving = false;
         lDungeon.isEnemyTurn = true;
+    }
+    
+    public void useSkill1(DungeonMain lDungeon)
+    {
+        Fireball(lDungeon, this);
     }
     
         

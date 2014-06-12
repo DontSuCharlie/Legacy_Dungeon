@@ -18,6 +18,7 @@ public class DungeonMain extends JPanel implements Runnable
     static ArrayList<DeadCharacter> recentDeadCharList = new ArrayList<DeadCharacter>();
     ArrayList<Enemy> activeEnemyList = new ArrayList<Enemy>();
     static ArrayList<Number> NumberList = new ArrayList<Number>();
+    static ArrayList<Projectile> ProjectileList = new ArrayList<Projectile>();
     DungeonTile[][] tileArray;
     static JFrame window;
     WorldMap world;
@@ -26,6 +27,7 @@ public class DungeonMain extends JPanel implements Runnable
     //private Timer timer;
     final static int DELAY = 25;
     private Thread animator;
+    boolean screenShakeOn;
     
     static ImageLoader imageLoader = new ImageLoader();
     BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
@@ -125,12 +127,7 @@ public class DungeonMain extends JPanel implements Runnable
         tileArray = DungeonRunner.tileList;
     }
     
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException
-    {
-        //Testing
-        DungeonMain game = new DungeonMain();
-        game.dungeonLoop();
-    }
+
     
     public void dungeonLoop() throws InstantiationException, IllegalAccessException
     {
@@ -157,18 +154,30 @@ public class DungeonMain extends JPanel implements Runnable
                 dungeon.playerCharacter.interact(this);
             }
             
+            if(KeyboardInput.boolIs1 == true)
+            {
+                dungeon.playerCharacter.useSkill1(this);
+                KeyboardInput.boolIs1 = false;
+            }
+            
+            if(KeyboardInput.diagnostic == true)
+            {
+                System.out.println(dungeon.playerCharacter.currentTile.x + " " + dungeon.playerCharacter.currentTile.y);
+            }
             //Enemy actions
+            
+            for (Projectile i: ProjectileList)
+            {
+                i.act(this);
+            }
+            
             while(isEnemyTurn)
             {
                 for (Enemy i: dungeon.enemyList)
                 {
-                    if(i instanceof Jam && ((Jam)i).isActive == true)
-                    {
-                        ((Jam)i).act(this);  
-                    }   
-                    
-                    //else if other enemies
+                    i.act(this);
                 }
+                //This can be changed if speed changes occur.
                 isEnemyTurn = false;
             }       
         }
@@ -206,7 +215,17 @@ public class DungeonMain extends JPanel implements Runnable
        int screenShakeX = 0;
        int screenShakeY = 0;
        
-       if(recentDeadCharList.size() != 0)
+       if(recentDeadCharList.size() != 0 || dungeon.playerCharacter.isHit)
+       {
+           screenShakeOn = true;
+       }
+       
+       else
+       {
+           screenShakeOn = false;
+       }
+       
+       if(screenShakeOn)
        {
            screenShakeX = (int)(20 * Math.random() - 10);
            screenShakeY = (int)(20 * Math.random() - 10);
@@ -322,6 +341,12 @@ public class DungeonMain extends JPanel implements Runnable
                        g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                    }
                }
+               
+               if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)
+               {
+                   
+               }
+               
                //Draw floating numbers
                if(drawnTile instanceof DungeonTile && drawnTile.number instanceof Number)
                {
@@ -478,6 +503,7 @@ public class DungeonMain extends JPanel implements Runnable
                        }
                        }
                    
+                   //Floating gold numbers.
                    if(drawnTile.number instanceof GoldNumber)
                    {
                        int goldDisplayed = ((GoldNumber)drawnTile.number).amount;
@@ -500,9 +526,7 @@ public class DungeonMain extends JPanel implements Runnable
                                goldDisplayed = 0;
                                numCounter++;
                                }
-                           
-                           //Even more inefficient. More a test.
-                               
+                                                          
                            if(oneDigit == 0)
                            {
                                image = num0G;
@@ -980,4 +1004,11 @@ public class DungeonMain extends JPanel implements Runnable
             }
         }
     }
+   
+   public static void main(String[] args) throws InstantiationException, IllegalAccessException
+   {
+       //Testing
+       DungeonMain game = new DungeonMain();
+       game.dungeonLoop();
+   }
 }

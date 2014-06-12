@@ -12,7 +12,7 @@ public class Enemy extends Character{
         
     }
     
-    public void act()
+    public void act(DungeonMain lDungeon)
     {
         System.out.println("lol");
     }

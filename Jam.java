@@ -21,10 +21,10 @@ public class Jam extends Enemy
         {
             switch(this.direction)
             {
-            case 0: return DungeonMain.slimeImageEast;
-            case 1: return DungeonMain.slimeImageNorth;
-            case 2: return DungeonMain.slimeImageWest;
-            case 3: return DungeonMain.slimeImageSouth;
+            case 6: return DungeonMain.slimeImageEast;
+            case 8: return DungeonMain.slimeImageNorth;
+            case 4: return DungeonMain.slimeImageWest;
+            case 2: return DungeonMain.slimeImageSouth;
             default: return DungeonMain.slimeImageEast;
             }
         }
@@ -33,10 +33,10 @@ public class Jam extends Enemy
         {
             switch(this.direction)
             {
-            case 0: return DungeonMain.slimeImageEastWalk;
-            case 1: return DungeonMain.slimeImageNorthWalk;
-            case 2: return DungeonMain.slimeImageWestWalk;
-            case 3: return DungeonMain.slimeImageSouthWalk;
+            case 6: return DungeonMain.slimeImageEastWalk;
+            case 8: return DungeonMain.slimeImageNorthWalk;
+            case 4: return DungeonMain.slimeImageWestWalk;
+            case 2: return DungeonMain.slimeImageSouthWalk;
             default: return DungeonMain.slimeImageEastWalk;
             }
         }
@@ -45,10 +45,10 @@ public class Jam extends Enemy
         {
             switch(this.direction)
             {
-            case 0: return DungeonMain.slimeImageEastHit;
-            case 1: return DungeonMain.slimeImageNorthHit;
-            case 2: return DungeonMain.slimeImageWestHit;
-            case 3: return DungeonMain.slimeImageSouthHit;
+            case 6: return DungeonMain.slimeImageEastHit;
+            case 8: return DungeonMain.slimeImageNorthHit;
+            case 4: return DungeonMain.slimeImageWestHit;
+            case 2: return DungeonMain.slimeImageSouthHit;
             default: return DungeonMain.slimeImageEastHit;
             }
         }
