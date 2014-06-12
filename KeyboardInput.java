@@ -5,9 +5,9 @@ import java.awt.*;
 //Used to get keyboard input, similar in use to imageLoader
 public class KeyboardInput implements KeyListener
 {
-	public static boolean boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIsMoving;
-	static boolean[] actionArray = {boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting};
-	int[] keyArray = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE, KeyEvent.VK_SHIFT};
+	public static boolean boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIsMoving, boolIs1, diagnostic;
+	static boolean[] actionArray = {boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIs1, diagnostic};
+	int[] keyArray = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE, KeyEvent.VK_SHIFT, KeyEvent.VK_1, KeyEvent.VK_TAB};
     public static int key;
 	
 	public static void update(boolean[] actionArray)
@@ -24,6 +24,10 @@ public class KeyboardInput implements KeyListener
 			boolIsAttack = true;
 		if(actionArray[5])
 			boolIsInteracting = true;
+		if(actionArray[6])
+		    boolIs1 = true;
+		if(actionArray[7])
+		    diagnostic = true;
 	}
 	
 	public static void main(String[] args)

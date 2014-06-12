@@ -10,7 +10,7 @@ DungeonRunner.java will tell LegacyDungeon.java (the main runner) what to displa
 //difficulty should also increase with skill level
 //skills level can increase by # of monsters
 //Remove extends JPanel?
-public class DungeonRunner extends JPanel
+public class DungeonRunner
 {
     //Fields
     int numMonsters; //# of monsters
@@ -46,7 +46,7 @@ public class DungeonRunner extends JPanel
        this.skillID = skillID;
        this.difficulty = difficulty;//insert random factor that will adjust difficulty
        currentFloor = currentFloorInput;
-       //Will put this in legacyDungeon
+       //Will put this in legacyDungeon. Fix next line later
        numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
        //Remove this stuff later. Just for testing.
        xLength = xLengthInput;
@@ -208,7 +208,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             }
             
             //FOR TESTING
-            System.out.println(possibleTile.x + " " + possibleTile.y);
+            //System.out.println(possibleTile.x + " " + possibleTile.y);
         }    
     
         //Must fill remaining area with walls. Same unneeded note as above.
@@ -295,112 +295,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         */
     }
   
-    private boolean pickTileCoordinate(DungeonTile[][] choiceList)
-    {
-        //Pick a random tile from the list. 
-        int randX = pickTileCoordinateX();
-        int randY = pickTileCoordinateY();
-        if (choiceList[randX][randY] instanceof DungeonTile)
-        {
-            return true;
-        }
-        
-        else return false;
-    }
-    
-//Perhaps inefficient?
-    private int pickTileCoordinateX()
-    {
-        //Pick a random int from the range (minX - maxX)
-        int x = minX + (int) ((maxX-minX + 1)* Math.random());
-        return x;
-    }
-    
-    private int pickTileCoordinateY()
-    {
-        //Pick a random int from the range (minY - maxY)
-        int y = minY + (int) ((maxY-minY + 1)* Math.random());
-        return y;
-    }
-    
-/*    private boolean checkValidAdjacentTile(int xInput, int yInput)
-    {
-        int x = xInput;
-        int y = yInput;       
-        
-        while (true)
-        {
-            double randomNumber = Math.random();
-            if (randomNumber <= .25)
-            {
-                x++;
-            }
-        
-            else if (randomNumber <= .5)
-            {
-                x--;
-            }
-        
-            else if (randomNumber <= .75)
-            {
-                y++;
-            }
-        
-            else if (randomNumber < 1)
-            {
-                y--;
-            }
-        
-            if (tileList[x][y] instanceof DungeonTile)
-            {
-                //Will restart loop if this tile is occupied
-                return true;
-            }
-                //Breaks loop.
-                return false;
-            
-        }
-    }*/
-    /*
-    private int  checkValidAdjacentTileX(int xInput)
-    {
-    
-        
-        {
-            double randomNumber = Math.random();
-            if (randomNumber <= .25)
-            {
-                xInput++;
-            }
-        
-            else if (randomNumber <= .5)
-            {
-                xInput--;
-            }
-        
-            return xInput;
-        }
-    }
-    
-    private int checkValidAdjacentTileY(int yInput)
-    {
-        int y = yInput;       
-        
-        {
-            double randomNumber = Math.random();
-            if (randomNumber <= .5)
-            {
-                y++;
-            }
-        
-            else if (randomNumber < 1)
-            {
-                y--;
-            }
-            return y;
-        }
-    }
-    */
     private DungeonTile getAdjacentTile(int xInput, int yInput)
     {         
             double randomNumber = Math.random();
@@ -512,7 +406,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         playerCharacter.currentTile = checkList.get(tileNumber);
         tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].character = playerCharacter;
         checkList.get(tileNumber).character = playerCharacter;
-        System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
+        //System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
         
     }
     
@@ -537,7 +431,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         
         tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].tileID = 2;
         checkList.get(tileNumber).tileID = 2;
-        System.out.println("Stairs are at: " + checkList.get(tileNumber));
+        //System.out.println("Stairs are at: " + checkList.get(tileNumber));
         
     }
     
@@ -596,8 +490,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             
             }
         }
-    }
-    
+    }    
     //When generating dungeons, we choose which sets of enemies spawn with these ArrayLists.
     private void spawnEnemies(ArrayList<Enemy> enemyTypes) throws InstantiationException, IllegalAccessException
     {
