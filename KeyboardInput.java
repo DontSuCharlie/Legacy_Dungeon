@@ -48,6 +48,7 @@ public class KeyboardInput implements KeyListener
 		{
 			if(keyArray[i] == key)
 			{
+			    System.out.println(i);
 				actionArray[i] = true;
 				update(actionArray);
 				if(i <4)//all arrow keys have indices less than 4

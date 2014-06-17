@@ -55,18 +55,18 @@ public abstract class Character extends Skills
  /*   
     public int CopiedCheckTile(int deltaX, int deltaY, DungeonTile occupiedTile)
     {
-        for (int i = 0; i < DungeonRunnerV2.tileList.size(); i++)
+        for (int i = 0; i < DungeonBuilderV2.tileList.size(); i++)
         {
-            //Will use the static ArrayList<DungeonTile> tileList from DungeonRunnerV2.java
-            if ((DungeonRunnerV2.tileList.get(i).x == (occupiedTile.x + deltaX) ) && (DungeonRunnerV2.tileList.get(i).y == occupiedTile.y + deltaY))
+            //Will use the static ArrayList<DungeonTile> tileList from DungeonBuilderV2.java
+            if ((DungeonBuilderV2.tileList.get(i).x == (occupiedTile.x + deltaX) ) && (DungeonBuilderV2.tileList.get(i).y == occupiedTile.y + deltaY))
             {
                 // If another character is there, return the ID for a wall.
-                if (DungeonRunnerV2.tileList.get(i).characterID != 0)
+                if (DungeonBuilderV2.tileList.get(i).characterID != 0)
                 {
                     return 0;               
                 }
                 
-                return DungeonRunnerV2.tileList.get(i).tileID;
+                return DungeonBuilderV2.tileList.get(i).tileID;
             }
         } 
         //If it gets here, then the tile is not found.
@@ -75,7 +75,7 @@ public abstract class Character extends Skills
         
     }
     */
-    public DungeonTile charMove(int deltaX, int deltaY, Character character, DungeonRunner dungeonChar)
+    public DungeonTile charMove(int deltaX, int deltaY, Character character, DungeonBuilder dungeonChar)
     {    
         if(deltaX > 0)
         {
@@ -129,8 +129,8 @@ public abstract class Character extends Skills
     public void onDeath()
     {
         System.out.println(":<");
-        DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
-        DungeonRunner.tileList[this.currentTile.x][this.currentTile.y].character = null;
+        DungeonBuilder.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
+        DungeonBuilder.tileList[this.currentTile.x][this.currentTile.y].character = null;
         DungeonMain.recentDeadCharList.add(new DeadCharacter(this));
         //Sound
         //Animation

@@ -17,10 +17,8 @@ public class DungeonMain extends JPanel implements Runnable
 	private Thread animator;//new thread
 	boolean screenShakeOn;//if true, screen will be shaking; else, screen won't be shaking
 	static ImageLoader imageLoader = new ImageLoader();//in charge of loading images
-	//BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
+	BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
 	BufferedImage money = imageLoader.loadImage("images/coinGold.png");
-	//BufferedImage tileImage1 = imageLoader.loadImage("images/tileImage1.png");
-	//BufferedImage tileImage2 = imageLoader.loadImage("images/tileImage2.png");
 	static BufferedImage playerImageEast = imageLoader.loadImage("images/playerEast.png");
 	static BufferedImage playerImageWest = imageLoader.loadImage("images/playerWest.png");
 	static BufferedImage playerImageNorth = imageLoader.loadImage("images/playerNorth.png");
@@ -68,7 +66,6 @@ public class DungeonMain extends JPanel implements Runnable
 	BufferedImage[] num = new BufferedImage[10];
 	BufferedImage[] numG = new BufferedImage[10];
 	BufferedImage[] numR = new BufferedImage[10];
-	BufferedImage[] tileImagesDefault = new BufferedImage[10];
 	BufferedImage plusG = imageLoader.loadImage("images/PlusG.png");
 	BufferedImage minus = imageLoader.loadImage("images/Minus.png");
 	BufferedImage minusR = imageLoader.loadImage("images/MinusR.png");
@@ -78,22 +75,18 @@ public class DungeonMain extends JPanel implements Runnable
 	{
 		window = new JFrame("Hazardous Laboratory");
 		dungeon = new DungeonBuilder(1,1,1,100,100,1,null, null);
-		for(int i = 0; i <= 9; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			num[i] = imageLoader.loadImage("images/" + i + ".png");
 		}
-		for(int i = 0; i <= 9; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			numR[i] = imageLoader.loadImage("images/" + i + "R.png");
 		}
-		for(int i = 0; i <= 9; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			numG[i] = imageLoader.loadImage("images/" + i + "G.png");
 		}
-	    for(int i = 0; i <= 2; i++)
-	    {
-	        tileImagesDefault[i] = imageLoader.loadImage("images/DungeonTile" + i + ".png");
-	    }
 	}
 	//Basically runs the dungeonmain object. It goes into a loop
 	public void dungeonLoop() throws InstantiationException, IllegalAccessException
@@ -180,11 +173,7 @@ public class DungeonMain extends JPanel implements Runnable
 				}
 				// Draws a row of tiles.
 				if (!(drawnTile instanceof DungeonTile))
-					image = tileImagesDefault[0];
-				else
-				{
-				    image = tileImagesDefault[drawnTile.tileID];
-				}
+					image = tileImage0;
 				g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
 
 				//Draw bodies :<
@@ -257,7 +246,6 @@ public class DungeonMain extends JPanel implements Runnable
 						g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
 					}
 				}
-				
 				if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)
 				{
 
@@ -306,20 +294,19 @@ public class DungeonMain extends JPanel implements Runnable
 						
 						//Using the timer for y coordinates allow it to float up.
 						g.drawImage(image, i * tileLengthX - numCounter * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - numCounter * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, image.getWidth(null), image.getHeight(null), null);
-					
-    					//Draws corresponding minuses
-    					if(!((HitNumber)drawnTile.number).targetIsFriendly)
-    					{
-    						g.drawImage(minus, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
-    					}
-    					else if(((HitNumber)drawnTile.number).targetIsFriendly)
-    					{
-    						g.drawImage(minusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
-    					}
-    				}
+					}
+					//Draws corresponding minuses
+					if(!((HitNumber)drawnTile.number).targetIsFriendly)
+					{
+						g.drawImage(minus, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
+					}
+					else if(((HitNumber)drawnTile.number).targetIsFriendly)
+					{
+						g.drawImage(minusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
+					}
 				}
 				//Floating gold numbers.
-				//System.out.println("This is the drawnTile " + drawnTile);
+				System.out.println("This is the drawnTile " + drawnTile);
 				if(drawnTile != null && drawnTile.number instanceof GoldNumber)
 				{
 					int goldDisplayed = ((GoldNumber)drawnTile.number).amount;
@@ -439,8 +426,6 @@ public class DungeonMain extends JPanel implements Runnable
 				numCounter++;
 			}
 			image = num[oneDigit];
-			
-			//Testing
 			g.drawImage(image, 5 * tileLengthX - numCounter * tileLengthX/4, 3 * tileLengthY/4, 21 * tileLengthX/4 - numCounter * tileLengthX/4, tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null),(null));
 		}while(healthNum != 0);
 

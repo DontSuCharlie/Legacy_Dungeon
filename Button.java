@@ -63,7 +63,7 @@ public class Button extends JComponent implements MouseListener
 	public void mousePressed(MouseEvent e)
 	{
 		currentImage = isPressed;
-		musicPlayer.playSound("sounds/button.wav");
+		musicPlayer.playSound("sounds/button2.wav");
 		pressed = true;
 		clicked = false;
 		repaint();

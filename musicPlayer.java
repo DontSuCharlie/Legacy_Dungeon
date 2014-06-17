@@ -1,11 +1,8 @@
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.AudioSystem;
-
 import java.io.File;
-
 import javax.sound.sampled.*;
-
 import java.io.*;
 
 /*
@@ -24,7 +21,7 @@ If you want to play multiple songs at once, do above^ w/o .stop().
 
 */
 
-public class musicPlayer
+public class MusicPlayer
 {
 	private String songPath;
 	boolean playing = true;

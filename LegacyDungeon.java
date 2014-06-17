@@ -10,15 +10,16 @@ import java.awt.Polygon;
 
 public class LegacyDungeon extends JPanel
 {
-	/*variables that'll be used everywhere*/
-	static musicPlayer musicPlayer = new musicPlayer();//musicPlayer class plays music
-	static Menu menu;
-	static Window window;
-	static WorldMap world;
-	static int turnCounter;
+	/*variables that'll be used EVERYWHERE*/
+	static Window window;//creates Window
+	static Menu menu;//runs menu
+	static WorldMap world;//runs world map
+	static DungeonMain dungeon;//runs dungeon
+	static MusicPlayer musicPlayer = new MusicPlayer();//musicPlayer class plays music
+	static int turnCounter;//counts turns
 	static boolean running;
-	static boolean inGame;
 	static boolean inMenu;
+	static boolean inGame;
 	static boolean inWorldMap;
 	static boolean inDungeon;	
 	static LegacyDungeon game;
@@ -47,14 +48,12 @@ public class LegacyDungeon extends JPanel
 		maxAreaPolygon = new MaxAreaPolygon();//in charge of drawing the polygon in worldmap
 		validList = new ArrayList<Node>();//list of nodes that will be fed into maxareapolygon to draw the polygon int he worldmap
 	}
-	
 	public static void main(String[] args)
 	{
 		running = true;//means the game is running
 		game = new LegacyDungeon();
 		Window.createWindow();//creates window
 		Window.window.add(game);//adds game file to the window
-
 		while(running)
 		{
 			loadMenu();//loads menu screen
@@ -81,9 +80,7 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 /*////////////////////////////////////////////////////////Method 1: Loads menu screen*/
 	public static void loadMenu()
 	{
-		//game.setFont(gameFont);
-		//musicPlayer.start();
-		musicPlayer.playMusic("sounds/menu.wav");
+		musicPlayer.playMusic("sounds/menu0.wav");
 		menu = new Menu();
 		Window.window.add(menu.newGameButton);
 		Window.window.add(menu.loadGameButton);

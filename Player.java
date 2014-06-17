@@ -23,13 +23,6 @@ public class Player extends Character{
         currentHealth = maxHealth;
     }
     
-    //Basic punch
-    public void punch()
-    {
-
-    }
-    
-    
     public int playerMoveY()
     {
        
@@ -160,8 +153,7 @@ public class Player extends Character{
                 break;
             default: targetTileX += 1;
         }
-    
-        if (targetTileX  >= 0 && targetTileX < DungeonRunner.xLength && targetTileY >= 0 && targetTileY < DungeonRunner.yLength && lDungeon.dungeon.tileList[targetTileX][targetTileY] instanceof DungeonTile && lDungeon.dungeon.tileList[targetTileX][targetTileY].character instanceof Character)
+        if (targetTileX  >= 0 && targetTileX < DungeonBuilder.xLength && targetTileY >= 0 && targetTileY < DungeonBuilder.yLength && lDungeon.dungeon.tileList[targetTileX][targetTileY] instanceof DungeonTile && lDungeon.dungeon.tileList[targetTileX][targetTileY].character instanceof Character)
         {
             dealDamage(damage, targetTileX, targetTileY, lDungeon);
         }
@@ -191,7 +183,7 @@ public class Player extends Character{
             {
                 System.out.println("");
             }
-                //lDungeon.tileArray = DungeonRunner.tileList;
+                //lDungeon.tileArray = DungeonBuilder.tileList;
         }
         
         if(lDungeon.dungeon.playerCharacter.currentTile.tileID == 2)
@@ -201,8 +193,8 @@ public class Player extends Character{
             lDungeon.dungeon.currentFloor++;                    
             lDungeon.dungeon.spawningEnemyList.get(0).spawnRate -= .1;
             lDungeon.dungeon.spawningEnemyList.get(1).spawnRate += .1;
-            lDungeon.dungeon = new DungeonRunner(1,1,1,100,100,lDungeon.dungeon.currentFloor, lDungeon.dungeon.playerCharacter, lDungeon.dungeon.spawningEnemyList);
-            lDungeon.tileArray = DungeonRunner.tileList;
+            lDungeon.dungeon = new DungeonBuilder(1,1,1,100,100,lDungeon.dungeon.currentFloor, lDungeon.dungeon.playerCharacter, lDungeon.dungeon.spawningEnemyList);
+            lDungeon.dungeon.tileList = DungeonBuilder.tileList;
             //isChange = true;
             
             //If this is the last floor, we export stuff from player and set ingame to false;
