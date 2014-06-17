@@ -17,10 +17,8 @@ public class DungeonMain extends JPanel implements Runnable
 	private Thread animator;//new thread
 	boolean screenShakeOn;//if true, screen will be shaking; else, screen won't be shaking
 	static ImageLoader imageLoader = new ImageLoader();//in charge of loading images
-	//BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
+    
 	BufferedImage money = imageLoader.loadImage("images/coinGold.png");
-	//BufferedImage tileImage1 = imageLoader.loadImage("images/tileImage1.png");
-	//BufferedImage tileImage2 = imageLoader.loadImage("images/tileImage2.png");
 	static BufferedImage playerImageEast = imageLoader.loadImage("images/playerEast.png");
 	static BufferedImage playerImageWest = imageLoader.loadImage("images/playerWest.png");
 	static BufferedImage playerImageNorth = imageLoader.loadImage("images/playerNorth.png");
@@ -257,7 +255,7 @@ public class DungeonMain extends JPanel implements Runnable
 						g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
 					}
 				}
-				
+
 				if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)
 				{
 
@@ -439,8 +437,6 @@ public class DungeonMain extends JPanel implements Runnable
 				numCounter++;
 			}
 			image = num[oneDigit];
-			
-			//Testing
 			g.drawImage(image, 5 * tileLengthX - numCounter * tileLengthX/4, 3 * tileLengthY/4, 21 * tileLengthX/4 - numCounter * tileLengthX/4, tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null),(null));
 		}while(healthNum != 0);
 

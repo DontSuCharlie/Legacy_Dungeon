@@ -30,8 +30,6 @@ public class DungeonTile
 		x = xPos;
 		y = yPos;
 		tileID = inputTileID;
-		//if(inputTileID == 1 || inputTileID == 2)
-		//	tileImage = imageLoader.loadImage("images/DungeonTile" + inputTileID + ".png");
 		connectionCap = 2;
 		itemID = 0;
 		//characterID = 0;
