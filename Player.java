@@ -226,7 +226,12 @@ public class Player extends Character{
     {
         Fireball(lDungeon, this);
     }
+
     
+    public void useSkill2(DungeonMain lDungeon)
+    {
+        Heal(lDungeon, this);
+    }
         
    static public void main(String[] args)
     {

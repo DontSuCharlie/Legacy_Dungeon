@@ -15,7 +15,7 @@ public class CombatJam extends Jam{
         isFriendly = false;
         
     }
-    public BufferedImage getImage()
+    public final BufferedImage getImage()
     {
         Image combatSlimeImage = null;
         if (this.imageID == 0 && this.isHit == false)
@@ -61,7 +61,7 @@ public class CombatJam extends Jam{
         }
     }
     
-    public void act(DungeonMain lDungeon)
+    public final void act(final DungeonMain lDungeon)
     {
         AIAggressiveSemiRandom(lDungeon);
     }

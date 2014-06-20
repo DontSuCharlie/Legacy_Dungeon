@@ -13,22 +13,12 @@ public class DungeonMain extends JPanel implements Runnable
 	static ArrayList<Projectile> ProjectileList = new ArrayList<Projectile>();//list of projectiles
 	static JFrame window;//to create new window
 	DungeonBuilder dungeon;//to create dungeon tile
-	static final int DELAY = 25; //sets fps to 55
-	final double overHealDecayPercent = .1; //If the player is above this health, then this percent of health will be decayed over time.
+	final static int DELAY = 25;//sets fps to 55
 	private Thread animator;//new thread
 	boolean screenShakeOn;//if true, screen will be shaking; else, screen won't be shaking
 	static ImageLoader imageLoader = new ImageLoader();//in charge of loading images
-	//BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
+	BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
 	BufferedImage money = imageLoader.loadImage("images/coinGold.png");
-	BufferedImage redBarLeft = imageLoader.loadImage("images/redBarLeft.png");
-	BufferedImage redBarRight = imageLoader.loadImage("images/redBarRight.png");
-	BufferedImage redBarMiddle = imageLoader.loadImage("images/redBarMiddle.png");
-	BufferedImage greenBarLeft = imageLoader.loadImage("images/greenBarLeft.png");
-	BufferedImage greenBarRight = imageLoader.loadImage("images/greenBarRight.png");
-	BufferedImage greenBarMiddle = imageLoader.loadImage("images/greenBarMiddle.png");
-
-	//BufferedImage tileImage1 = imageLoader.loadImage("images/tileImage1.png");
-	//BufferedImage tileImage2 = imageLoader.loadImage("images/tileImage2.png");
 	static BufferedImage playerImageEast = imageLoader.loadImage("images/playerEast.png");
 	static BufferedImage playerImageWest = imageLoader.loadImage("images/playerWest.png");
 	static BufferedImage playerImageNorth = imageLoader.loadImage("images/playerNorth.png");
@@ -76,10 +66,7 @@ public class DungeonMain extends JPanel implements Runnable
 	BufferedImage[] num = new BufferedImage[10];
 	BufferedImage[] numG = new BufferedImage[10];
 	BufferedImage[] numR = new BufferedImage[10];
-	BufferedImage[] numGr = new BufferedImage[10];
-	BufferedImage[] tileImagesDefault = new BufferedImage[10];
 	BufferedImage plusG = imageLoader.loadImage("images/PlusG.png");
-	BufferedImage plusGr = imageLoader.loadImage("images/PlusGr.png");
 	BufferedImage minus = imageLoader.loadImage("images/Minus.png");
 	BufferedImage minusR = imageLoader.loadImage("images/MinusR.png");
 	BufferedImage divide = imageLoader.loadImage("images/Slash.png");
@@ -88,31 +75,21 @@ public class DungeonMain extends JPanel implements Runnable
 	{
 		window = new JFrame("Hazardous Laboratory");
 		dungeon = new DungeonBuilder(1,1,1,100,100,1,null, null);
-		for(int i = 0; i <= 9; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			num[i] = imageLoader.loadImage("images/" + i + ".png");
 		}
-		for(int i = 0; i <= 9; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			numR[i] = imageLoader.loadImage("images/" + i + "R.png");
 		}
-		for(int i = 0; i <= 9; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			numG[i] = imageLoader.loadImage("images/" + i + "G.png");
 		}
-		for(int i = 0; i <= 9; i++)
-	    {
-	        numGr[i] = imageLoader.loadImage("images/" + i + "Gr.png");
-	    }
-	    for(int i = 0; i <= 2; i++)
-	    {
-	        tileImagesDefault[i] = imageLoader.loadImage("images/DungeonTile" + i + ".png");
-	    }
-
-	    
 	}
 	//Basically runs the dungeonmain object. It goes into a loop
-	public final void dungeonLoop() throws InstantiationException, IllegalAccessException
+	public void dungeonLoop() throws InstantiationException, IllegalAccessException
 	{
 		Window window = new Window();
 		Window.createWindow();//creates window
@@ -122,32 +99,18 @@ public class DungeonMain extends JPanel implements Runnable
 		{
 			//Player actions
 			if (KeyboardInput.boolIsMoving)
-            {
-                dungeon.playerCharacter.move(this);
-            }
+				dungeon.playerCharacter.move(this);
 			if (KeyboardInput.boolIsAttack)
-            {
-                dungeon.playerCharacter.attack(this);
-            }
+				dungeon.playerCharacter.attack(this);
 			if(KeyboardInput.boolIsInteracting)
-            {
-                dungeon.playerCharacter.interact(this);
-            }
+				dungeon.playerCharacter.interact(this);
 			if(KeyboardInput.boolIs1)
 			{
 				dungeon.playerCharacter.useSkill1(this);
 				KeyboardInput.boolIs1 = false;
 			}
-			
-	        if(KeyboardInput.boolIs2)
-	            {
-	                dungeon.playerCharacter.useSkill2(this);
-	                KeyboardInput.boolIs2 = false;
-	            }
 			if(KeyboardInput.diagnostic)
-            {
-                //System.out.println(dungeon.playerCharacter.currentTile.x + " " + dungeon.playerCharacter.currentTile.y);
-            }
+				System.out.println(dungeon.playerCharacter.currentTile.x + " " + dungeon.playerCharacter.currentTile.y);
 			//Enemy actions
 			for (Projectile i: ProjectileList)
 			{
@@ -158,42 +121,6 @@ public class DungeonMain extends JPanel implements Runnable
 				for (Enemy i: dungeon.enemyList)
 				{
 					i.act(this);
-					//Enemy overheals occur just after their turn.
-					if (i.currentHealth > i.maxHealth)
-	                {
-	                    //If the overheal amount is less than the threshold percentage, restore currentHealth to the normal MaxHealth
-	                    if (i.currentHealth < (1+overHealDecayPercent) * i.maxHealth)
-	                    {
-	                        i.currentHealth = i.maxHealth;
-	                        System.out.println("Reverted to normal max");
-	                    }
-	                    
-	                    //Reduce the overheal percent in other case.
-	                    else 
-	                    {
-	                        System.out.println("Overheal reduced");
-	                        i.currentHealth -= (int)(overHealDecayPercent * i.maxHealth);
-	                        System.out.println(i.currentHealth);
-	                    }
-	                }
-				}
-				//Overheal decay occurs after enemies take turn.
-				if (dungeon.playerCharacter.currentHealth > dungeon.playerCharacter.maxHealth)
-				{
-				    //If the overheal amount is less than the threshold percentage, restore currentHealth to the normal MaxHealth
-				    if (dungeon.playerCharacter.currentHealth < (1+overHealDecayPercent) * dungeon.playerCharacter.maxHealth)
-				    {
-				        dungeon.playerCharacter.currentHealth = dungeon.playerCharacter.maxHealth;
-				        System.out.println("Reverted to normal max");
-				    }
-				    
-				    //Reduce the overheal percent in other case.
-				    else 
-				    {
-				        System.out.println("Overheal reduced");
-				        dungeon.playerCharacter.currentHealth -= (int)(overHealDecayPercent * dungeon.playerCharacter.maxHealth);
-				        System.out.println(dungeon.playerCharacter.currentHealth);
-				    }
 				}
 				//This can be changed if speed changes occur.
 				isEnemyTurn = false;
@@ -202,7 +129,7 @@ public class DungeonMain extends JPanel implements Runnable
 	}
 	//Methods that already work
 	//Run when panel has started.
-	public final void addNotify()
+	public void addNotify()
 	{
 		super.addNotify();
 		animator = new Thread(this);
@@ -211,7 +138,7 @@ public class DungeonMain extends JPanel implements Runnable
 	//Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
 	//Calling game.repaint() will update what's in here.
 	@Override
-    public final void paintComponent(final Graphics g)
+	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);//we have to do super because magic
 		visibleCharacters.clear();
@@ -226,13 +153,9 @@ public class DungeonMain extends JPanel implements Runnable
 		int screenShakeX = 0;
 		int screenShakeY = 0;
 		if(recentDeadCharList.size() != 0 || dungeon.playerCharacter.isHit)
-        {
-            screenShakeOn = true;
-        }
-        else
-        {
-            screenShakeOn = false;
-        }
+			screenShakeOn = true;
+		else
+			screenShakeOn = false;
 		if(screenShakeOn)
 		{
 			screenShakeX = (int)(20 * Math.random() - 10);
@@ -250,13 +173,7 @@ public class DungeonMain extends JPanel implements Runnable
 				}
 				// Draws a row of tiles.
 				if (!(drawnTile instanceof DungeonTile))
-                {
-                    image = tileImagesDefault[0];
-                }
-                else
-				{
-				    image = tileImagesDefault[drawnTile.tileID];
-				}
+					image = tileImage0;
 				g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
 
 				//Draw bodies :<
@@ -277,7 +194,7 @@ public class DungeonMain extends JPanel implements Runnable
 							break;
 							default: slimeImage = slimeImageEastDead;
 						}
-						g.drawImage(slimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+						g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
 					}
 					if (drawnTile.deadCharacter.prevCharacter instanceof CombatJam)
 					{
@@ -294,7 +211,7 @@ public class DungeonMain extends JPanel implements Runnable
 						break;
 						default: combatSlimeImage = combatSlimeImageEastDead;
 						}
-						g.drawImage(combatSlimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, combatSlimeImage.getWidth(null) + 50, combatSlimeImage.getHeight(null) + 100, null);
+						g.drawImage(combatSlimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, combatSlimeImage.getWidth(null) + 50, combatSlimeImage.getHeight(null) + 100, null);
 					}
 				}
 				//Draw money
@@ -303,7 +220,7 @@ public class DungeonMain extends JPanel implements Runnable
 					if (drawnTile.itemID == 1)
 					{
 						image = money;
-						g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (int)((.5+j) * tileLengthY) + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+						g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (int)((.5+j) * tileLengthY), 0, 0, image.getWidth(null), image.getHeight(null), null);
 					}
 				}
 				//Draw player
@@ -329,12 +246,11 @@ public class DungeonMain extends JPanel implements Runnable
 						g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
 					}
 				}
-				
 				if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)
 				{
 
 				}
-				//Draw floating numbers.This will not shake to improve readability
+				//Draw floating numbers
 				if(drawnTile instanceof DungeonTile && drawnTile.number instanceof Number)
 				{
 					//-2 for making the numbers fit in correct space.
@@ -367,9 +283,6 @@ public class DungeonMain extends JPanel implements Runnable
 							{
 								image = numR[oneDigit];
 							}
-							g.drawImage(image, i * tileLengthX - numCounter * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - numCounter * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, image.getWidth(null), image.getHeight(null), null);
-
-							
 						}while(damageDisplayed != 0);
 						
 						//Stop displaying number after some time.
@@ -380,75 +293,20 @@ public class DungeonMain extends JPanel implements Runnable
 						}						
 						
 						//Using the timer for y coordinates allow it to float up.
-					
-    					//Draws corresponding minuses
-    					if(!((HitNumber)drawnTile.number).targetIsFriendly)
-    					{
-    						g.drawImage(minus, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
-    					}
-    					else if(((HitNumber)drawnTile.number).targetIsFriendly)
-    					{
-    						g.drawImage(minusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
-    					}
-    				}
-					
-					if(drawnTile.number instanceof HealNumber)
-                    {
-                        int healDisplayed = ((HealNumber)drawnTile.number).amount;
-                        int oneDigit = 0;
-                        do
-                        {
-                            if(healDisplayed > 9)
-                            {
-                                oneDigit = healDisplayed % 10;
-                                healDisplayed /= 10;
-                                numCounter++;
-                            }
-                            else
-                            {
-                                oneDigit = healDisplayed;
-                                healDisplayed = 0;
-                                numCounter++;
-                            }
-                            //Draws white numbers if damage is dealt to an enemy
-                            if(((HealNumber)drawnTile.number).targetIsFriendly == true)
-                            {
-                                image = numGr[oneDigit];
-                            }
-                            /*
-                            //Draws red damage numbers if damage is dealt to an ally.
-                            else if(((HitNumber)drawnTile.number).targetIsFriendly == true)
-                            {
-                                image = numR[oneDigit];
-                            }*/
-                            g.drawImage(image, i * tileLengthX - numCounter * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - numCounter * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, image.getWidth(null), image.getHeight(null), null);
-
-                            
-                        }while(healDisplayed != 0);
-                        
-                        //Stop displaying number after some time.
-                        if (drawnTile.number.timer <= 0)
-                        {
-                            drawnTile.number = null;
-                            //NumberList.remove(drawnTile.number.timer);
-                        }                       
-                        
-                        //Using the timer for y coordinates allow it to float up.
-                    
-                        //Draws corresponding plusses.
-                        if(((HealNumber)(drawnTile.number)).targetIsFriendly)
-                        {
-                            g.drawImage(plusGr, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
-                        }
-                        /*
-                        else if(((HitNumber)drawnTile.number).targetIsFriendly)
-                        {
-                            g.drawImage(minusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
-                        }*/
-                    }
+						g.drawImage(image, i * tileLengthX - numCounter * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - numCounter * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, image.getWidth(null), image.getHeight(null), null);
+					}
+					//Draws corresponding minuses
+					if(!((HitNumber)drawnTile.number).targetIsFriendly)
+					{
+						g.drawImage(minus, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
+					}
+					else if(((HitNumber)drawnTile.number).targetIsFriendly)
+					{
+						g.drawImage(minusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
+					}
 				}
 				//Floating gold numbers.
-				//System.out.println("This is the drawnTile " + drawnTile);
+				System.out.println("This is the drawnTile " + drawnTile);
 				if(drawnTile != null && drawnTile.number instanceof GoldNumber)
 				{
 					int goldDisplayed = ((GoldNumber)drawnTile.number).amount;
@@ -568,8 +426,6 @@ public class DungeonMain extends JPanel implements Runnable
 				numCounter++;
 			}
 			image = num[oneDigit];
-			
-			//Testing
 			g.drawImage(image, 5 * tileLengthX - numCounter * tileLengthX/4, 3 * tileLengthY/4, 21 * tileLengthX/4 - numCounter * tileLengthX/4, tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null),(null));
 		}while(healthNum != 0);
 
@@ -595,62 +451,9 @@ public class DungeonMain extends JPanel implements Runnable
 			image = num[oneDigit];
 			g.drawImage(image, 6 * tileLengthX - numCounter * tileLengthX/4, 3 * tileLengthY/4, 25 * tileLengthX/4 - numCounter * tileLengthX/4, tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null),(null));
 		}while(maxHealthNum != 0);
-		
-		//Draw the health bar. Split up into 3 cases. Near full health, middle health, near dead.
-		//This finds the % health the player is currently at.
-		double healthProportion = (double)dungeon.playerCharacter.currentHealth/dungeon.playerCharacter.maxHealth;
-		//This determines the amount of health the ends take up. (this amount for each)
-		double endPercent = .05;
-		
-		//This is the case where the player has nearly full health. 2 edges, right is depleting and a full middle
-		if (healthProportion > (1-endPercent))
-	    {
-		    //This corresponds to the right edge. The right edge is depleted first. ((healthProportion-endPercent)/endPercent) forces it to be depleted over 5% health.
-	        g.drawImage(redBarRight, 34 * tileLengthX/4, 3 * tileLengthY/4, (int)(((healthProportion-(1-endPercent))/endPercent) * tileLengthX/4 + (34 * tileLengthX/4)), tileLengthY, 0, 0, (int) (((healthProportion-(1-endPercent))/endPercent)*redBarRight.getWidth(null)), redBarRight.getHeight(null),(null));
-	        g.drawImage(redBarMiddle, 26 * tileLengthX/4, 3 * tileLengthY/4, (int)(2 * tileLengthX + (26 * tileLengthX/4)), tileLengthY, 0, 0, redBarMiddle.getWidth(null), redBarMiddle.getHeight(null),(null));
-	        g.drawImage(redBarLeft, 25 * tileLengthX/4, 3 * tileLengthY/4, 26 * tileLengthX/4, tileLengthY, 0, 0, redBarLeft.getWidth(null), redBarLeft.getHeight(null),(null));
-	    }
-		
-		//This is the middle case. Left edge and a depleting middle.
-		else if(healthProportion <= 1-endPercent && healthProportion >= endPercent)
-		{
-		    g.drawImage(redBarMiddle, 26 * tileLengthX/4, 3 * tileLengthY/4, (int)(2 * (healthProportion - endPercent)/(1-endPercent) * tileLengthX + (26 * tileLengthX/4)), tileLengthY, 0, 0, redBarMiddle.getWidth(null), redBarMiddle.getHeight(null),(null));
-	        g.drawImage(redBarLeft, 25 * tileLengthX/4, 3 * tileLengthY/4, 26 * tileLengthX/4, tileLengthY, 0, 0, redBarLeft.getWidth(null), redBarLeft.getHeight(null),(null));
-		}
-		
-		//This is the case where the player is almost dead. Depleting left edge.
-		else if (healthProportion < endPercent)
-	    {
-	        g.drawImage(redBarLeft, 25 * tileLengthX/4, 3 * tileLengthY/4, (int)((healthProportion/endPercent) * tileLengthX/4 + (25 * tileLengthX/4)), tileLengthY, 0, 0, (int)((healthProportion/endPercent)*redBarLeft.getWidth(null)), redBarLeft.getHeight(null),(null));
-	    }
-		
-		//Displaying overheal amounts using same previous principle.
-		if (healthProportion > 1)
-		{
-    	    if (healthProportion > (2-endPercent))
-    	    {
-    	        //This corresponds to the right edge. The right edge is depleted first. ((healthProportion-endPercent)/endPercent) forces it to be depleted over 5% health.
-    	        g.drawImage(greenBarRight, 34 * tileLengthX/4, 3 * tileLengthY/4, (int)(((healthProportion-(2-endPercent))/endPercent) * tileLengthX/4 + (34 * tileLengthX/4)), tileLengthY, 0, 0, (int) (((healthProportion-(2-endPercent))/endPercent)*redBarRight.getWidth(null)), redBarRight.getHeight(null),(null));
-    	        g.drawImage(greenBarMiddle, 26 * tileLengthX/4, 3 * tileLengthY/4, (int)(2 * tileLengthX + (26 * tileLengthX/4)), tileLengthY, 0, 0, greenBarMiddle.getWidth(null), greenBarMiddle.getHeight(null),(null));
-    	        g.drawImage(greenBarLeft, 25 * tileLengthX/4, 3 * tileLengthY/4, 26 * tileLengthX/4, tileLengthY, 0, 0, greenBarLeft.getWidth(null), greenBarLeft.getHeight(null),(null));
-    	    }
-    	        
-    	    //This is the middle case. Left edge and a depleting middle.
-    	    else if(healthProportion <= (2-endPercent) && healthProportion >= 1 + endPercent)
-    	    {
-    	        g.drawImage(greenBarMiddle, 26 * tileLengthX/4, 3 * tileLengthY/4, (int)(2 * (healthProportion - 1 - endPercent)/(1-endPercent) * tileLengthX + (26 * tileLengthX/4)), tileLengthY, 0, 0, greenBarMiddle.getWidth(null), greenBarMiddle.getHeight(null),(null));
-    	        g.drawImage(greenBarLeft, 25 * tileLengthX/4, 3 * tileLengthY/4, 26 * tileLengthX/4, tileLengthY, 0, 0, greenBarLeft.getWidth(null), redBarLeft.getHeight(null),(null));
-    	    }
-    	        
-    	    //This is the case where the player is almost dead. Depleting left edge.
-    	    else if (healthProportion - 1 < endPercent)
-    	    {
-    	        g.drawImage(greenBarLeft, 25 * tileLengthX/4, 3 * tileLengthY/4, (int)(((healthProportion - 1)/endPercent) * tileLengthX/4 + (25 * tileLengthX/4)), tileLengthY, 0, 0, (int)(((healthProportion - 1)/endPercent)*greenBarLeft.getWidth(null)), greenBarLeft.getHeight(null),(null));
-    	    }
-		}
 }
 	@Override
-    public final void run()
+	public void run()
 	{
 		long previousTime, sleepTime, timeDifference;
 		int counter = 0;
@@ -661,9 +464,7 @@ public class DungeonMain extends JPanel implements Runnable
 			timeDifference = System.currentTimeMillis() - previousTime;
 			sleepTime = DELAY - timeDifference;
 			if (sleepTime < 0)
-            {
-                sleepTime = 2;
-            }
+				sleepTime = 2;
 			try
 			{
 				Thread.sleep(sleepTime);
@@ -681,10 +482,8 @@ public class DungeonMain extends JPanel implements Runnable
 				if (counter%i.altTimer == 0)
 				{
 					if (i.imageID == 0)
-                    {
-                        i.imageID = 1;
-                    }
-                    else if(i.imageID == 1)
+						i.imageID = 1;
+					else if(i.imageID == 1)
 					{
 						i.imageID = 0;
 					}
@@ -717,7 +516,7 @@ public class DungeonMain extends JPanel implements Runnable
 			}
 		}
 	}
-	public static void main(final String[] args) throws InstantiationException, IllegalAccessException
+	public static void main(String[] args) throws InstantiationException, IllegalAccessException
 	{
 		//Testing
 		DungeonMain game = new DungeonMain();

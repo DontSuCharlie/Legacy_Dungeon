@@ -120,7 +120,19 @@ public class Skills
         //Is enemy turn is true when source is friendly. It is false when source is unfriendly.
         lDungeon.isEnemyTurn = sourceCharacter.isFriendly;
         System.out.println("Enemy turn: " + lDungeon.isEnemyTurn);
-        System.out.println(lDungeon.dungeon.playerCharacter.currentTile.x + " " + lDungeon.dungeon.playerCharacter.currentTile.y);
+        //System.out.println(lDungeon.dungeon.playerCharacter.currentTile.x + " " + lDungeon.dungeon.playerCharacter.currentTile.y);
+    }
+    
+    //Gives you 10 health. How trite. Please make cooler. OVERHEAL.
+    public void Heal(DungeonMain lDungeon, Character sourceCharacter)
+    {
+        int healAmount = 30;
+        description = "Gives you " + healAmount +" health. If you heal above 100%, then the extra points will decay over turns." + lDungeon.overHealDecayPercent + "& of max health per turn. Max overheal is 200%";
+        System.out.println("whoosh");
+        
+        sourceCharacter.heal(healAmount, sourceCharacter, lDungeon);
+        lDungeon.isEnemyTurn = sourceCharacter.isFriendly;
+        System.out.println("Enemy turn: " + lDungeon.isEnemyTurn);
     }
     
 }

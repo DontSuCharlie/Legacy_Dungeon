@@ -28,7 +28,7 @@ public class MusicPlayer
 	AudioInputStream audio;
 	Clip clip;
 	
-	public void playSound(String songPath)
+	public final void playSound(final String songPath)
 	{
 		try
 		{
@@ -50,11 +50,11 @@ public class MusicPlayer
 			System.out.println(e);
 		}
 	}
-	public void stop()
+	public final void stop()
 	{
 		clip.stop();
 	}
-	public void playMusic(String songPath)
+	public final void playMusic(final String songPath)
 	{
 		try
 		{

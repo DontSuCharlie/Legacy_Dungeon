@@ -1,13 +1,11 @@
 //package WorldMap
 import java.util.*;
 import java.awt.image.*;
-import java.awt.Polygon;
 import javax.swing.*;
-import java.awt.*;
 
 public class WorldMap extends JPanel
 {
-	Character0 character;
+    Character0 character;
 	ImageLoader imageLoader = new ImageLoader();
 	BufferedImage map = imageLoader.loadImage("images/map.png");
 	BufferedImage[] numImage = new BufferedImage[10];

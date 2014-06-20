@@ -105,7 +105,7 @@ public abstract class Character extends Skills
                if (potentialTile.tileID == 0 || potentialTile.character instanceof Character)
                {
                    //Play a sound
-                   System.out.println("Oh no a wall");
+                   //System.out.println("Oh no a wall");
                    return character.currentTile;
                }
                else 
@@ -117,12 +117,12 @@ public abstract class Character extends Skills
                    character.currentTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
            
                    //HMMMM. IS THIS CAUSING THE ERROR?  nop
-                   System.out.println(character.getClass().getName()+ " moved to " + character.currentTile);
+             //      System.out.println(character.getClass().getName()+ " moved to " + character.currentTile);
                    //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
                }
            } 
            
-           System.out.println("Oh no a wall");
+           //System.out.println("Oh no a wall");
            return character.currentTile;
     }
     
@@ -154,6 +154,23 @@ public abstract class Character extends Skills
                 ((Jam)(lDungeon.dungeon.tileList[targetX][targetY].character)).onDeath();        
             } */       
         }
+    }
+    
+    public void heal(int healAmount, Character healedCharacter, DungeonMain lDungeon)
+    {
+        healedCharacter.currentHealth += healAmount;
+        //lDungeon.dungeon.tileList[locationX][locationY].character.isHeal = true; This could be used to have different colors for enemy heals.
+        //System.out.println(DungeonMain.dungeon.tileList[locationTileX][locationTileY].character.currentHealth);
+        if (healedCharacter.currentHealth > (2 * healedCharacter.maxHealth))
+        {
+            //This business with the healAmount allows for the proper healNumber.
+            healAmount -= (healedCharacter.currentHealth - 2 * healedCharacter.maxHealth);
+            healedCharacter.currentHealth = (2 * healedCharacter.maxHealth);
+        }
+        HealNumber temp = new HealNumber(healAmount, healedCharacter.currentTile.x, healedCharacter.currentTile.y, healedCharacter.isFriendly);
+        DungeonMain.NumberList.add(temp);
+        lDungeon.dungeon.tileList[healedCharacter.currentTile.x][healedCharacter.currentTile.y].number = temp;
+        
     }
     ////////////////////////////////////////////////AI Types/////////////////////////////////////////////
     public void AIRandom(DungeonMain lDungeon)
