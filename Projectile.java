@@ -26,21 +26,12 @@ public class Projectile {
             
                 if(currentTile.character != null)
                 {
+                    currentTile.character.dealDamage(damage, currentTile.x, currentTile.y, lDungeon);
+                    //Use deal damage method?
                     System.out.println("Shot");
-                    HitNumber temp = new HitNumber(damage, currentTile.x, currentTile.y, lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.isFriendly);
-                    DungeonMain.NumberList.add(temp);
-                    lDungeon.dungeon.tileList[currentTile.x][currentTile.y].number = temp;
-                    lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.currentHealth -= damage;
-                    lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.isHit = true;
-                    //System.out.println(DungeonMain.dungeon.tileList[targetTileX][targetTileY].character.currentHealth);
-                
+                   
                     //Destroy this projectile.
                     lDungeon.ProjectileList.remove(this);
-                
-                    if(lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.currentHealth <= 0)
-                    {                   
-                        lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.onDeath();        
-                    }
                 }
             
                 if(this.direction == 6)

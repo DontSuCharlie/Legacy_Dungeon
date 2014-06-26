@@ -21,6 +21,7 @@ public class Player extends Character{
         isFriendly = true;
         maxHealth = 100;
         currentHealth = maxHealth;
+        direction = 2;
     }
     
     public int playerMoveY()
@@ -92,6 +93,9 @@ public class Player extends Character{
             Image slimeImage = null;
             if (this.imageID == 0 && this.isHit == false)
             {
+                return DungeonMain.playerImages[direction];
+
+                /*
                 switch(this.direction)
                 {
                 case 6: return DungeonMain.playerImageEast;
@@ -99,35 +103,23 @@ public class Player extends Character{
                 case 4: return DungeonMain.playerImageWest;
                 case 2: return DungeonMain.playerImageSouth;
                 default: return DungeonMain.playerImageEast;
-                }
+                }*/
             }
             //Jam alt. image
             else if(this.imageID == 1 && this.isHit == false)
             {
-                switch(this.direction)
-                {
-                case 6: return DungeonMain.playerImageEastAlt;
-                case 8: return DungeonMain.playerImageNorthAlt;
-                case 4: return DungeonMain.playerImageWestAlt;
-                case 2: return DungeonMain.playerImageSouthAlt;
-                default: return DungeonMain.playerImageEastAlt;
-                }
+                return DungeonMain.playerImagesAlt[direction];
+
             }
             
             else if(this.isHit == true)
             {
-                switch(this.direction)
-                {
-                case 6: return DungeonMain.playerImageEastHit;
-                //case 1: return DungeonMain.playerImageNorthHit;
-                case 4: return DungeonMain.playerImageWestHit;
-                //case 3: return DungeonMain.playerImageSouthHit;
-                default: return DungeonMain.playerImageEastHit;
-                }
+                return DungeonMain.playerImagesHit[direction];
             }
             else 
             {
-                return DungeonMain.playerImageEast;
+                System.out.println("Error, player image not found");
+                return DungeonMain.playerImages[6];
             }
     }
     
@@ -232,7 +224,13 @@ public class Player extends Character{
     {
         Heal(lDungeon, this);
     }
+    
+    public void useSkill3(DungeonMain lDungeon)
+    {
+        revive(lDungeon, this);
+    }
         
+    /*
    static public void main(String[] args)
     {
         //This frame is for testing only. KeyListener will be in LegacyDungeon.
@@ -249,5 +247,5 @@ public class Player extends Character{
                 player.yMovement = player.playerMoveY();
                 //player.charMove(player.xMovement, player.yMovement);
         }
-    }   
+    } */  
 }

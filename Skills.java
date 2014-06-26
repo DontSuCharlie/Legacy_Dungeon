@@ -39,7 +39,8 @@ public class Skills
     String description = "This is a skill";
     int damage = 0; //Negative for heals, positive for damage.
     
-    public DungeonTile getSourceTile(int direction, DungeonTile tile)
+    //Gets the tile in front of the sourceCharacter.
+    public DungeonTile getSourceTile(DungeonMain lDungeon, int direction, DungeonTile tile)
     {
       //If bash for direction
         if(direction == 6)
@@ -89,8 +90,28 @@ public class Skills
             tile.x += 1;
         }
         
-        return tile;
+        if (tile.x  >= 0 && tile.x < DungeonBuilder.xLength && tile.y >= 0 && tile.y < DungeonBuilder.yLength && lDungeon.dungeon.tileList[tile.x][tile.y] instanceof DungeonTile)
+        {
+            return lDungeon.dungeon.tileList[tile.x][tile.y];
+        }
+        else
+        {
+            return null;
+        }
+        
     }
+    
+    //All stuff to be run after using a skill
+    private void skillHelper(DungeonMain lDungeon, Character sourceCharacter)
+    {
+        //Is enemy turn is true when source is friendly. It is false when source is unfriendly.
+        lDungeon.isEnemyTurn = sourceCharacter.isFriendly;
+        System.out.println("Enemy turn: " + lDungeon.isEnemyTurn);
+        
+        //Put this skill on cooldown.
+        
+    }
+    
     /* Fun error: Moves you with projectile, killing things in way. Then softlocks
     public void QuadFireball(DungeonMain lDungeon, Character sourceCharacter)
     {
@@ -115,24 +136,35 @@ public class Skills
         
         DungeonTile startTile = lDungeon.dungeon.tileList[sourceCharacter.currentTile.x][sourceCharacter.currentTile.y];
         
-        lDungeon.ProjectileList.add(new Projectile (5, sourceCharacter.direction, getSourceTile(sourceCharacter.direction, startTile)));
+        lDungeon.ProjectileList.add(new Projectile (5, sourceCharacter.direction, getSourceTile(lDungeon, sourceCharacter.direction, startTile)));
         
-        //Is enemy turn is true when source is friendly. It is false when source is unfriendly.
-        lDungeon.isEnemyTurn = sourceCharacter.isFriendly;
-        System.out.println("Enemy turn: " + lDungeon.isEnemyTurn);
-        //System.out.println(lDungeon.dungeon.playerCharacter.currentTile.x + " " + lDungeon.dungeon.playerCharacter.currentTile.y);
+        skillHelper(lDungeon, sourceCharacter);
     }
     
-    //Gives you 10 health. How trite. Please make cooler. OVERHEAL.
+    //Gives you health. Please make cooler. OVERHEAL.
     public void Heal(DungeonMain lDungeon, Character sourceCharacter)
     {
         int healAmount = 30;
         description = "Gives you " + healAmount +" health. If you heal above 100%, then the extra points will decay over turns." + lDungeon.overHealDecayPercent + "& of max health per turn. Max overheal is 200%";
         System.out.println("whoosh");
-        
         sourceCharacter.heal(healAmount, sourceCharacter, lDungeon);
-        lDungeon.isEnemyTurn = sourceCharacter.isFriendly;
-        System.out.println("Enemy turn: " + lDungeon.isEnemyTurn);
+        
+        skillHelper(lDungeon, sourceCharacter);
+    }
+    
+    public void revive(DungeonMain lDungeon, Character sourceCharacter)
+    {
+        double healAmount = .25;
+        System.out.println("pow");
+        description = "Revives a dead creature to fight for you";
+        DungeonTile targetTile = getSourceTile(lDungeon, sourceCharacter.direction, sourceCharacter.currentTile);
+        if (targetTile instanceof DungeonTile && targetTile.deadCharacter instanceof DeadCharacter)
+        {
+            sourceCharacter.revive(healAmount, targetTile.deadCharacter, lDungeon);
+        }
+        skillHelper(lDungeon, sourceCharacter);
+        
+        
     }
     
 }

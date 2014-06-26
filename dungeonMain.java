@@ -3,18 +3,20 @@
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.*;
+
 import javax.swing.*;
 public class DungeonMain extends JPanel implements Runnable
 {
-	ArrayList<Character> visibleCharacters = new ArrayList<Character>();//list of characters that ou want to make visible?
-	static ArrayList<DeadCharacter> recentDeadCharList = new ArrayList<DeadCharacter>();//list of dead characters?
+	ArrayList<Character> visibleCharacters = new ArrayList<Character>();//list of characters that are painted?
+	static ArrayList<DeadCharacter> recentDeadCharList = new ArrayList<DeadCharacter>();//list of dead characters that are undergoing death animation
+	static ArrayList<DeadCharacter> deadCharList = new ArrayList<DeadCharacter>();//list of dead characters on floor. (Used for AI related to dead creatures (reviver)
 	ArrayList<Enemy> activeEnemyList = new ArrayList<Enemy>();//list of live enemies
 	static ArrayList<Number> NumberList = new ArrayList<Number>();//list of numbers
 	static ArrayList<Projectile> ProjectileList = new ArrayList<Projectile>();//list of projectiles
 	static JFrame window;//to create new window
 	DungeonBuilder dungeon;//to create dungeon tile
 	static final int DELAY = 25; //sets fps to 55
-	final double overHealDecayPercent = .1; //If the player is above this health, then this percent of health will be decayed over time.
+	final double overHealDecayPercent = .1; //If a character is above this health, then this percent of health will be decayed over time.
 	private Thread animator;//new thread
 	boolean screenShakeOn;//if true, screen will be shaking; else, screen won't be shaking
 	static ImageLoader imageLoader = new ImageLoader();//in charge of loading images
@@ -27,6 +29,7 @@ public class DungeonMain extends JPanel implements Runnable
 	BufferedImage greenBarRight = imageLoader.loadImage("images/greenBarRight.png");
 	BufferedImage greenBarMiddle = imageLoader.loadImage("images/greenBarMiddle.png");
 
+	/*
 	//BufferedImage tileImage1 = imageLoader.loadImage("images/tileImage1.png");
 	//BufferedImage tileImage2 = imageLoader.loadImage("images/tileImage2.png");
 	static BufferedImage playerImageEast = imageLoader.loadImage("images/playerEast.png");
@@ -73,9 +76,48 @@ public class DungeonMain extends JPanel implements Runnable
 	static BufferedImage combatSlimeImageWestDead = imageLoader.loadImage("images/combatSlimeWestDead.png");
 	static BufferedImage combatSlimeImageNorthDead = imageLoader.loadImage("images/combatSlimeNorthDead.png");
 	static BufferedImage combatSlimeImageSouthDead = imageLoader.loadImage("images/combatSlimeSouthDead.png");
+	static BufferedImage ghostImageEast = imageLoader.loadImage("images/ghostEast.png");
+    static BufferedImage ghostImageWest = imageLoader.loadImage("images/ghostWest.png");
+    static BufferedImage ghostImageNorth = imageLoader.loadImage("images/ghostNorth.png");
+    static BufferedImage ghostImageSouth = imageLoader.loadImage("images/ghostSouth.png");
+    static BufferedImage ghostImageEastWalk = imageLoader.loadImage("images/ghostEastWalk.png");
+    static BufferedImage ghostImageWestWalk = imageLoader.loadImage("images/ghostWestWalk.png");
+    static BufferedImage ghostImageNorthWalk = imageLoader.loadImage("images/ghostNorthWalk.png");
+    static BufferedImage ghostImageSouthWalk = imageLoader.loadImage("images/ghostSouthWalk.png");
+    static BufferedImage ghostImageEastDead = imageLoader.loadImage("images/ghostEastDead.png");
+    static BufferedImage ghostImageWestDead = imageLoader.loadImage("images/ghostWestDead.png");
+    static BufferedImage ghostImageNorthDead = imageLoader.loadImage("images/ghostNorthDead.png");
+    static BufferedImage ghostImageSouthDead = imageLoader.loadImage("images/ghostSouthDead.png");
+    static BufferedImage ghostImageEastHit = imageLoader.loadImage("images/ghostEastHit.png");
+    static BufferedImage ghostImageWestHit = imageLoader.loadImage("images/ghostWestHit.png");
+    static BufferedImage ghostImageNorthHit = imageLoader.loadImage("images/ghostNorthHit.png");
+    static BufferedImage ghostImageSouthHit = imageLoader.loadImage("images/ghostSouthHit.png");
+    */
+    
+    static BufferedImage[] slimeImages = new BufferedImage[10];
+    static BufferedImage[] slimeImagesAlt = new BufferedImage[10];
+    static BufferedImage[] slimeImagesHit = new BufferedImage[10];
+    static BufferedImage[] slimeImagesDead = new BufferedImage[10];
+    static BufferedImage[] combatSlimeImages = new BufferedImage[10];
+    static BufferedImage[] combatSlimeImagesAlt = new BufferedImage[10];
+    static BufferedImage[] combatSlimeImagesDead = new BufferedImage[10];
+    static BufferedImage[] playerImages = new BufferedImage[10];
+    static BufferedImage[] playerImagesAlt = new BufferedImage[10];
+    static BufferedImage[] playerImagesHit = new BufferedImage[10];
+    //static BufferedImage[] playerImagesDead = new BufferedImage[10];
+    static BufferedImage[] ghostImages = new BufferedImage[10];
+    static BufferedImage[] ghostImagesAlt = new BufferedImage[10];
+    static BufferedImage[] ghostImagesHit = new BufferedImage[10];
+    static BufferedImage[] ghostImagesDead = new BufferedImage[10];
+
+
+    //White numbers
 	BufferedImage[] num = new BufferedImage[10];
+	//Gold numbers
 	BufferedImage[] numG = new BufferedImage[10];
+	//Red numbers
 	BufferedImage[] numR = new BufferedImage[10];
+	//Green numbers
 	BufferedImage[] numGr = new BufferedImage[10];
 	BufferedImage[] tileImagesDefault = new BufferedImage[10];
 	BufferedImage plusG = imageLoader.loadImage("images/PlusG.png");
@@ -84,6 +126,7 @@ public class DungeonMain extends JPanel implements Runnable
 	BufferedImage minusR = imageLoader.loadImage("images/MinusR.png");
 	BufferedImage divide = imageLoader.loadImage("images/Slash.png");
 	public static boolean isEnemyTurn = false;
+	
 	public DungeonMain() throws InstantiationException, IllegalAccessException
 	{
 		window = new JFrame("Hazardous Laboratory");
@@ -108,7 +151,90 @@ public class DungeonMain extends JPanel implements Runnable
 	    {
 	        tileImagesDefault[i] = imageLoader.loadImage("images/DungeonTile" + i + ".png");
 	    }
-
+	    //Note change i+=2 back to i++ when diagonal sprites are added.
+        for(int i = 2; i <= 9; i+=2)
+        {
+            slimeImages[i] = imageLoader.loadImage("images/slime" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            slimeImagesAlt[i] = imageLoader.loadImage("images/slimeAlt" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            slimeImagesHit[i] = imageLoader.loadImage("images/slimeHit" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            slimeImagesDead[i] = imageLoader.loadImage("images/slimeDead" + i + ".png");
+        }
+        for(int i = 1; i <= 9; i++)
+        {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
+            combatSlimeImages[i] = imageLoader.loadImage("images/combatSlime" + i + ".png");
+        }
+        for(int i = 1; i <= 9; i++)
+        {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
+            combatSlimeImagesAlt[i] = imageLoader.loadImage("images/combatSlimeAlt" + i + ".png");
+        }
+        for(int i = 1; i <= 9; i++)
+        {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
+            combatSlimeImagesDead[i] = imageLoader.loadImage("images/combatSlimeDead" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            playerImages[i] = imageLoader.loadImage("images/player" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            playerImagesAlt[i] = imageLoader.loadImage("images/playerAlt" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            playerImagesHit[i] = imageLoader.loadImage("images/playerHit" + i + ".png");
+        }
+        /*
+        for(int i = 2; i <= 9; i+=2)
+        {
+            playerImagesDead[i] = imageLoader.loadImage("images/playerDead" + i + ".png");
+        }
+	    */
+        /*
+        for(int i = 2; i <= 9; i+=2)
+        {
+            ghostImages[i] = imageLoader.loadImage("images/ghost" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            ghostImagesAlt[i] = imageLoader.loadImage("images/ghostAlt" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            ghostImagesHit[i] = imageLoader.loadImage("images/ghostHit" + i + ".png");
+        }
+        for(int i = 2; i <= 9; i+=2)
+        {
+            ghostImagesDead[i] = imageLoader.loadImage("images/ghostDead" + i + ".png");
+        }
+	    
+	    */
+	    
+        
+	    
 	    
 	}
 	//Basically runs the dungeonmain object. It goes into a loop
@@ -140,13 +266,18 @@ public class DungeonMain extends JPanel implements Runnable
 			}
 			
 	        if(KeyboardInput.boolIs2)
-	            {
-	                dungeon.playerCharacter.useSkill2(this);
-	                KeyboardInput.boolIs2 = false;
-	            }
+	        {
+	            dungeon.playerCharacter.useSkill2(this);
+	            KeyboardInput.boolIs2 = false;
+	        }
+            if(KeyboardInput.boolIs3)
+            {
+                dungeon.playerCharacter.useSkill3(this);
+                KeyboardInput.boolIs3 = false;
+            }
 			if(KeyboardInput.diagnostic)
             {
-                //System.out.println(dungeon.playerCharacter.currentTile.x + " " + dungeon.playerCharacter.currentTile.y);
+                System.out.println("Diagnostic " +dungeon.playerCharacter.currentTile.x + " " + dungeon.playerCharacter.currentTile.y);
             }
 			//Enemy actions
 			for (Projectile i: ProjectileList)
@@ -265,6 +396,10 @@ public class DungeonMain extends JPanel implements Runnable
 					if (drawnTile.deadCharacter.prevCharacter instanceof Jam)
 					{
 						Image slimeImage = null;
+						
+			            slimeImage = DungeonMain.slimeImagesDead[drawnTile.deadCharacter.prevCharacter.direction];
+
+						/*
 						switch(drawnTile.deadCharacter.prevCharacter.direction)
 						{
 							case 0: slimeImage = slimeImageEastDead;
@@ -276,24 +411,14 @@ public class DungeonMain extends JPanel implements Runnable
 							case 3: slimeImage = slimeImageSouthDead;
 							break;
 							default: slimeImage = slimeImageEastDead;
-						}
+						}*/
 						g.drawImage(slimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
 					}
 					if (drawnTile.deadCharacter.prevCharacter instanceof CombatJam)
 					{
 						Image combatSlimeImage = null;
-						switch(drawnTile.deadCharacter.prevCharacter.direction)
-						{
-						case 0: combatSlimeImage = combatSlimeImageEastDead;
-						break;
-						case 1: combatSlimeImage = combatSlimeImageNorthDead;
-						break;
-						case 2: combatSlimeImage = combatSlimeImageWestDead;
-						break;
-						case 3: combatSlimeImage = combatSlimeImageSouthDead;
-						break;
-						default: combatSlimeImage = combatSlimeImageEastDead;
-						}
+	                    combatSlimeImage = DungeonMain.combatSlimeImagesDead[drawnTile.deadCharacter.prevCharacter.direction];
+
 						g.drawImage(combatSlimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, combatSlimeImage.getWidth(null) + 50, combatSlimeImage.getHeight(null) + 100, null);
 					}
 				}
@@ -316,6 +441,7 @@ public class DungeonMain extends JPanel implements Runnable
 						//activeEnemyList.add((Enemy)drawnTile.character);
 						//Start aim mode, preventing movement here.
 					}
+					//Note: should change source image to be good and then just use drawnTile.character.getImage() and display that normally.
 					if (drawnTile.character instanceof Player)
 					{
 						Image playerImage;
@@ -485,24 +611,14 @@ public class DungeonMain extends JPanel implements Runnable
 		{
 			if (i.prevCharacter instanceof Jam)
 			{
-			Image slimeImage = null;
-			switch(i.prevCharacter.direction)
-			{
-			case 0: slimeImage = slimeImageEastHit;
-			break;
-			case 1: slimeImage = slimeImageNorthHit;
-			break;
-			case 2: slimeImage = slimeImageWestHit;
-			break;
-			case 3: slimeImage = slimeImageSouthHit;
-			break;
-			default: slimeImage = slimeImageEastHit;
-			}
-			if (i.deathTimer <= 0)
-			{
-			recentDeadCharList.remove(i);
-			}
-			g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
+			    Image slimeImage = null;
+			    slimeImage = DungeonMain.slimeImagesHit[i.prevCharacter.direction];
+
+			    if (i.deathTimer <= 0)
+			    {
+			        recentDeadCharList.remove(i);
+			    }
+			    g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
 			}
 		}
 		//UI is drawn last so it's on top of everything else.

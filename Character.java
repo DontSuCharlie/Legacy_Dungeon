@@ -37,9 +37,17 @@ public abstract class Character extends Skills
     public int direction; // Used for direction of sprite and attacks 6=east, 8=north, 4=west, 2=south, 9=NE, 7=NW, 3=SE, 1=SW
     public boolean isHit = false;
     //Used for length of hit animation. Currently set to 250 ms delay.
-    public int hitTimer = (int) (100/DungeonMain.DELAY);
+    final int hitTimer = (int) (100/DungeonMain.DELAY);
+    //Time to charge abilities
+    private int cooldownTimer1Max = 10;
+    //Reduced by one each turn.
+    public int cooldownTimer1 = cooldownTimer1Max;//Deals with cooldowns for the first ability of this creature. 
     public int currentHitTime = hitTimer;
+    //This is used to determine how abilities work with this character, ex. revives should not work on bosses.
+    public int dangerLevel = 1;
+    //Used to check attacks and determine which animating number to be shown.
     public boolean isFriendly;
+    boolean getNewTarget = true;
     
    //Constructor
     
@@ -50,31 +58,7 @@ public abstract class Character extends Skills
       currentTile = new DungeonTile(0,0,0);
    }
    */
-   //Superclass's Methods
-    
- /*   
-    public int CopiedCheckTile(int deltaX, int deltaY, DungeonTile occupiedTile)
-    {
-        for (int i = 0; i < DungeonBuilderV2.tileList.size(); i++)
-        {
-            //Will use the static ArrayList<DungeonTile> tileList from DungeonBuilderV2.java
-            if ((DungeonBuilderV2.tileList.get(i).x == (occupiedTile.x + deltaX) ) && (DungeonBuilderV2.tileList.get(i).y == occupiedTile.y + deltaY))
-            {
-                // If another character is there, return the ID for a wall.
-                if (DungeonBuilderV2.tileList.get(i).characterID != 0)
-                {
-                    return 0;               
-                }
-                
-                return DungeonBuilderV2.tileList.get(i).tileID;
-            }
-        } 
-        //If it gets here, then the tile is not found.
-        System.out.println("Missing tile for movement, returning unmovable.");
-        return 0;
-        
-    }
-    */
+   
     public DungeonTile charMove(int deltaX, int deltaY, Character character, DungeonBuilder dungeonChar)
     {    
         if(deltaX > 0)
@@ -126,12 +110,14 @@ public abstract class Character extends Skills
            return character.currentTile;
     }
     
-    public void onDeath()
+    public void onDeath(DungeonMain lDungeon)
     {
         System.out.println(":<");
-        DungeonBuilder.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
-        DungeonBuilder.tileList[this.currentTile.x][this.currentTile.y].character = null;
-        DungeonMain.recentDeadCharList.add(new DeadCharacter(this));
+        lDungeon.dungeon.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
+        lDungeon.dungeon.tileList[this.currentTile.x][this.currentTile.y].character = null;
+        lDungeon.recentDeadCharList.add(new DeadCharacter(this));
+        lDungeon.deadCharList.add(new DeadCharacter(this));
+
         //Sound
         //Animation
         //Remnant on Tile
@@ -139,20 +125,18 @@ public abstract class Character extends Skills
     
     public void dealDamage(int damage, int targetX, int targetY, DungeonMain lDungeon)
     {
+        //Create a new damage number
         HitNumber temp = new HitNumber(damage, targetX, targetY, lDungeon.dungeon.tileList[targetX][targetY].character.isFriendly);
         DungeonMain.NumberList.add(temp);
         lDungeon.dungeon.tileList[targetX][targetY].number = temp;
+        //Subtract health
         lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth -= damage;
+        //Show hit animation.
         lDungeon.dungeon.tileList[targetX][targetY].character.isHit = true;
-        //System.out.println(DungeonMain.dungeon.tileList[targetTileX][targetTileY].character.currentHealth);
+        //If the character has no health, it dies. :<
         if(lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth <= 0)
         {
-            lDungeon.dungeon.tileList[targetX][targetY].character.onDeath();
-            /*
-            if(lDungeon.dungeon.tileList[targetX][targetY].character instanceof Jam)
-            {
-                ((Jam)(lDungeon.dungeon.tileList[targetX][targetY].character)).onDeath();        
-            } */       
+            lDungeon.dungeon.tileList[targetX][targetY].character.onDeath(lDungeon); 
         }
     }
     
@@ -172,8 +156,78 @@ public abstract class Character extends Skills
         lDungeon.dungeon.tileList[healedCharacter.currentTile.x][healedCharacter.currentTile.y].number = temp;
         
     }
+    //healPercent determines the percent of health the revived health starts with. Will only be run if there is no other character there. Else the old character would disappear.(Perhaps humorous combat solution ~ telefragging?)
+    public void revive(double healPercent, DeadCharacter character, DungeonMain lDungeon)
+    {
+        //Get the dead character and place it as a character again. (Note still 0 health)
+        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character = character.prevCharacter;
+        //Replace health based on maxHealth
+        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.currentHealth = (int)(lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.maxHealth * healPercent);
+        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.isFriendly = this.isFriendly;
+
+        //Add a new heal number to show what happened.
+        //Perhaps add another fancy image to show the revival.
+        HealNumber temp = new HealNumber(lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.currentHealth, character.prevCharacter.currentTile.x, character.prevCharacter.currentTile.y, character.prevCharacter.isFriendly);
+        DungeonMain.NumberList.add(temp);
+        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].number = temp;
+        
+    }
+    
+    //Get distance from this character to another tile
+    public int getDistance(DungeonTile tile)
+    {
+        return (int)(Math.sqrt(((this.currentTile.x - tile.x)^2 + (this.currentTile.y - tile.y)^2)));  
+    }
+    
+    public void setDirection(int targetTileX, int targetTileY)
+    {
+      //Set direction of this creature. Ugly please change.
+        //East
+        if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
+        {
+            this.direction = 6;
+        }
+        
+        //North
+        else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y == -1)
+        {
+            this.direction = 8;
+        }
+        
+        //West
+        else if(targetTileX - this.currentTile.x == -1 && targetTileY == this.currentTile.y )
+        {
+            this.direction = 4;
+        }
+        
+        //South
+        else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y == 1)
+        {
+            this.direction = 2;
+        }
+        
+        if(targetTileX - this.currentTile.x == 1 && targetTileY - this.currentTile.y == 1)
+        {
+            this.direction = 3;
+        }
+        
+        if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == 1)
+        {
+            this.direction = 1;
+        }
+        
+        if(targetTileX - this.currentTile.x == 1 && targetTileY - this.currentTile.y == -1)
+        {
+            this.direction = 9;
+        }
+        
+        if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == -1)
+        {
+            this.direction = 7;
+        }
+    }
     ////////////////////////////////////////////////AI Types/////////////////////////////////////////////
-    public void AIRandom(DungeonMain lDungeon)
+    public void AIRandom(DungeonMain lDungeon) //Jam
     {
         //Picks random spot to go to. Including walls.
         double directionChoice = Math.random();
@@ -202,7 +256,7 @@ public abstract class Character extends Skills
     }
     
     //Player can be replaced by an input target if allies become viable.
-    public void AIAggressiveSemiRandom(DungeonMain lDungeon)
+    public void AIAggressiveSemiRandom(DungeonMain lDungeon)//Combat Jam
     {
         //Attack player if in range. Only attacks if diagonal. (It's not a bug, it's a feature :>) Correct code commented.
         //Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 || Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 
@@ -212,51 +266,7 @@ public abstract class Character extends Skills
             int damage = (int) (2 * Math.random()) + 1;
             int targetTileX = lDungeon.dungeon.playerCharacter.currentTile.x;
             int targetTileY = lDungeon.dungeon.playerCharacter.currentTile.y;
-            
-            //Set direction of this creature
-            //East
-            if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
-            {
-                this.direction = 0;
-            }
-            
-            //North
-            else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y == 1)
-            {
-                this.direction = 1;
-            }
-            
-            //West
-            else if(targetTileX - this.currentTile.x == -1 && targetTileY == this.currentTile.y )
-            {
-                this.direction = 2;
-            }
-            
-            //South
-            else if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
-            {
-                this.direction = 3;
-            }
-            
-            if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
-            {
-                this.direction = 4;
-            }
-            
-            if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == 1)
-            {
-                this.direction = 5;
-            }
-            
-            if(targetTileX - this.currentTile.x == 1 && targetTileY - this.currentTile.y == -1)
-            {
-                this.direction = 6;
-            }
-            
-            if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == -1)
-            {
-                this.direction = 7;
-            }
+            this.setDirection(targetTileX, targetTileY);
             
             dealDamage(damage, targetTileX, targetTileY, lDungeon);
         }
@@ -285,8 +295,16 @@ public abstract class Character extends Skills
                 
                 else if (temp == 0)
                 {
-                    //If on same x level, then randomly decide to left or right.
-                    deltaX = (int) (2* Math.random() - 1);
+                    //If on same x level, then randomly decide to go left or right.
+                    if(directionChoice < .2)
+                    {
+                        deltaX = 1;
+                    }
+                    
+                    else
+                    {
+                        deltaX = -1;
+                    }
                 }
                 
             }
@@ -307,8 +325,16 @@ public abstract class Character extends Skills
                 
                 else if (temp == 0)
                 {
-                    //If on same x level, then randomly decide to left or right.
-                    deltaY = (int) (2 * Math.random() - 1);
+                    //If on same x level, then randomly decide to go up or down.
+                    if(directionChoice < .6)
+                    {
+                        deltaY = 1;
+                    }
+                    
+                    else
+                    {
+                        deltaY = -1;
+                    }
                 }
             }
             
@@ -334,16 +360,139 @@ public abstract class Character extends Skills
         }
     }
     
-/*    
-    public void draw(Graphics g)
+    //Running from evil (or you). Hmm, this runs from only one scary creature, maybe directly into another :<. Need better AI.
+    public void AIRun(DungeonMain lDungeon, Character scaryCharacter)
     {
-        g.drawImage(image, XPos, YPos, XSpriteSize, YSpriteSize, null);
+        
+        
+        
     }
-   
-    public void paint(Graphics g)
+    
+    //This should only be activated when the dead body is relatively nearby, because this hones in on the selected body.
+    //Note, need to make balanced lol. OP right now, especially with two revivers reviving each other.
+    //Somewhat inefficient, finds the closest dead char at each loop. Perhaps could rework to only refind when one dies.
+    //Run getDeadCharacter in character.act() to get potential deadCharacter
+    public void AIReviver(DungeonMain lDungeon, DeadCharacter chosenDead)//tba(Reviver)
     {
-       ObjectProperties.super.paint(g);
+        //These control how much health the revived character has.
+        double minReviveHealth = .25;
+        double maxReviveHealth = .75;
+        
+        //Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 || Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 
+        
+        //Try to use Revive if off cooldown. Currently does not revive if another character is there (Including itself).
+        if (cooldownTimer1 <= 0 && Math.abs(chosenDead.prevCharacter.currentTile.x - this.currentTile.x) <= 1 && Math.abs(chosenDead.prevCharacter.currentTile.y - this.currentTile.y) <= 1 && !(chosenDead.prevCharacter.currentTile.character instanceof Character))
+        {
+            System.out.println("revived!");
+            //Pick amount of health the character respawns with.
+            double healthPercent = ((maxReviveHealth - minReviveHealth) * Math.random()) + minReviveHealth;
+            this.setDirection(chosenDead.prevCharacter.currentTile.x, chosenDead.prevCharacter.currentTile.y);
+            
+            revive(healthPercent, chosenDead, lDungeon);
+            //Reset cooldown. Also prevents multiple respawns at a time.
+            this.cooldownTimer1 = this.cooldownTimer1Max;
+        }
+        
+        //Go to nearest body. Moves if not reviving. Waits if in range of target
+        else if (Math.abs(chosenDead.prevCharacter.currentTile.x - this.currentTile.x) > 1 || Math.abs(chosenDead.prevCharacter.currentTile.y - this.currentTile.y) > 1)
+        {
+            double directionChoice = Math.random();
+            int deltaX = 0;
+            int deltaY = 0;
+            //Get closer in x axis.
+            if(directionChoice < .50)
+            {
+                int temp = chosenDead.prevCharacter.currentTile.x - this.currentTile.x;
+                //If the player is further to the right, then go right.
+                if (temp > 0)
+                {
+                    deltaX = 1;
+                }
+                
+                else if (temp < 0)
+                {
+                deltaX = -1;
+                }
+                
+                else if (temp == 0)
+                {
+                    //If on same x level, then randomly decide to go left or right.
+                    deltaX = (int) (2 * Math.random() - 1);
+                }
+                
+            }
+            
+            else
+            {
+                int temp = chosenDead.prevCharacter.currentTile.y - this.currentTile.y;
+                //If the player is further to the right, then go right.
+                if (temp > 0)
+                {
+                    deltaY = 1;
+                }
+                
+                else if (temp < 0)
+                {
+                    deltaY = -1;
+                }
+                
+                else if (temp == 0)
+                {
+                    //If on same x level, then randomly decide to left or right.
+                    deltaY = (int) (2 * Math.random() - 1);
+                }
+            }
+            
+            charMove(deltaX, deltaY, this, lDungeon.dungeon);
+        }
+        cooldownTimer1--;
+
     }
-    //Methods unique to Character.java
-*/
+    
+    //Just find the closest deadChar to revive
+    private DeadCharacter getDeadCharacter(DungeonMain lDungeon)
+    {
+        //The target. If no deadcharacters, then 
+        DeadCharacter closestDeadChar = null;
+        //Used to find closest character
+        int minDistance = 999;
+        
+        //Get nearest deadCharacter to revive.
+        for (DeadCharacter character : lDungeon.deadCharList)
+        {
+            int temp = this.getDistance(character.prevCharacter.currentTile);
+            if(temp < minDistance)
+            {
+                minDistance = temp;
+                closestDeadChar = character;
+            }
+        }
+        return closestDeadChar;
+    }
+    
+    //Try to revive stronger ones first (nasty)
+    private DeadCharacter getDeadCharacterPrioritized(DungeonMain lDungeon)
+    {
+        //The target. If no deadcharacters, then 
+        DeadCharacter closestDeadChar = null;
+        //Used to find closest character. If no closest, then revert to old to prev AI
+        int minDistance = 999;
+        
+        //Get nearest deadCharacter to revive.
+        for (DeadCharacter character : lDungeon.deadCharList)
+        {
+            //Dividing distance by dangerLevel prioritizes higher ranking enemies, but if there is one lower rank nearby, then it can still be targeted.
+            int temp = this.getDistance(character.prevCharacter.currentTile) / character.prevCharacter.dangerLevel;
+            if(temp < minDistance)
+            {
+                minDistance = temp;
+                closestDeadChar = character;
+            }
+        }
+        return closestDeadChar;
+    }
+    
+    
+    
+    
 }

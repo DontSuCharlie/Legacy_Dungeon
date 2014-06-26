@@ -9,7 +9,6 @@ public class Enemy extends Character{
     public Enemy()
     {
         
-        
     }
     
     public void act(DungeonMain lDungeon)
@@ -17,9 +16,9 @@ public class Enemy extends Character{
         System.out.println("lol");
     }
     
-    public void onDeath()
+    public void onDeath(DungeonMain lDungeon)
     {
-        super.onDeath();
+        super.onDeath(lDungeon);
         DungeonBuilder.enemyList.remove(this.enemyID);
         //Used to keep enemy IDs consistent with their new position.
         for (Enemy i : DungeonBuilder.enemyList)

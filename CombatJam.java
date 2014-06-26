@@ -13,51 +13,33 @@ public class CombatJam extends Jam{
         maxHealth = 5;
         currentHealth = 5;
         isFriendly = false;
-        
+        direction = 6;
     }
     public final BufferedImage getImage()
     {
         Image combatSlimeImage = null;
         if (this.imageID == 0 && this.isHit == false)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.combatSlimeImageEast;
-            case 8: return DungeonMain.combatSlimeImageNorth;
-            case 4: return DungeonMain.combatSlimeImageWest;
-            case 2: return DungeonMain.combatSlimeImageSouth;
-            default: return DungeonMain.combatSlimeImageEast;
-            }
+            return DungeonMain.combatSlimeImages[direction];
         }
         //Jam alt. image
         else if(this.imageID == 1 && this.isHit == false)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.combatSlimeImageEastWalk;
-            case 8: return DungeonMain.combatSlimeImageNorthWalk;
-            case 4: return DungeonMain.combatSlimeImageWestWalk;
-            case 2: return DungeonMain.combatSlimeImageSouthWalk;
-            default: return DungeonMain.combatSlimeImageEastWalk;
-            }
+            return DungeonMain.combatSlimeImagesAlt[direction];
+
         }
         
         else if(this.isHit == true)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.slimeImageEastHit;
-            case 8: return DungeonMain.slimeImageNorthHit;
-            case 4: return DungeonMain.slimeImageWestHit;
-            case 2: return DungeonMain.slimeImageSouthHit;
-            default: return DungeonMain.slimeImageEastHit;
-            }
+            return DungeonMain.slimeImagesHit[direction];
+
         }
         
         else 
         {
             //Should not run.
-            return DungeonMain.combatSlimeImageEast;
+            System.out.println("Error combatSlime image not found");
+            return DungeonMain.combatSlimeImages[6];
         }
     }
     

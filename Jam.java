@@ -12,6 +12,7 @@ public class Jam extends Enemy
         //characterID = 2;
         maxHealth = 5;
         currentHealth = 5;
+        direction = 2;
         
     }
     public BufferedImage getImage()
@@ -19,44 +20,25 @@ public class Jam extends Enemy
         Image slimeImage = null;
         if (this.imageID == 0 && this.isHit == false)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.slimeImageEast;
-            case 8: return DungeonMain.slimeImageNorth;
-            case 4: return DungeonMain.slimeImageWest;
-            case 2: return DungeonMain.slimeImageSouth;
-            default: return DungeonMain.slimeImageEast;
-            }
+            return DungeonMain.slimeImages[direction];
         }
         //Jam alt. image
         else if(this.imageID == 1 && this.isHit == false)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.slimeImageEastWalk;
-            case 8: return DungeonMain.slimeImageNorthWalk;
-            case 4: return DungeonMain.slimeImageWestWalk;
-            case 2: return DungeonMain.slimeImageSouthWalk;
-            default: return DungeonMain.slimeImageEastWalk;
-            }
+            return DungeonMain.slimeImagesAlt[direction];
+
         }
         
         else if(this.isHit == true)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.slimeImageEastHit;
-            case 8: return DungeonMain.slimeImageNorthHit;
-            case 4: return DungeonMain.slimeImageWestHit;
-            case 2: return DungeonMain.slimeImageSouthHit;
-            default: return DungeonMain.slimeImageEastHit;
-            }
+            return DungeonMain.slimeImagesHit[direction];
         }
         
         else 
         {
             //Should not run.
-            return DungeonMain.slimeImageEast;
+            System.out.println("Error missing slime image");
+            return DungeonMain.slimeImages[direction];
         }
     }
     
