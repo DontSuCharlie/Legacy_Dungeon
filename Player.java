@@ -10,7 +10,6 @@ public class Player extends Character{
     int goldAmount;
     public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
 
-    
     public Player(int inputRiches)
     {
         xMovement = 0;
@@ -22,8 +21,61 @@ public class Player extends Character{
         maxHealth = 100;
         currentHealth = maxHealth;
         direction = 2;
+        isActive = true;
     }
-    
+        
+    public void act(DungeonMain lDungeon) throws InstantiationException, IllegalAccessException
+    {
+        boolean waitingForPlayer = true;
+        //Loop while the player needs to act
+        while (waitingForPlayer)
+        {
+            //Uncomment this System.out for things to work, albeit laggily and broken :<.
+            System.out.println("Player");
+            //Player actions
+            //In move we use char move and then 
+            if (KeyboardInput.boolIsMoving)
+            {
+                lDungeon.dungeon.playerCharacter.move(lDungeon);
+                waitingForPlayer = false;
+            }
+            else if (KeyboardInput.boolIsAttack)
+            {
+                lDungeon.dungeon.playerCharacter.attack(lDungeon);
+                waitingForPlayer = false;
+            }
+            else if(KeyboardInput.boolIsInteracting)
+            {
+                lDungeon.dungeon.playerCharacter.interact(lDungeon);
+                waitingForPlayer = false;
+            }
+            else if(KeyboardInput.boolIs1)
+            {
+                lDungeon.dungeon.playerCharacter.useSkill1(lDungeon);
+                KeyboardInput.boolIs1 = false;
+                waitingForPlayer = false;
+            }
+            
+            else if(KeyboardInput.boolIs2)
+            {
+                lDungeon.dungeon.playerCharacter.useSkill2(lDungeon);
+                KeyboardInput.boolIs2 = false;
+                waitingForPlayer = false;
+            }
+            else if(KeyboardInput.boolIs3)
+            {
+                lDungeon.dungeon.playerCharacter.useSkill3(lDungeon);
+                KeyboardInput.boolIs3 = false;
+                waitingForPlayer = false;
+            }
+            else if(KeyboardInput.diagnostic)
+            {
+                System.out.println("Diagnostic " +lDungeon.dungeon.playerCharacter.currentTile.x + " " + lDungeon.dungeon.playerCharacter.currentTile.y);
+                waitingForPlayer = false;
+            }
+        }
+    }
+        
     public int playerMoveY()
     {
        
@@ -209,6 +261,20 @@ public class Player extends Character{
     {
         System.out.println("Moving");
         lDungeon.dungeon.playerCharacter.charMove(lDungeon.dungeon.playerCharacter.playerMoveX(), lDungeon.dungeon.playerCharacter.playerMoveY(), lDungeon.dungeon.playerCharacter, lDungeon.dungeon);
+        
+      //Need to activate nearby enemies. Trying to do it in paintComponent breaks stuff :<. Not entirely sure about the incrementation.
+        for (int i = lDungeon.dungeon.playerCharacter.currentTile.x - lDungeon.numTilesX; i < lDungeon.dungeon.playerCharacter.currentTile.x + lDungeon.numTilesX; i++)
+        {
+            for (int j = lDungeon.dungeon.playerCharacter.currentTile.y - lDungeon.numTilesY; j < lDungeon.dungeon.playerCharacter.currentTile.y + lDungeon.numTilesY; j++)
+            {
+                if (i > 0 && i < DungeonBuilder.xLength && j > 0 && j < DungeonBuilder.yLength && lDungeon.dungeon.tileList[i][j] instanceof DungeonTile && lDungeon.dungeon.tileList[i][j].character instanceof Character && !lDungeon.dungeon.tileList[i][j].character.isActive)
+                {
+                    lDungeon.dungeon.tileList[i][j].character.isActive = true;
+                    //Start aim mode, preventing movement here.
+                }
+            }
+        }
+        //lDungeon.activeCharacterList.addAll(bufferList);
         System.out.println(lDungeon.dungeon.playerCharacter.currentTile);
         KeyboardInput.boolIsMoving = false;
         lDungeon.isEnemyTurn = true;
@@ -230,6 +296,8 @@ public class Player extends Character{
         revive(lDungeon, this);
     }
         
+    
+    
     /*
    static public void main(String[] args)
     {

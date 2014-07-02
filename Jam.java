@@ -44,7 +44,9 @@ public class Jam extends Enemy
     
     public void act(DungeonMain lDungeon)
     {
+        System.out.println("Jam acting");
         //Picks random spot to go to. Including walls.
         AIRandom(lDungeon);
+        System.out.println("Jam Acted");
     }
 }

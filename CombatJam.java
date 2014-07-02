@@ -43,9 +43,11 @@ public class CombatJam extends Jam{
         }
     }
     
-    public final void act(final DungeonMain lDungeon)
+    public void act(final DungeonMain lDungeon)
     {
+        System.out.println("CombatJam acting");
         AIAggressiveSemiRandom(lDungeon);
+        System.out.println("CombatJam acted");
     }
 
 }

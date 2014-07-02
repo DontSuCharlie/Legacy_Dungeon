@@ -32,6 +32,7 @@ public abstract class Character extends Skills
     //public int characterID;// Used to check between player or enemy.
     public String description;
     public DungeonTile currentTile;
+    public Character storedTargetCharacter;
     public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
     public int direction; // Used for direction of sprite and attacks 6=east, 8=north, 4=west, 2=south, 9=NE, 7=NW, 3=SE, 1=SW
@@ -48,6 +49,7 @@ public abstract class Character extends Skills
     //Used to check attacks and determine which animating number to be shown.
     public boolean isFriendly;
     boolean getNewTarget = true;
+    boolean isActive = false;
     
    //Constructor
     
@@ -81,30 +83,29 @@ public abstract class Character extends Skills
         {
             direction = -1;
         }
-           if (character.currentTile.x + deltaX >= 0 && character.currentTile.x + deltaX < dungeonChar.xLength && character.currentTile.y + deltaY >= 0 && character.currentTile.y + deltaY < dungeonChar.yLength && dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY] instanceof DungeonTile)
+        if (character.currentTile.x + deltaX >= 0 && character.currentTile.x + deltaX < dungeonChar.xLength && character.currentTile.y + deltaY >= 0 && character.currentTile.y + deltaY < dungeonChar.yLength && dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY] instanceof DungeonTile)       
+        {
                
-           {
-               
-               DungeonTile potentialTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
-               if (potentialTile.tileID == 0 || potentialTile.character instanceof Character)
-               {
-                   //Play a sound
-                   //System.out.println("Oh no a wall");
-                   return character.currentTile;
-               }
-               else 
-               {
-                   //dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
-                   dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].character = null;
-                   //dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
-                   dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].character = character;
-                   character.currentTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
+            DungeonTile potentialTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
+            if (potentialTile.tileID == 0 || potentialTile.character instanceof Character)
+            {
+                //Play a sound
+                //System.out.println("Oh no a wall");
+                return character.currentTile;
+            }
+            else 
+            {
+                //dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
+                dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].character = null;
+                //dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
+                dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].character = character;
+                character.currentTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
            
-                   //HMMMM. IS THIS CAUSING THE ERROR?  nop
+                //HMMMM. IS THIS CAUSING THE ERROR?  nop
              //      System.out.println(character.getClass().getName()+ " moved to " + character.currentTile);
                    //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
-               }
-           } 
+            }
+        } 
            
            //System.out.println("Oh no a wall");
            return character.currentTile;
@@ -258,21 +259,26 @@ public abstract class Character extends Skills
     //Player can be replaced by an input target if allies become viable.
     public void AIAggressiveSemiRandom(DungeonMain lDungeon)//Combat Jam
     {
+        //If no target is stored, get one.
+        if (!(storedTargetCharacter instanceof Character))
+        {
+            storedTargetCharacter = getFriendlyCharacter(lDungeon);
+        }
         //Attack player if in range. Only attacks if diagonal. (It's not a bug, it's a feature :>) Correct code commented.
         //Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 || Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 
-        if (Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 && Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 )
+        if (Math.abs(this.currentTile.x - storedTargetCharacter.currentTile.x) == 1 && Math.abs(this.currentTile.y - storedTargetCharacter.currentTile.y) == 1 )
         {
             System.out.println("punched!");
             int damage = (int) (2 * Math.random()) + 1;
-            int targetTileX = lDungeon.dungeon.playerCharacter.currentTile.x;
-            int targetTileY = lDungeon.dungeon.playerCharacter.currentTile.y;
-            this.setDirection(targetTileX, targetTileY);
+            int storedTargetCharacterTileX = storedTargetCharacter.currentTile.x;
+            int storedTargetCharacterTileY = storedTargetCharacter.currentTile.y;
+            this.setDirection(storedTargetCharacterTileX, storedTargetCharacterTileY);
             
-            dealDamage(damage, targetTileX, targetTileY, lDungeon);
+            dealDamage(damage, storedTargetCharacterTileX, storedTargetCharacterTileY, lDungeon);
         }
 
         
-        //Pursue target
+        //Pursue storedTargetCharacter
         else
         {
             double directionChoice = Math.random();
@@ -281,7 +287,7 @@ public abstract class Character extends Skills
             //Get closer in x axis.
             if(directionChoice < .40)
             {
-                int temp = lDungeon.dungeon.playerCharacter.currentTile.x - this.currentTile.x;
+                int temp = storedTargetCharacter.currentTile.x - this.currentTile.x;
                 //If the player is further to the right, then go right.
                 if (temp > 0)
                 {
@@ -311,7 +317,7 @@ public abstract class Character extends Skills
             
             else if(directionChoice < .80)
             {
-                int temp = lDungeon.dungeon.playerCharacter.currentTile.y - this.currentTile.y;
+                int temp = storedTargetCharacter.currentTile.y - this.currentTile.y;
                 //If the player is further to the right, then go right.
                 if (temp > 0)
                 {
@@ -449,10 +455,16 @@ public abstract class Character extends Skills
 
     }
     
+    //Get closest friendly character. Currently only gives player.
+    private Character getFriendlyCharacter(DungeonMain lDungeon)
+    {
+        return lDungeon.dungeon.playerCharacter;
+    }
+    
     //Just find the closest deadChar to revive
     private DeadCharacter getDeadCharacter(DungeonMain lDungeon)
     {
-        //The target. If no deadcharacters, then 
+        //The target. If no deadcharacters, then return null
         DeadCharacter closestDeadChar = null;
         //Used to find closest character
         int minDistance = 999;
@@ -490,6 +502,14 @@ public abstract class Character extends Skills
             }
         }
         return closestDeadChar;
+    }
+
+    public void act(DungeonMain lDungeon) throws InstantiationException, IllegalAccessException
+    {
+        System.out.println("Error");
+        
+        // TODO Auto-generated method stub
+        
     }
     
     

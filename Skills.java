@@ -43,56 +43,59 @@ public class Skills
     public DungeonTile getSourceTile(DungeonMain lDungeon, int direction, DungeonTile tile)
     {
       //If bash for direction
+        int targetX = tile.x;
+        int targetY = tile.y;
+        
         if(direction == 6)
         {
-            tile.x += 1; 
+            targetX += 1; 
         }
         
         //North
         else if(direction == 8)
         {
-            tile.y -= 1;
+            targetY -= 1;
         }
         
         //West
         else if(direction == 4)
         {
-            tile.x -= 1;
+            targetX -= 1;
         }
         
         //South
         else if(direction == 2)
         {
-            tile.y += 1;
+            targetY += 1;
         }
         
         else if(direction == 9)
         {
-            tile.y -= 1;
-            tile.x += 1;
+            targetY -= 1;
+            targetX += 1;
         }
         
         else if(direction == 7)
         {
-            tile.y -= 1;
-            tile.x -= 1;
+            targetY -= 1;
+            targetX -= 1;
         }
         
         else if(direction == 1)
         {
-            tile.y += 1;
-            tile.x -= 1;
+            targetY += 1;
+            targetX -= 1;
         }
         
         else if(direction == 3)
         {
-            tile.y += 1;
-            tile.x += 1;
+            targetY += 1;
+            targetX += 1;
         }
         
-        if (tile.x  >= 0 && tile.x < DungeonBuilder.xLength && tile.y >= 0 && tile.y < DungeonBuilder.yLength && lDungeon.dungeon.tileList[tile.x][tile.y] instanceof DungeonTile)
+        if (targetX  >= 0 && targetX < DungeonBuilder.xLength && targetY >= 0 && targetY < DungeonBuilder.yLength && lDungeon.dungeon.tileList[targetX][targetY] instanceof DungeonTile)
         {
-            return lDungeon.dungeon.tileList[tile.x][tile.y];
+            return lDungeon.dungeon.tileList[targetX][targetY];
         }
         else
         {

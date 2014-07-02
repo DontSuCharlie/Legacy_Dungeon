@@ -37,6 +37,7 @@ public class DungeonBuilder
     //Used to pick a tile for enemy generation, player generation, item generation, etc. Random tile should be found in DRunner
     private ArrayList<DungeonTile> checkList;
     static public ArrayList<Enemy> enemyList;
+    static public ArrayList<Character> characterList = new ArrayList<Character>();
     ArrayList<Enemy> spawningEnemyList = new ArrayList<Enemy>();
     
    //Constructor
@@ -390,6 +391,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         boolean isBadTile = true;
         int tileNumber = 0;
         
+        //Loops until a good tile is found
         while (isBadTile)
         {
             tileNumber = (int) (Math.random() * checkList.size());
@@ -403,9 +405,14 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 isBadTile = true;    
         
         }
+        //Set a tile for the player.
         playerCharacter.currentTile = checkList.get(tileNumber);
+        //Add the character to these tiles. This works for all of the lists.
         tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].character = playerCharacter;
-        checkList.get(tileNumber).character = playerCharacter;
+        //Add this to the list of characters that will be cycled through for the turns.
+        characterList.add(playerCharacter);
+        playerCharacter.isActive = true;
+        
         //System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
         
     }
@@ -499,21 +506,29 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         {
             if (!(checkList.get(i).character instanceof Character))
             {
-                //If the random double is less than itemChance, randomly pick the item that will be there.
+                //If the random double is less than itemChance, randomly pick the enemy that will be there.
                 double enemyChance = .05;
                 if (Math.random() < enemyChance)
                 {
                     double chooser = Math.random();
                     int prevSpawnRate = 0;
                 
+                    //Pick a random enemy to spawn
                     for(int j = 0; j < enemyTypes.size(); j++)
                     {
                 
+                        //Theoretically should not depends on order in enemyTypes.
+                        //Example, a jam has a spawn rate of .4 while a combatJam has .05.
+                        //If my chooser is .43, then it would first check the jam's spawn rate, and fail. Then it would loop back. Because the combatJam spawns if the jam does not spawn, I add the jam's spawn rate and get .45 which would pass.
+                        
                         if (chooser < enemyTypes.get(j).spawnRate + prevSpawnRate)
                         {
                             //checkList.get(i).character = enemyTypes.get(j).characterID;
                             //tileList[checkList.get(i).x][checkList.get(i).y].character = enemyTypes.get(j).characterID;
+                            
+                            //This involves reflection. I store the class of the object in temp. For example, Jam.getClass would return Jam.
                             Class<? extends Enemy> temp = enemyTypes.get(j).getClass();
+                            //This new instance will be used for everything.
                             Enemy something = temp.newInstance();
                             something.enemyID = mainEnemyID;
                             something.currentTile = tileList[checkList.get(i).x][checkList.get(i).y];
@@ -521,7 +536,8 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                             
                             enemyList.add(something);
                             checkList.get(i).character = something;
-                            System.out.println("I AM JAM");
+                            
+                            //System.out.println("I AM JAM");
                             mainEnemyID++;
                         }
                 
@@ -533,6 +549,9 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 }
             }
         }  
+        
+        //Add these enemies to the list to be looped through.
+        characterList.addAll(enemyList);
     }
     
     

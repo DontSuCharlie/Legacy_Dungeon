@@ -1,4 +1,3 @@
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 
@@ -19,49 +18,29 @@ public class Ghost extends Enemy{
     
     public BufferedImage getImage()
     {
-        Image ghostImage = null;
         if (this.imageID == 0 && this.isHit == false)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.ghostImageEast;
-            case 8: return DungeonMain.ghostImageNorth;
-            case 4: return DungeonMain.ghostImageWest;
-            case 2: return DungeonMain.ghostImageSouth;
-            default: return DungeonMain.ghostImageEast;
-            }
+            return DungeonMain.ghostImages[direction];
         }
+
         //Jam alt. image
         else if(this.imageID == 1 && this.isHit == false)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.ghostImageEastWalk;
-            case 8: return DungeonMain.ghostImageNorthWalk;
-            case 4: return DungeonMain.ghostImageWestWalk;
-            case 2: return DungeonMain.ghostImageSouthWalk;
-            default: return DungeonMain.ghostImageEastWalk;
-            }
+            return DungeonMain.ghostImagesAlt[direction];
         }
-        
+            
         else if(this.isHit == true)
         {
-            switch(this.direction)
-            {
-            case 6: return DungeonMain.ghostImageEastHit;
-            case 8: return DungeonMain.ghostImageNorthHit;
-            case 4: return DungeonMain.ghostImageWestHit;
-            case 2: return DungeonMain.ghostImageSouthHit;
-            default: return DungeonMain.ghostImageEastHit;
-            }
+            return DungeonMain.ghostImagesHit[direction];
         }
-        
+
         else 
         {
             //Should not run.
             System.out.println("Error missing ghost image");
-            return DungeonMain.ghostImageEast;
+            return DungeonMain.ghostImages[direction];
         }
+    }
         
         public void act(DungeonMain lDungeon)
         {
