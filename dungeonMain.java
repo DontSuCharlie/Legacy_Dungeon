@@ -69,7 +69,7 @@ public class DungeonMain extends JPanel implements Runnable
 	public DungeonMain() throws InstantiationException, IllegalAccessException
 	{
 		window = new JFrame("Hazardous Laboratory");
-		dungeon = new DungeonBuilder(1,1,1,100,100,1,null, null);
+		dungeon = new DungeonBuilder(1,1,1,100,100,1);
         for (int i = dungeon.playerCharacter.currentTile.x - numTilesX; i < dungeon.playerCharacter.currentTile.x + numTilesX; i++)
         {
             for (int j = dungeon.playerCharacter.currentTile.y - numTilesY; j < dungeon.playerCharacter.currentTile.y + numTilesY; j++)
@@ -194,48 +194,109 @@ public class DungeonMain extends JPanel implements Runnable
 		Window.createWindow();//creates window
 		Window.window.add(this);//adds game file to the window
 		boolean inGame = true;
+		boolean onCurrentFloor = true;//When false, create a new floor.
 		while (inGame)
 		{
-		    System.out.println("Starting over");
-			//Projectile movement and actions
-			for (Projectile i: ProjectileList)
-			{
-				i.act(this);
-			}
-					
-			//Character actions
-			for (Character i: dungeon.characterList)
-			{
-			    if (i.isActive)
-			    {
-    			    System.out.println(i);
+		    while(onCurrentFloor)
+		    {
+    		    System.out.println("Starting over");
+    			//Projectile movement and actions
+    			for (Projectile i: ProjectileList)
+    			{
     				i.act(this);
-                    System.out.println(i + "Has acted");
-
-    				//Enemy overheals occur just after their turn. Move this to character.
-    				if (i.currentHealth > i.maxHealth)
-    	            {
-    	                //If the overheal amount is less than the threshold percentage, restore currentHealth to the normal MaxHealth
-    	                if (i.currentHealth < (1+overHealDecayPercent) * i.maxHealth)
-    	                {
-    	                    i.currentHealth = i.maxHealth;
-    	                    System.out.println("Reverted to normal max");
-    	                }
-    	                    
-    	                //Reduce the overheal percent in other case.
-    	                else 
-    	                {
-    	                    System.out.println("Overheal reduced");
-    	                    i.currentHealth -= (int)(overHealDecayPercent * i.maxHealth);
-    	                    System.out.println(i.currentHealth);
-    	                }
-    				}
-			    }
-			}
-			System.out.println("Relooping");			
+    			}
+    					
+    			//Character actions
+    			for (Character i: dungeon.characterList)
+    			{
+    			    if (i.isActive)
+    			    {
+        			    System.out.println(i);
+        				i.act(this);
+                        System.out.println(i + "Has acted");
+    
+        				//Enemy overheals occur just after their turn. Move this to character.
+        				if (i.currentHealth > i.maxHealth)
+        	            {
+        	                //If the overheal amount is less than the threshold percentage, restore currentHealth to the normal MaxHealth
+        	                if (i.currentHealth < (1+overHealDecayPercent) * i.maxHealth)
+        	                {
+        	                    i.currentHealth = i.maxHealth;
+        	                    System.out.println("Reverted to normal max");
+        	                }
+        	                    
+        	                //Reduce the overheal percent in other case.
+        	                else 
+        	                {
+        	                    System.out.println("Overheal reduced");
+        	                    i.currentHealth -= (int)(overHealDecayPercent * i.maxHealth);
+        	                    System.out.println(i.currentHealth);
+        	                }
+        				}
+    			    }
+    			}
+			System.out.println("Relooping");	
+		    }
+		    nextLevel();
+		    
 		}
 		System.out.println("Loop broken");
 	}
+	
+	
+	/*
+	 * Performs required tasks for going to next floor or exiting.
+	 * Runs when player has interacted with stairs, setting goingToNewFloor to be true, after all enemies have taken their turn.
+	 * 
+	*/
+	private void nextLevel() throws InstantiationException, IllegalAccessException
+	{
+        changeSpawnRates();
+        dungeon = new DungeonBuilder(dungeon);
+        dungeon.tileList = DungeonBuilder.tileList;
+	}
+	
+	/*
+	 * This method should be used to change spawn rates. It should only be run when running nextLevel() so it can effect on the next floor.
+	 * PLACEHOLDER: Currently simply increases spawn rate of combatJams and decreases spawn rate of Jams.
+	 * Place fancy difficulty adjusting algorithm here. Ex. increase harder enemy spawn rate if player did not take much damage/ less spawn if player was nearly killed
+	 * Compute heuristics and stuff.
+	 */
+	
+	private void changeSpawnRates()
+	{
+	    //Use heuristic to affect spawn rates. Deeper is also more difficult.
+	    dungeon.difficultyHeuristic = dungeon.playerCharacter.goldAmount - dungeon.playerFloorDamage;
+	    if (dungeon.theme == 1)
+	    {
+	        //If there was a way to get an element of its type, that would be helpful. As is, I if bash with a for each loop for all elements.
+	        for(Enemy e : dungeon.spawningEnemyList)
+	        {
+	            //Normal jams become less common.
+	            if(e instanceof RandomJam)
+	            {
+	                e.spawnRate -= .1;
+	            }
+	           
+	            if(e instanceof CombatJam)
+	            {
+	                e.spawnRate += .1;
+	            }
+	        }
+	    }
+	    
+	    //Clumsily done, needs more fine-tuning. This adds player wealth and subtracts damage taken.
+	    if(dungeon.difficultyHeuristic < 0)
+	    {
+	        dungeon.goldChance += .05;
+	    }
+	    
+	    if(dungeon.difficultyHeuristic > 0)
+        {
+            dungeon.goldChance -= .05;
+        }
+	}
+	
 	//Methods that already work
 	//Run when panel has started.
 	public void addNotify()
@@ -295,7 +356,7 @@ public class DungeonMain extends JPanel implements Runnable
 				//Draw bodies :<
 				if (drawnTile instanceof DungeonTile && drawnTile.deadCharacter instanceof DeadCharacter)
 				{
-					if (drawnTile.deadCharacter.prevCharacter instanceof Jam)
+					if (drawnTile.deadCharacter.prevCharacter instanceof RandomJam)
 					{
 						Image slimeImage = null;
 						
@@ -344,12 +405,19 @@ public class DungeonMain extends JPanel implements Runnable
 						playerImage = dungeon.playerCharacter.getImage();
 						g.drawImage(playerImage, (int)((numTilesX/2 + .15) * tileLengthX), (int)((numTilesY/2 + .15) * tileLengthY), (int)((numTilesX/2 + .85) * tileLengthX), (int)((numTilesY/2 + .85) * tileLengthY), 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
 					}
-					//Draw Jam
-					else if (drawnTile.character instanceof Jam)
+					//Draw RandomJam
+					else if (drawnTile.character instanceof RandomJam)
 					{
-						BufferedImage slimeImage = ((Jam)drawnTile.character).getImage();
+						BufferedImage slimeImage = ((RandomJam)drawnTile.character).getImage();
 						g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
 					}
+					
+					//Draw CombatJam
+                    else if (drawnTile.character instanceof CombatJam)
+                    {
+                        BufferedImage slimeImage = ((CombatJam)drawnTile.character).getImage();
+                        g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                    }
 				}
 				
 				if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)
@@ -505,7 +573,7 @@ public class DungeonMain extends JPanel implements Runnable
 		//Death animations. Very broken
 		for (DeadCharacter i : recentDeadCharList)
 		{
-			if (i.prevCharacter instanceof Jam)
+			if (i.prevCharacter instanceof RandomJam)
 			{
 			    Image slimeImage = null;
 			    slimeImage = DungeonMain.slimeImagesHit[i.prevCharacter.direction];
@@ -516,6 +584,18 @@ public class DungeonMain extends JPanel implements Runnable
 			    }
 			    g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
 			}
+			
+	         if (i.prevCharacter instanceof CombatJam)
+	            {
+	                Image slimeImage = null;
+	                slimeImage = DungeonMain.slimeImagesHit[i.prevCharacter.direction];
+
+	                if (i.deathTimer <= 0)
+	                {
+	                    recentDeadCharList.remove(i);
+	                }
+	                g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
+	            }
 		}
 		//UI is drawn last so it's on top of everything else.
 		int floorNum = dungeon.currentFloor;

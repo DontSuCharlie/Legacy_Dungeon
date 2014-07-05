@@ -37,17 +37,12 @@ public abstract class Character extends Skills
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
     public int direction; // Used for direction of sprite and attacks 6=east, 8=north, 4=west, 2=south, 9=NE, 7=NW, 3=SE, 1=SW
     public boolean isHit = false;
-    //Used for length of hit animation. Currently set to 250 ms delay.
-    final int hitTimer = (int) (100/DungeonMain.DELAY);
-    //Time to charge abilities
-    private int cooldownTimer1Max = 10;
-    //Reduced by one each turn.
+    final int hitTimer = (int) (100/DungeonMain.DELAY); //Used for length of hit animation. Currently set to 250 ms delay.
+    private int cooldownTimer1Max = 10; //Time to charge abilities. Reduced by one each turn.
     public int cooldownTimer1 = cooldownTimer1Max;//Deals with cooldowns for the first ability of this creature. 
     public int currentHitTime = hitTimer;
-    //This is used to determine how abilities work with this character, ex. revives should not work on bosses.
-    public int dangerLevel = 1;
-    //Used to check attacks and determine which animating number to be shown.
-    public boolean isFriendly;
+    public int dangerLevel = 1; //This is used to determine how abilities work with this character, ex. revives should not work on bosses.
+    public boolean isFriendly; //Used to check attacks and determine which animating number to be shown.
     boolean getNewTarget = true;
     boolean isActive = false;
     
@@ -116,6 +111,7 @@ public abstract class Character extends Skills
         System.out.println(":<");
         lDungeon.dungeon.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
         lDungeon.dungeon.tileList[this.currentTile.x][this.currentTile.y].character = null;
+        this.isActive = false;
         lDungeon.recentDeadCharList.add(new DeadCharacter(this));
         lDungeon.deadCharList.add(new DeadCharacter(this));
 
@@ -132,6 +128,13 @@ public abstract class Character extends Skills
         lDungeon.dungeon.tileList[targetX][targetY].number = temp;
         //Subtract health
         lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth -= damage;
+        
+        //Used for stats and the heuristic for finetuning difficulty when building new floors.
+        if(lDungeon.dungeon.tileList[targetX][targetY].character instanceof Player)
+        {
+            lDungeon.dungeon.playerFloorDamage+= damage;
+        }
+        
         //Show hit animation.
         lDungeon.dungeon.tileList[targetX][targetY].character.isHit = true;
         //If the character has no health, it dies. :<
@@ -165,7 +168,10 @@ public abstract class Character extends Skills
         //Replace health based on maxHealth
         lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.currentHealth = (int)(lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.maxHealth * healPercent);
         lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.isFriendly = this.isFriendly;
+        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.isActive = true;
+        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].deadCharacter = null;
 
+        
         //Add a new heal number to show what happened.
         //Perhaps add another fancy image to show the revival.
         HealNumber temp = new HealNumber(lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.currentHealth, character.prevCharacter.currentTile.x, character.prevCharacter.currentTile.y, character.prevCharacter.isFriendly);

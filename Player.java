@@ -8,6 +8,7 @@ public class Player extends Character{
     int xMovement;
     int yMovement;
     int goldAmount;
+    boolean goingToNewFloor = false; //Turned true to start process of going to next floor.
     public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
 
     public Player(int inputRiches)
@@ -30,7 +31,7 @@ public class Player extends Character{
         //Loop while the player needs to act
         while (waitingForPlayer)
         {
-            //Uncomment this System.out for things to work, albeit laggily and broken :<.
+            //Uncomment this System.out for things to work, albeit laggily and broken :< Maybe problem with KeyboardInput?
             System.out.println("Player");
             //Player actions
             //In move we use char move and then 
@@ -232,27 +233,10 @@ public class Player extends Character{
         
         if(lDungeon.dungeon.playerCharacter.currentTile.tileID == 2)
         {
+            goingToNewFloor = true;
             System.out.println("NEXT LEVEL");
-            //lDungeon.superPlayer.goldCount = lDungeon.dungeon.playerCharacter.riches;
-            lDungeon.dungeon.currentFloor++;                    
-            lDungeon.dungeon.spawningEnemyList.get(0).spawnRate -= .1;
-            lDungeon.dungeon.spawningEnemyList.get(1).spawnRate += .1;
-            lDungeon.dungeon = new DungeonBuilder(1,1,1,100,100,lDungeon.dungeon.currentFloor, lDungeon.dungeon.playerCharacter, lDungeon.dungeon.spawningEnemyList);
-            lDungeon.dungeon.tileList = DungeonBuilder.tileList;
-            //isChange = true;
-            
-            //If this is the last floor, we export stuff from player and set ingame to false;
-            /*
-            if lDungeon.dungeon.currentFloor > lDungeon.numFloors
-            {
-                lDungeon.playerData = lDungeon.dungeon.playerCharacter;
-                inGame = false;
-            }
-*/
+            //Will then run stuff in DungeonMain.   
         }
-        
-        
-        
         System.out.println("Interacting woah");
         KeyboardInput.boolIsInteracting = false; 
     }
