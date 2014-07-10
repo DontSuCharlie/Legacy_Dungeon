@@ -244,7 +244,7 @@ public class Player extends Character{
     public void move(DungeonMain lDungeon)
     {
         System.out.println("Moving");
-        lDungeon.dungeon.playerCharacter.charMove(lDungeon.dungeon.playerCharacter.playerMoveX(), lDungeon.dungeon.playerCharacter.playerMoveY(), lDungeon.dungeon.playerCharacter, lDungeon.dungeon);
+        lDungeon.dungeon.playerCharacter.charMove(lDungeon.dungeon.playerCharacter.playerMoveX(), lDungeon.dungeon.playerCharacter.playerMoveY(), lDungeon.dungeon);
         
       //Need to activate nearby enemies. Trying to do it in paintComponent breaks stuff :<. Not entirely sure about the incrementation.
         for (int i = lDungeon.dungeon.playerCharacter.currentTile.x - lDungeon.numTilesX; i < lDungeon.dungeon.playerCharacter.currentTile.x + lDungeon.numTilesX; i++)

@@ -58,7 +58,6 @@ public class DungeonBuilder
         this.difficulty = difficulty;//insert random factor that will adjust difficulty
         currentFloor = currentFloorInput;
         //Will put this in legacyDungeon. Fix next line later
-        numFloor = (int) (Math.random()*difficulty) + (int)(difficulty/10) + 1;
         //Remove this stuff later. Just for testing.
         xLength = xLengthInput;
         yLength = yLengthInput;
@@ -72,16 +71,42 @@ public class DungeonBuilder
         connectorList = new ArrayList<DungeonTile>();
         checkList = new ArrayList<DungeonTile>();
         enemyList = new ArrayList<Enemy>();
+
+       
+        //Number of floors is based on the difficulty level
+    }
+    
+    void build() throws InstantiationException, IllegalAccessException
+    {
         this.assignTilePos(numTiles);
         this.spawnPlayer();       
         this.spawnStairs();
         this.generateItems();
         this.spawnEnemies(spawningEnemyList);
-       
-        //Number of floors is based on the difficulty level
+    }
+    
+    /*
+     * Use this to test new stuff. This builds a 5x5 room to mess around in.
+     */
+    void buildTest()
+    {
+        for (int i = 1; i < 6; i++)
+        {
+            for (int j = 1; j < 6; j++)
+            {
+                tileList[i][j] = new DungeonTile(i,j,1);
+            }
+        }
+        spawnPlayer(1,1);
+        tileList[5][5].character = new RandomJam();
+        tileList[5][5].character.isActive = true;
+        tileList[5][5].character.currentTile = tileList[5][5];
+        characterList.add(tileList[5][5].character);
+        
+        
     }
        
-    private void getSpawnLists(int theme2)
+    private void getSpawnLists(int theme)
     {
         if (theme == 1)
         {
@@ -99,7 +124,7 @@ public class DungeonBuilder
         this.skillID = dungeon.skillID; //The skill found there 
         this.difficulty = dungeon.difficulty;//insert random factor that will adjust difficulty
         
-        currentFloor = dungeon.currentFloor++;
+        currentFloor = ++dungeon.currentFloor;
         //Will put this in legacyDungeon. Fix next line later
         numFloor = dungeon.currentFloor;
         //Remove this stuff later. Just for testing.
@@ -453,6 +478,21 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
         
     }
+    //Player and enemy locations will be defined by two ways- a dungeonTile for each character and a different characterID on the tileList. Maybe not efficient enough.
+    //OVERLOADED: For spawning in a given location. Assumed correct.
+    private void spawnPlayer(int x, int y)
+    {
+        //Set a tile for the player.
+        playerCharacter.currentTile = tileList[x][y];
+        //Add the character to these tiles. This works for all of the lists.
+        tileList[x][y].character = playerCharacter;
+        //Add this to the list of characters that will be cycled through for the turns.
+        characterList.add(playerCharacter);
+        playerCharacter.isActive = true;
+        
+        //System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
+        
+    }
     
     private void spawnStairs()
     {
@@ -596,6 +636,49 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         characterList.addAll(enemyList);
     }
     
+    /**
+     * A method that returns true if an input DungeonTile is in bounds and is a valid tile (i.e. not a wall)
+     * Else returns false.
+     * The boolean checkOpenTile, if true adds an additional check for whether it is empty and thus moveable.
+     * This mostly just makes code look cleaner elsewhere. 
+     */
+    public boolean tileChecker(int x, int y, boolean checkOpenTile)
+    {
+        if (x > 0 && x < xLength && y > 0 && y < yLength && tileList[x][y] instanceof DungeonTile)
+        {
+            if (checkOpenTile)
+            {
+                if(!(tileList[x][y].character instanceof Character))
+                {
+                    return true;
+                }
+                
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else 
+        {
+            return false;
+        }
+    }
+    
+    public void buildTestRoom()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                tileList[i][j] = new DungeonTile(i,j,1);
+            }
+        }
+        
+        
+        
+    }
     
     /* FIX WHEN ITEM SYSTEM IS SOLIDIFIED
     private void generateItems()

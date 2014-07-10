@@ -9,7 +9,7 @@ public class DungeonMain extends JPanel implements Runnable
 {
 	ArrayList<Character> visibleCharacters = new ArrayList<Character>();//list of characters that are painted
 	static ArrayList<DeadCharacter> recentDeadCharList = new ArrayList<DeadCharacter>();//list of dead characters that are undergoing death animation
-	static ArrayList<DeadCharacter> deadCharList = new ArrayList<DeadCharacter>();//list of dead characters on floor. (Used for AI related to dead creatures (reviver)
+	static ArrayList<DeadCharacter> deadCharList = new ArrayList<DeadCharacter>();//list of dead characters on floor. (Used for AI related to dead creatures (reviver, slime-eater)
 	static ArrayList<Number> NumberList = new ArrayList<Number>();//list of numbers
 	static ArrayList<Projectile> ProjectileList = new ArrayList<Projectile>();//list of projectiles
 	static JFrame window;//to create new window
@@ -64,17 +64,29 @@ public class DungeonMain extends JPanel implements Runnable
 	BufferedImage minus = imageLoader.loadImage("images/Minus.png");
 	BufferedImage minusR = imageLoader.loadImage("images/MinusR.png");
 	BufferedImage divide = imageLoader.loadImage("images/Slash.png");
+	BufferedImage heart = imageLoader.loadImage("images/heart.png");
 	public static boolean isEnemyTurn = false;
 	
 	public DungeonMain() throws InstantiationException, IllegalAccessException
 	{
+	    //Just a simple way to activate test mode.
+	    String buildSetting = "Nottest";
 		window = new JFrame("Hazardous Laboratory");
 		dungeon = new DungeonBuilder(1,1,1,100,100,1);
+		if (buildSetting.equals("test"))
+		{
+		    dungeon.buildTest();
+		}
+		
+		else
+		{
+		    dungeon.build();
+		}
         for (int i = dungeon.playerCharacter.currentTile.x - numTilesX; i < dungeon.playerCharacter.currentTile.x + numTilesX; i++)
         {
             for (int j = dungeon.playerCharacter.currentTile.y - numTilesY; j < dungeon.playerCharacter.currentTile.y + numTilesY; j++)
             {
-                if (i > 0 && i < DungeonBuilder.xLength && j > 0 && j < DungeonBuilder.yLength && dungeon.tileList[i][j] instanceof DungeonTile && dungeon.tileList[i][j].character instanceof Character && !dungeon.tileList[i][j].character.isActive)
+                if (dungeon.tileChecker(i, j, false) && dungeon.tileList[i][j].character instanceof Character)
                 {
                     dungeon.tileList[i][j].character.isActive = true;
                     //Start aim mode, preventing movement here.
@@ -102,20 +114,40 @@ public class DungeonMain extends JPanel implements Runnable
 	        tileImagesDefault[i] = imageLoader.loadImage("images/DungeonTile" + i + ".png");
 	    }
 	    //Note change i+=2 back to i++ when diagonal sprites are added.
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
             slimeImages[i] = imageLoader.loadImage("images/slime" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
             slimeImagesAlt[i] = imageLoader.loadImage("images/slimeAlt" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
             slimeImagesHit[i] = imageLoader.loadImage("images/slimeHit" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
             slimeImagesDead[i] = imageLoader.loadImage("images/slimeDead" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
@@ -145,16 +177,31 @@ public class DungeonMain extends JPanel implements Runnable
             }
             combatSlimeImagesDead[i] = imageLoader.loadImage("images/combatSlimeDead" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
             playerImages[i] = imageLoader.loadImage("images/player" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
             playerImagesAlt[i] = imageLoader.loadImage("images/playerAlt" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            //No sprite for center(5)
+            if(i == 5)
+            {
+                i = 6;
+            }
             playerImagesHit[i] = imageLoader.loadImage("images/playerHit" + i + ".png");
         }
         /*
@@ -197,7 +244,7 @@ public class DungeonMain extends JPanel implements Runnable
 		boolean onCurrentFloor = true;//When false, create a new floor.
 		while (inGame)
 		{
-		    while(onCurrentFloor)
+		    while(!dungeon.playerCharacter.goingToNewFloor)
 		    {
     		    System.out.println("Starting over");
     			//Projectile movement and actions
@@ -237,6 +284,7 @@ public class DungeonMain extends JPanel implements Runnable
     			}
 			System.out.println("Relooping");	
 		    }
+		    dungeon.playerCharacter.goingToNewFloor = false;
 		    nextLevel();
 		    
 		}
@@ -269,7 +317,7 @@ public class DungeonMain extends JPanel implements Runnable
 	    dungeon.difficultyHeuristic = dungeon.playerCharacter.goldAmount - dungeon.playerFloorDamage;
 	    if (dungeon.theme == 1)
 	    {
-	        //If there was a way to get an element of its type, that would be helpful. As is, I if bash with a for each loop for all elements.
+	        //If there was a way to get an element of its type, that would be helpful. As is, I if-bash with a for each loop for all elements.
 	        for(Enemy e : dungeon.spawningEnemyList)
 	        {
 	            //Normal jams become less common.
@@ -338,7 +386,7 @@ public class DungeonMain extends JPanel implements Runnable
 			{
 				//Draw tiles
 				DungeonTile drawnTile = null;
-				if (dungeon.playerCharacter.currentTile.x - numTilesX/2 + i>= 0 && dungeon.playerCharacter.currentTile.x - numTilesX/2 + i < DungeonBuilder.xLength && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j >= 0 && dungeon.playerCharacter.currentTile.y - numTilesY/2 + j < DungeonBuilder.yLength)
+				if (dungeon.tileChecker(dungeon.playerCharacter.currentTile.x-numTilesX/2 + i, dungeon.playerCharacter.currentTile.y-numTilesY/2 + j, false))
 				{
 					drawnTile = dungeon.tileList[dungeon.playerCharacter.currentTile.x - numTilesX/2 + i][dungeon.playerCharacter.currentTile.y - numTilesY/2 + j];
 				}
@@ -399,6 +447,9 @@ public class DungeonMain extends JPanel implements Runnable
 				{
 					visibleCharacters.add(drawnTile.character);
 					//Note: should change source image to be good and then just use drawnTile.character.getImage() and display that normally.
+					
+					
+					
 					if (drawnTile.character instanceof Player)
 					{
 						Image playerImage;
@@ -418,6 +469,24 @@ public class DungeonMain extends JPanel implements Runnable
                         BufferedImage slimeImage = ((CombatJam)drawnTile.character).getImage();
                         g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                     }
+					
+					//Drawn above characters
+					//if(drawnTile.character.status =! 0)
+					{
+					    //Draw status effects.
+					}
+					
+					/* The use of the next part is to draw a heart above friendly characters except the player.
+					 * Currently set to draw a heart as 1/4 a tile.
+					 * 
+					 */
+					
+	                if(drawnTile.character.isFriendly && !(drawnTile.character instanceof Player))
+	                {
+	                    g.drawImage(heart, (int)((i+.25)* tileLengthX + screenShakeX), (int)((j+.25) * tileLengthY + screenShakeY), (int)((i+.5) * tileLengthX + screenShakeX), (int)((j+.5) * tileLengthY + screenShakeY), 0, 0, image.getWidth(null), image.getHeight(null), null);
+	                }
+					
+					
 				}
 				
 				if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)

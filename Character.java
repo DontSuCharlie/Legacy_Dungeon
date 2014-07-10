@@ -1,8 +1,8 @@
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import javax.swing.JFrame;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Stack;
 
 /*
 Character.java is the superclass of NPC.java, Player.java, and Enemy.java. All characters will have the following attributes in the file.
@@ -13,7 +13,7 @@ Character.java is the superclass of NPC.java, Player.java, and Enemy.java. All c
 5] Inventory
 6] Skills
 */
-//lol probably should not extend skills
+//probably should not extend skills. Sloppy
 public abstract class Character extends Skills
 {
 //Note to self: Remember to update public or not based on how you want other classes to access this file
@@ -45,6 +45,11 @@ public abstract class Character extends Skills
     public boolean isFriendly; //Used to check attacks and determine which animating number to be shown.
     boolean getNewTarget = true;
     boolean isActive = false;
+    int status = 0; //Keeps track of necessary effects, such as damaging this from poison.
+    Stack<DungeonTile> currentPath = new Stack<DungeonTile>();
+    boolean closeToTarget = false;
+    private int pathFindingCooldown = 0;
+    private int maxPathFindingCooldown = 5;
     
    //Constructor
     
@@ -55,55 +60,46 @@ public abstract class Character extends Skills
       currentTile = new DungeonTile(0,0,0);
    }
    */
-   
-    public DungeonTile charMove(int deltaX, int deltaY, Character character, DungeonBuilder dungeonChar)
+    
+    /* charMove: moves this character some given distance and sets their direction appropriately.
+     * Mostly used for simple movement, but can be used as part of creature skills as well.
+     * NOTE: For pushing abilities, call charMove several times. This only checks if the final tile is occupied. Useful for short range teleports, jumps, etc.
+     * The returned boolean is for whether the movement succeeds or fails.
+     */
+    public boolean charMove(int deltaX, int deltaY, DungeonBuilder dungeonChar)
     {    
-        if(deltaX > 0)
+        
+        setDirection(this.currentTile.x+ deltaX, this.currentTile.y+deltaY);
+        if (dungeonChar.tileChecker(this.currentTile.x + deltaX, this.currentTile.y + deltaY, true))       
         {
-            direction = 6;
-        }
-        else if(deltaX < 0)
-        {
-            direction = 4;
-        }
-        else if(deltaY > 0)
-        {
-            direction = 2;
-        }
-        else if(deltaY < 0)
-        {
-            direction = 8;
-        }
-        else
-        {
-            direction = -1;
-        }
-        if (character.currentTile.x + deltaX >= 0 && character.currentTile.x + deltaX < dungeonChar.xLength && character.currentTile.y + deltaY >= 0 && character.currentTile.y + deltaY < dungeonChar.yLength && dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY] instanceof DungeonTile)       
-        {
-               
-            DungeonTile potentialTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
-            if (potentialTile.tileID == 0 || potentialTile.character instanceof Character)
-            {
-                //Play a sound
-                //System.out.println("Oh no a wall");
-                return character.currentTile;
-            }
-            else 
-            {
-                //dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].characterID = 0;
-                dungeonChar.tileList[character.currentTile.x] [character.currentTile.y].character = null;
-                //dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].characterID = character.characterID;
-                dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY].character = character;
-                character.currentTile = dungeonChar.tileList[character.currentTile.x + deltaX] [character.currentTile.y + deltaY];
+            dungeonChar.tileList[this.currentTile.x] [this.currentTile.y].character = null;
+            dungeonChar.tileList[this.currentTile.x + deltaX] [this.currentTile.y + deltaY].character = this;
+            this.currentTile = dungeonChar.tileList[this.currentTile.x + deltaX] [this.currentTile.y + deltaY];
            
-                //HMMMM. IS THIS CAUSING THE ERROR?  nop
-             //      System.out.println(character.getClass().getName()+ " moved to " + character.currentTile);
-                   //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
-            }
-        } 
+            //HMMMM. IS THIS CAUSING THE ERROR?  nop
+            //System.out.println(character.getClass().getName()+ " moved to " + character.currentTile);
+            //return new DungeonTile(currentTile.x + deltaX, currentTile.y + deltaY, 1);
+        }
            
            //System.out.println("Oh no a wall");
-           return character.currentTile;
+           return false;
+    }
+    
+    /* OVERLOADED: Input of chosen DungeonTile instead of coordinates.
+     *  charMove: moves a character some given distance and sets their direction appropriately.
+     * This differs in that it would work better for pathfinding and teleportation.
+     * NOTE: all directions currently not set. Need to do diagonals.
+     * ASSUMES VALID TILE. Because if not then 
+     * 
+     * The boolean is for whether the movement succeeds or fails.
+     */
+    public void charMove(DungeonTile chosenTile, DungeonBuilder dungeonChar)
+    {    
+        setDirection(chosenTile.x, chosenTile.y);
+        
+        dungeonChar.tileList[this.currentTile.x] [this.currentTile.y].character = null;
+        chosenTile.character = this;
+        this.currentTile = chosenTile;
     }
     
     public void onDeath(DungeonMain lDungeon)
@@ -179,6 +175,177 @@ public abstract class Character extends Skills
         lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].number = temp;
         
     }
+     
+    /**
+    * Using A* pathing, we get beautiful paths. Diagonals suck though. There is no reason not to use diagonal movement when x and y coordinates differ. I have currently set it so that paths are found diagonals
+    * Start by calculating the 
+    * This is insensitive to other creatures so it's easier to process. When within 10 tiles or so, use P. This will only be calculated every 5 turns or so.
+    * The fine finder takes other characters in account but also reprocesses each turn.
+    * 
+    */
+    public void PathFinder(DungeonMain lDungeon, DungeonTile targetTile)
+    {
+        System.out.println("Path Finding");
+
+        //These limits determine what are close enough to the target to justify PathFinderFine
+        final int FINE_LIMIT_X = lDungeon.numTilesX;
+        final int FINE_LIMIT_Y = lDungeon.numTilesY;
+        //If close enough we swap to a more accurate pathFinder that takes nearby enemies in account.
+        if (Math.abs(this.currentTile.x - targetTile.x) < FINE_LIMIT_X && Math.abs(this.currentTile.y - targetTile.y) < FINE_LIMIT_Y)
+        {
+            this.closeToTarget = true;
+        }
+
+        boolean atTarget = false;
+        //HashSets are great for checking if something is in it. Not good for recalling data. Useful for knowing if we already navigated this tile. If we have already went past this tile then we don't add it again. If our heuristic is good enough (consistent) then it should work.
+        HashSet<PathTile> checkedTiles = new HashSet<PathTile>();
+        
+        //We only care about the minimum value so a priority queue is best for the job.
+        PriorityQueue<PathTile> potentialTileQueue = new PriorityQueue<PathTile>();
+        potentialTileQueue.addAll(new PathTile(this.currentTile).getAdjacentTilesAndSetValues(lDungeon, new PathTile(this.currentTile), targetTile, this.closeToTarget));
+        //We store this so that the final path is stored as a linked list.
+
+        //If the queue is empty, then there's no possible way to reach the target. :<
+        while(!atTarget && !potentialTileQueue.isEmpty())
+        {
+            //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
+            PathTile possibleTile = potentialTileQueue.poll();
+            
+            
+            //This goal is used when the character is far from the target. Characters in the way are ignored.
+            //If this tile is near the target (distance on both x and y axis are within the FINE_LIMIT) then we backtrack, following the previous tile pointers.
+            if (!this.closeToTarget && Math.abs(possibleTile.thisTile.x - targetTile.x) < FINE_LIMIT_X && Math.abs(possibleTile.thisTile.y - targetTile.y) < FINE_LIMIT_Y)
+            {
+                System.out.println("Coarse Target");
+                atTarget = true;
+                //Keep going back until we reach the source character again.
+                while(possibleTile.thisTile != this.currentTile)
+                {
+                    currentPath.add(possibleTile.thisTile);
+                    //Going back further.
+                    possibleTile = possibleTile.previousTile;
+                }
+            }
+            
+            //If the possibleTile is the targetTile, then we backtrack to find the path.
+            else if (this.closeToTarget && possibleTile.thisTile.equals(targetTile))
+            {
+                System.out.println("Fine Target");
+                atTarget = true;
+                //Keep going back until we reach the source character again.
+                while(possibleTile.thisTile != this.currentTile)
+                {
+                    System.out.println(possibleTile.thisTile);
+                    currentPath.add(possibleTile.thisTile);
+                                        
+                    //Going back further.
+                    possibleTile = possibleTile.previousTile;
+                }
+            }
+            
+            if (!checkedTiles.contains(possibleTile))
+            {
+                System.out.println("Tile plucked");
+
+                checkedTiles.add(possibleTile);
+                //Even if there are dead ends, the priorityqueue just gets the next best value. 
+                ArrayList<PathTile> temp = possibleTile.getAdjacentTilesAndSetValues(lDungeon, possibleTile, storedTargetCharacter.currentTile, this.closeToTarget);
+
+                potentialTileQueue.addAll(temp);
+            }
+        }
+    }
+    
+/*
+    public void PathFinderCoarse(DungeonMain lDungeon, DungeonTile targetTile)
+    {
+        //These limits determine what are close enough to the target to justify PathFinderFine
+        final int FINE_LIMIT_X = lDungeon.numTilesX;
+        final int FINE_LIMIT_Y = lDungeon.numTilesY;
+        boolean atTarget = false;
+        //HashSets are great for checking if something is in it. Not good for recalling data. Useful for knowing if we already navigated this tile. If our heuristic is good enough (consistent) then it should work.
+        HashSet<DungeonTile> checkedTiles = new HashSet<DungeonTile>();
+        
+        //We only care about the minimum value so a priority queue is best for the job.
+        PriorityQueue<DungeonTile> potentialTileQueue = new PriorityQueue<DungeonTile>();
+        potentialTileQueue.addAll(this.currentTile.getAdjacentTilesAndSetValues(lDungeon, this.currentTile, targetTile));
+        //We store this so that the final path is stored as a linked list.
+
+        //If the queue is empty, then there's no possible way to reach the target. :<
+        while(!atTarget && !potentialTileQueue.isEmpty())
+        {
+            
+            //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
+            DungeonTile possibleTile = potentialTileQueue.poll();
+            
+            
+            //If this tile is near the target then we backtrack, following the previous tile pointers.
+            if (Math.abs(possibleTile.x - targetTile.x) < FINE_LIMIT_X && Math.abs(possibleTile.y - targetTile.y) < FINE_LIMIT_Y)
+            {
+                //Keep going until we reach this character again.
+                while(possibleTile != this.currentTile)
+                {
+                    currentPath.add(possibleTile);
+                    //Going back further.
+                    possibleTile = possibleTile.previousTile;
+                }
+            }
+            
+            if (!checkedTiles.contains(possibleTile))
+            {
+                //Even if there are dead ends, the priorityqueue just gets the next best value. 
+                ArrayList<DungeonTile> temp = possibleTile.getAdjacentTilesAndSetValues(lDungeon, possibleTile, storedTargetCharacter.currentTile);
+
+                potentialTileQueue.addAll(temp);
+            }
+        }
+    }
+    
+    public void PathFinderFine(DungeonMain lDungeon, DungeonTile targetTile)
+    {
+        boolean atTarget = false;
+        //HashSets are great for checking if something is in it. Not good for recalling data. Useful for knowing if we already navigated this tile. If our heuristic is good enough (consistent) then it should work.
+        HashSet<DungeonTile> checkedTiles = new HashSet<DungeonTile>();
+        
+        //We only care about the minimum value so a priority queue is best for the job.
+        PriorityQueue<DungeonTile> potentialTileQueue = new PriorityQueue<DungeonTile>();
+        potentialTileQueue.addAll(this.currentTile.getAdjacentTilesAndSetValues(lDungeon, this.currentTile, targetTile, true));
+        //We store this so that the final path is stored as a linked list.
+
+        //If the queue is empty, then there's no possible way to reach the target. :<
+        while(!atTarget && !potentialTileQueue.isEmpty())
+        {
+            
+            //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
+            DungeonTile possibleTile = potentialTileQueue.poll();
+            
+            
+            //If this tile is the target then we go back, following the previous tile pointers.
+            if (possibleTile == targetTile)
+            {
+                //Keep going until we reach this character again.
+                while(possibleTile != this.currentTile)
+                {
+                    currentPath.add(possibleTile);
+                    //Going back further.
+                    possibleTile = possibleTile.previousTile;
+                }
+            }
+            
+            if (!checkedTiles.contains(possibleTile))
+            {
+                //Even if there are dead ends, the priorityqueue just gets the next best value.
+                ArrayList<DungeonTile> temp = possibleTile.getAdjacentTilesAndSetValues(lDungeon, possibleTile, storedTargetCharacter.currentTile);
+                
+                //We hit a dead end and need to backtrack.
+                if (temp.isEmpty())
+                {
+                    
+                }
+                potentialTileQueue.addAll(temp);
+            }
+        }
+    }*/
     
     //Get distance from this character to another tile
     public int getDistance(DungeonTile tile)
@@ -190,45 +357,45 @@ public abstract class Character extends Skills
     {
       //Set direction of this creature. Ugly please change.
         //East
-        if(targetTileX - this.currentTile.x == 1 && targetTileY == this.currentTile.y )
+        if(targetTileX - this.currentTile.x > 0 && targetTileY == this.currentTile.y )
         {
             this.direction = 6;
         }
         
         //North
-        else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y == -1)
+        else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y < 0)
         {
             this.direction = 8;
         }
         
         //West
-        else if(targetTileX - this.currentTile.x == -1 && targetTileY == this.currentTile.y )
+        else if(targetTileX - this.currentTile.x < 0 && targetTileY == this.currentTile.y )
         {
             this.direction = 4;
         }
         
         //South
-        else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y == 1)
+        else if(targetTileX == this.currentTile.x && targetTileY - this.currentTile.y > 0)
         {
             this.direction = 2;
         }
         
-        if(targetTileX - this.currentTile.x == 1 && targetTileY - this.currentTile.y == 1)
+        if(targetTileX - this.currentTile.x > 0 && targetTileY - this.currentTile.y > 0)
         {
             this.direction = 3;
         }
         
-        if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == 1)
+        if(targetTileX - this.currentTile.x < 0 && targetTileY - this.currentTile.y > 0)
         {
             this.direction = 1;
         }
         
-        if(targetTileX - this.currentTile.x == 1 && targetTileY - this.currentTile.y == -1)
+        if(targetTileX - this.currentTile.x > 0 && targetTileY - this.currentTile.y < 0)
         {
             this.direction = 9;
         }
         
-        if(targetTileX - this.currentTile.x == -1 && targetTileY - this.currentTile.y == -1)
+        if(targetTileX - this.currentTile.x < 0 && targetTileY - this.currentTile.y < 0)
         {
             this.direction = 7;
         }
@@ -259,7 +426,7 @@ public abstract class Character extends Skills
             deltaY = -1;
         }
         
-        charMove(deltaX, deltaY, this, lDungeon.dungeon);
+        charMove(deltaX, deltaY, lDungeon.dungeon);
     }
     
     //Player can be replaced by an input target if allies become viable.
@@ -268,7 +435,7 @@ public abstract class Character extends Skills
         //If no target is stored, get one.
         if (!(storedTargetCharacter instanceof Character))
         {
-            storedTargetCharacter = getFriendlyCharacter(lDungeon);
+            storedTargetCharacter = getEnemyCharacter(lDungeon);
         }
         //Attack player if in range. Only attacks if diagonal. (It's not a bug, it's a feature :>) Correct code commented.
         //Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 || Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 
@@ -284,7 +451,7 @@ public abstract class Character extends Skills
         }
 
         
-        //Pursue storedTargetCharacter
+        //Pursue storedTargetCharacter. This is reflexive
         else
         {
             double directionChoice = Math.random();
@@ -368,7 +535,7 @@ public abstract class Character extends Skills
                 deltaX = 1;
             }
             
-            charMove(deltaX, deltaY, this, lDungeon.dungeon);
+            charMove(deltaX, deltaY, lDungeon.dungeon);
         }
     }
     
@@ -381,7 +548,7 @@ public abstract class Character extends Skills
     }
     
     //This should only be activated when the dead body is relatively nearby, because this hones in on the selected body.
-    //Note, need to make balanced lol. OP right now, especially with two revivers reviving each other.
+    //Note, need to make balanced. OP right now, especially with two revivers reviving each other.
     //Somewhat inefficient, finds the closest dead char at each loop. Perhaps could rework to only refind when one dies.
     //Run getDeadCharacter in character.act() to get potential deadCharacter
     public void AIReviver(DungeonMain lDungeon, DeadCharacter chosenDead)//tba(Reviver)
@@ -455,16 +622,67 @@ public abstract class Character extends Skills
                 }
             }
             
-            charMove(deltaX, deltaY, this, lDungeon.dungeon);
+            charMove(deltaX, deltaY, lDungeon.dungeon);
         }
         cooldownTimer1--;
 
     }
     
-    //Get closest friendly character. Currently only gives player.
-    private Character getFriendlyCharacter(DungeonMain lDungeon)
+    
+    /*
+     * Pathfinder test
+     * 
+     */
+    public void goToCharacter(DungeonMain lDungeon)
     {
-        return lDungeon.dungeon.playerCharacter;
+        if (pathFindingCooldown == 0)
+        {
+            PathFinder(lDungeon, storedTargetCharacter.currentTile);
+            //If we are close to target, then we repeatedly find new paths. Maybe bad idea. Else there is a cooldown period.
+            //This was so that the player doesn't often see AI acting strangely.
+            if(!closeToTarget)
+            {
+                pathFindingCooldown = maxPathFindingCooldown;
+            }
+        }
+        DungeonTile NextTile = currentPath.peek();
+        if (lDungeon.dungeon.tileChecker(NextTile.x, NextTile.y, true))
+        {
+            currentPath.pop();
+            charMove(NextTile, lDungeon.dungeon);
+        }
+    }
+    
+    //Get closest enemy character. Currently only gives player.
+    public Character getEnemyCharacter(DungeonMain lDungeon)
+    {
+        //If this is a friendly character
+        if (this.isFriendly)
+        {
+            if (lDungeon.dungeon.enemyList.isEmpty())
+            {
+                //Change to simple follow AI
+                return null;
+            }
+            Enemy closestEnemy = null;
+            int minDistance = 999;
+            //
+            for(Enemy e : lDungeon.dungeon.enemyList)
+            {
+                if (this.getDistance(e.currentTile) < minDistance)
+                {
+                    closestEnemy = e;
+                    minDistance = this.getDistance(e.currentTile);
+                }
+            }
+            return closestEnemy;
+        }
+        
+        //If this is an enemy character
+        else
+        {
+            return lDungeon.dungeon.playerCharacter;
+        }
     }
     
     //Just find the closest deadChar to revive

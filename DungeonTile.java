@@ -1,6 +1,7 @@
 /*This is the class that's in charge of drawing tiles?*/
 import java.awt.image.*;
-public class DungeonTile
+import java.util.ArrayList;
+public class DungeonTile implements Comparable<DungeonTile>
 {
 	int x;
 	int y;
@@ -19,17 +20,13 @@ public class DungeonTile
 	ImageLoader imageLoader = new ImageLoader();
 	Number number = null;
 
-	//Test for improvement for generation
-	boolean tileToLeft;
-	boolean tileToRight;
-	boolean tileToUp;
-	boolean tileToDown;
-
 	public DungeonTile(int xPos, int yPos, int inputTileID)
 	{
 		x = xPos;
 		y = yPos;
 		tileID = inputTileID;
+		//if(inputTileID == 1 || inputTileID == 2)
+		//	tileImage = imageLoader.loadImage("images/DungeonTile" + inputTileID + ".png");
 		connectionCap = 2;
 		itemID = 0;
 		//characterID = 0;
@@ -47,4 +44,177 @@ public class DungeonTile
 		// + tileToLeft + ", tileToRight=" + tileToRight + ", tileToUp="
 		// + tileToUp + ", tileToDown=" + tileToDown + "]";
 	}
+    
+	/**
+	 * This compare method is used for A* pathFinding. (non-Javadoc)
+	 * Different tile types will have different costs. Spikes may be weighted +3 vs. regular tiles for example.
+	 */ 
+	
+	
+    @Override
+    public int compareTo(DungeonTile other)
+    {
+        //We want the lowest score, so if the other is bigger then then this one should be placed lower. (Negative return values place this higher and positive ones place other higher.
+        int temp = this.y - other.y;
+        
+        if (temp != 0)
+        {
+            return (temp);
+        }
+        
+        //In the case of a tie, we want the larger cost, because that'll be closer to the target.
+        else
+        {
+            return (this.x - other.x);
+        }
+    }
+    /*
+    public boolean equals(Object obj)
+    {
+        //We want the lowest score, so if the other is bigger then then this one should be placed lower. (Negative return values place this higher and positive ones place other higher.
+        return (this.pathFindingHeuristic + this.pathFindingCost - other.pathFindingHeuristic - other.pathFindingCost);
+    }*/
+    
+    /**
+     * Return the tiles adjacent to the given one. Used in PathFinder(). The isFine adds the additional property of not having characters on it. Need to disable it for if the the target is a character though.
+     * Note: Returns diagonals. Undecided about what to do about them. Could add penalty for diags.
+     * 
+     */
+	/*
+    public ArrayList<DungeonTile> getAdjacentTilesAndSetValues(DungeonMain lDungeon, DungeonTile tile, DungeonTile targetTile, boolean isFine)
+    {
+        ArrayList<DungeonTile> returnList = new ArrayList<DungeonTile>();
+        if (lDungeon.dungeon.tileChecker(tile.x+1,  tile.y, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x + 1][tile.y]);
+        }
+        
+        if (lDungeon.dungeon.tileChecker(tile.x-1,  tile.y, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x - 1][tile.y]);
+        }
+        
+        if (lDungeon.dungeon.tileChecker(tile.x,  tile.y+1, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x][tile.y + 1]);
+        }
+        
+        if (lDungeon.dungeon.tileChecker(tile.x,  tile.y-1, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x][tile.y - 1]);
+        }
+        
+        if (lDungeon.dungeon.tileChecker(tile.x+1,  tile.y+1, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x+1][tile.y+1]);
+        }
+        
+        if (lDungeon.dungeon.tileChecker(tile.x+1,  tile.y-1, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x+1][tile.y - 1]);
+        }
+        
+        if (lDungeon.dungeon.tileChecker(tile.x-1,  tile.y+1, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x-1][tile.y + 1]);
+        }
+        
+        if (lDungeon.dungeon.tileChecker(tile.x-1,  tile.y-1, isFine))
+        {
+            returnList.add(lDungeon.dungeon.tileList[tile.x-1][tile.y - 1]);
+        }
+        
+        //:< Inefficient check if we are next to the target. 
+        if (Math.abs(tile.x - targetTile.x) <= 1 && Math.abs(tile.y - targetTile.y) <= 1)
+        {
+            returnList.add(targetTile);
+        }
+        
+        setPathFindingValues(returnList, targetTile, tile);
+        
+        return returnList;
+        
+    }
+    /**
+     * The bread and butter of A* pathing.
+     * This heuristic is basically an estimate of how far away we are from the goal. We use that to pick which tiles to use.
+     * If we're far from the goal then the position of characters isn't too relevant- they'll be different by the time we get there. That isn't too important.
+     * I currently use Manhattan distance which adds distance on the x axis and the y axis. I am avoiding diagonal movement but that shouldn't be too hard to add if desired.
+     * 
+     * In each pass, we need to find out the costs of the new tiles to be checked
+     * This involves the type of tile it is and the cost it took to get the tile just before this one.
+     * 
+     */
+    /*
+    private void setPathFindingValues(ArrayList<DungeonTile> tileList, DungeonTile targetTile, DungeonTile sourceTile)
+    {
+        for (DungeonTile tile : tileList)
+        {
+            //Using Chebychev distance to account for diagonal movement. If no diag, then better to use Manhattan distance.
+            tile.pathFindingHeuristic = Math.max(Math.abs(targetTile.x - tile.x), Math.abs(targetTile.y - tile.y));
+            
+            //Manhattan distance, better if no diagonals are needed.
+            //tile.pathFindingHeuristic = Math.abs(targetTile.x - tile.x) + Math.abs(targetTile.y - tile.y);
+            
+            /*
+            * In each pass, we need to find out the costs of the new tiles to be checked
+            * This involves the type of tile it is and the cost it took to get the tile just before this one.
+            */
+            /*
+            //If the cost is not 0, then this tile has been explored previously. 
+            if (tile.pathFindingCost != 0)
+            {
+                //If the old path to this tile is longer than the path from this new tile, then we switch the path to follow this new path.
+                //If not, then we do nothing to it.
+                if((tile.pathFindingCost - getTileIDCosts(tile))  > sourceTile.pathFindingCost)
+                {
+                    tile.pathFindingCost = sourceTile.pathFindingCost;
+                    tile.previousTile = sourceTile;
+                    
+                    tile.pathFindingCost += getTileIDCosts(tile);
+
+                }
+                tileList.remove(this);
+            }
+            
+            //Add cost of getting to the tile previous this one.
+            else
+            {
+                tile.pathFindingCost += sourceTile.pathFindingCost;
+                tile.previousTile = sourceTile;
+                
+                tile.pathFindingCost += getTileIDCosts(tile);
+
+            }
+            
+        }
+    }
+    
+    private int getTileIDCosts(DungeonTile tile)
+    {
+        //Ugly adding costs due to tile movement.
+        //Standard tile
+        if (tile.tileID == 1)
+        {
+            return 1;
+        }
+         
+        //Trap tile
+        else if(tile.tileID == 3)
+        {
+            return 3;
+        }
+            
+        //Stair tile
+        else if(tile.tileID == 2)
+        {
+            return 1;
+        }
+        
+        //Should not run.
+        else       
+        {
+            return 9999;
+        }
+    }*/
 }

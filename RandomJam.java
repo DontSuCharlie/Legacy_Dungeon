@@ -12,7 +12,6 @@ public class RandomJam extends Jam{
         maxHealth = 5;
         currentHealth = 5;
         direction = 2;
-        
     }
     public BufferedImage getImage()
     {
@@ -42,9 +41,12 @@ public class RandomJam extends Jam{
     
     public void act(DungeonMain lDungeon)
     {
-        System.out.println("Jam acting");
+        storedTargetCharacter = this.getEnemyCharacter(lDungeon);
+        System.out.println("RandomJam acting - found character");
         //Picks random spot to go to. Including walls.
-        AIRandom(lDungeon);
-        System.out.println("Jam Acted");
+        //AIRandom(lDungeon);
+        goToCharacter(lDungeon);
+        
+        System.out.println("RandomJam Acted");
     }
 }
