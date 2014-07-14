@@ -15,7 +15,7 @@ public class DungeonMain extends JPanel implements Runnable
 	static JFrame window;//to create new window
 	DungeonBuilder dungeon;//to create dungeon tile
 	static final int DELAY = 25; //sets fps to 55
-	final double overHealDecayPercent = .1; //If a character is above this health, then this percent of health will be decayed over time.
+	final double OVERHEAL_DECAY_PERCENT = .1; //If a character is above this health, then this percent of health will be decayed over time.
 	private Thread animator;//new thread
 	boolean screenShakeOn;//if true, screen will be shaking; else, screen won't be shaking
 	static ImageLoader imageLoader = new ImageLoader();//in charge of loading images
@@ -237,11 +237,9 @@ public class DungeonMain extends JPanel implements Runnable
 	//Basically runs the dungeonmain object. It goes into a loop
 	public void dungeonLoop() throws InstantiationException, IllegalAccessException
 	{
-		Window window = new Window();
 		Window.createWindow();//creates window
 		Window.window.add(this);//adds game file to the window
 		boolean inGame = true;
-		boolean onCurrentFloor = true;//When false, create a new floor.
 		while (inGame)
 		{
 		    while(!dungeon.playerCharacter.goingToNewFloor)
@@ -261,8 +259,8 @@ public class DungeonMain extends JPanel implements Runnable
         			    System.out.println(i);
         				i.act(this);
                         System.out.println(i + "Has acted");
-    
-        				//Enemy overheals occur just after their turn. Move this to character.
+    /*
+        				//Enemy overheals occur just after their turn.
         				if (i.currentHealth > i.maxHealth)
         	            {
         	                //If the overheal amount is less than the threshold percentage, restore currentHealth to the normal MaxHealth
@@ -280,6 +278,7 @@ public class DungeonMain extends JPanel implements Runnable
         	                    System.out.println(i.currentHealth);
         	                }
         				}
+        				*/
     			    }
     			}
 			System.out.println("Relooping");	
@@ -301,7 +300,7 @@ public class DungeonMain extends JPanel implements Runnable
 	{
         changeSpawnRates();
         dungeon = new DungeonBuilder(dungeon);
-        dungeon.tileList = DungeonBuilder.tileList;
+        //dungeon.tileList = DungeonBuilder.tileList;
 	}
 	
 	/*
@@ -531,12 +530,7 @@ public class DungeonMain extends JPanel implements Runnable
 							
 						}while(damageDisplayed != 0);
 						
-						//Stop displaying number after some time.
-						if (drawnTile.number.timer <= 0)
-						{
-							drawnTile.number = null;
-							//NumberList.remove(drawnTile.number.timer);
-						}						
+				
 						
 						//Using the timer for y coordinates allow it to float up.
 					
@@ -549,6 +543,13 @@ public class DungeonMain extends JPanel implements Runnable
     					{
     						g.drawImage(minusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
     					}
+    					
+    					//Stop displaying number after some time.
+						if (drawnTile.number.timer <= 0)
+						{
+							drawnTile.number = null;
+							//NumberList.remove(drawnTile.number.timer);
+						}   					
     				}
 					
 					if(drawnTile.number instanceof HealNumber)
@@ -585,12 +586,7 @@ public class DungeonMain extends JPanel implements Runnable
                             
                         }while(healDisplayed != 0);
                         
-                        //Stop displaying number after some time.
-                        if (drawnTile.number.timer <= 0)
-                        {
-                            drawnTile.number = null;
-                            //NumberList.remove(drawnTile.number.timer);
-                        }                       
+                   
                         
                         //Using the timer for y coordinates allow it to float up.
                     
@@ -599,6 +595,14 @@ public class DungeonMain extends JPanel implements Runnable
                         {
                             g.drawImage(plusGr, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
                         }
+                        
+                        //Stop displaying number after some time.
+                        if (drawnTile.number.timer <= 0)
+                        {
+                            drawnTile.number = null;
+                            //NumberList.remove(drawnTile.number.timer);
+                        }    
+                        
                         /*
                         else if(((HitNumber)drawnTile.number).targetIsFriendly)
                         {
@@ -629,13 +633,16 @@ public class DungeonMain extends JPanel implements Runnable
 						}
 							image = numG[oneDigit];
 							g.drawImage(image, i * tileLengthX - numCounter * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - numCounter * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, image.getWidth(null), image.getHeight(null), null);
-						if (drawnTile.number.timer <= 0)
-						{
-							drawnTile.number = null;
-							NumberList.remove(drawnTile.number.timer);
-						}
+
 					}while(goldDisplayed != 0);
 					g.drawImage(plusG, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
+					
+					if (drawnTile.number.timer <= 0)
+					{
+						drawnTile.number = null;
+						NumberList.remove(drawnTile.number);
+					}
+					
 				}
 			}
 		}
@@ -655,16 +662,16 @@ public class DungeonMain extends JPanel implements Runnable
 			}
 			
 	         if (i.prevCharacter instanceof CombatJam)
-	            {
-	                Image slimeImage = null;
-	                slimeImage = DungeonMain.slimeImagesHit[i.prevCharacter.direction];
+	         {
+	             Image slimeImage = null;
+	             slimeImage = DungeonMain.slimeImagesHit[i.prevCharacter.direction];
 
-	                if (i.deathTimer <= 0)
-	                {
-	                    recentDeadCharList.remove(i);
-	                }
-	                g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
-	            }
+	             if (i.deathTimer <= 0)
+	             {
+	                 recentDeadCharList.remove(i);
+	             }
+	             g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
+	         }
 		}
 		//UI is drawn last so it's on top of everything else.
 		int floorNum = dungeon.currentFloor;

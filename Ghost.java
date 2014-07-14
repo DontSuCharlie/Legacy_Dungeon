@@ -46,6 +46,7 @@ public class Ghost extends Enemy{
         {
             //Picks random spot to go to. Including walls.
             AIRandom(lDungeon);
+            endTurn(lDungeon);
         }
     
 }

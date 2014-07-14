@@ -18,21 +18,17 @@ public abstract class Character extends Skills
 {
 //Note to self: Remember to update public or not based on how you want other classes to access this file
     //Field
-    BufferedImage image; //Creates an image and loads it. 
+    //BufferedImage image; //Creates an image and loads it. 
     int maxHealth;//maximum HP
     int currentHealth; //current HP
-    //double xPos; //current x-coordinate position
-    //double yPos; //current y-coordinate position
     ArrayList<Integer> inventory = new ArrayList<Integer>();//this is the inventory
     //Skill[] skill = new Skill[20];//maximum number of skills you can hold is 20.
-    public int spriteHeight;//height of image, so rescaling is possible
-    public int spriteWidth;//width of image, so rescaling is possible
-    public int attemptedX;// These are the coordinates of a tile the character tries to go to. 
-    public int attemptedY;
+    //public int spriteHeight;//height of image, so rescaling is possible
+    //public int spriteWidth;//width of image, so rescaling is possible
     //public int characterID;// Used to check between player or enemy.
     public String description;
     public DungeonTile currentTile;
-    public Character storedTargetCharacter;
+    public Character storedTargetCharacter;// The character this character is basing it's movement off of. Running from it or going to it are just a few examples.
     public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
     public int direction; // Used for direction of sprite and attacks 6=east, 8=north, 4=west, 2=south, 9=NE, 7=NW, 3=SE, 1=SW
@@ -45,7 +41,7 @@ public abstract class Character extends Skills
     public boolean isFriendly; //Used to check attacks and determine which animating number to be shown.
     boolean getNewTarget = true;
     boolean isActive = false;
-    int status = 0; //Keeps track of necessary effects, such as damaging this from poison.
+    int status = 0; //Keeps track of necessary effects, such as damaging this from poison. 0 is normal.
     Stack<DungeonTile> currentPath = new Stack<DungeonTile>();
     boolean closeToTarget = false;
     private int pathFindingCooldown = 0;
@@ -55,11 +51,41 @@ public abstract class Character extends Skills
     
 /*
    public Character(int maxHealth)
+
    {
       this.maxHealth = maxHealth;
       currentTile = new DungeonTile(0,0,0);
    }
    */
+    
+    private void overHealBurn(DungeonMain lDungeon)
+    {
+        //If the overheal amount is less than the threshold percentage, restore currentHealth to the normal MaxHealth
+        //Right now, OVERHEAL_DECAY_PERCENT is shared between all characters. If individual characters require a different one, please add it specifically to that Enemy's class and manually set the act() properly.
+        if (this.currentHealth < (1+lDungeon.OVERHEAL_DECAY_PERCENT) * this.maxHealth)
+        {
+            this.currentHealth = this.maxHealth;
+            System.out.println("Reverted to normal max");
+        }
+            
+        //Reduce the overheal percent in other case.
+        else 
+        {
+            System.out.println("Overheal reduced");
+            this.currentHealth -= (int)(lDungeon.OVERHEAL_DECAY_PERCENT * this.maxHealth);
+            System.out.println(this.currentHealth);
+        }
+    }
+    /**
+     * In future, will add status effects
+     * First basic ones, poison, burn, freeze, sleep.
+     * Then more interesting ones, invisible, 
+     * @param lDungeon
+     */
+    private void statusEffects(DungeonMain lDungeon)
+    {
+        
+    }
     
     /* charMove: moves this character some given distance and sets their direction appropriately.
      * Mostly used for simple movement, but can be used as part of creature skills as well.
@@ -157,22 +183,32 @@ public abstract class Character extends Skills
         
     }
     //healPercent determines the percent of health the revived health starts with. Will only be run if there is no other character there. Else the old character would disappear.(Perhaps humorous combat solution ~ telefragging?)
-    public void revive(double healPercent, DeadCharacter character, DungeonMain lDungeon)
+    public void revive(double healPercent, DeadCharacter deadChar, DungeonMain lDungeon)
     {
-        //Get the dead character and place it as a character again. (Note still 0 health)
-        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character = character.prevCharacter;
+        //Get the dead deadChar and place it as a deadChar again. (Note still 0 health)
+        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character = deadChar.prevCharacter;
         //Replace health based on maxHealth
-        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.currentHealth = (int)(lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.maxHealth * healPercent);
-        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.isFriendly = this.isFriendly;
-        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.isActive = true;
-        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].deadCharacter = null;
-
+        /*
+        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.currentHealth = (int)(lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.maxHealth * healPercent);
+        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.isFriendly = this.isFriendly;
+        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.isActive = true;
+        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].deadCharacter = null;
+*/
+        deadChar.prevCharacter.currentHealth = (int)(deadChar.prevCharacter.maxHealth * healPercent);
+        deadChar.prevCharacter.isFriendly = this.isFriendly;
+        deadChar.prevCharacter.isActive = true;
+        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].deadCharacter = null;
+        //If this revived character is an enemy, we add it to the enemyList so, it can be checked for other applications 
+        if(!this.isFriendly)
+        {
+            lDungeon.dungeon.enemyList.add((Enemy) deadChar.prevCharacter);
+        }
         
         //Add a new heal number to show what happened.
         //Perhaps add another fancy image to show the revival.
-        HealNumber temp = new HealNumber(lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].character.currentHealth, character.prevCharacter.currentTile.x, character.prevCharacter.currentTile.y, character.prevCharacter.isFriendly);
+        HealNumber temp = new HealNumber(lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.currentHealth, deadChar.prevCharacter.currentTile.x, deadChar.prevCharacter.currentTile.y, deadChar.prevCharacter.isFriendly);
         DungeonMain.NumberList.add(temp);
-        lDungeon.dungeon.tileList[character.prevCharacter.currentTile.x][character.prevCharacter.currentTile.y].number = temp;
+        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].number = temp;
         
     }
      
@@ -205,8 +241,8 @@ public abstract class Character extends Skills
         potentialTileQueue.addAll(new PathTile(this.currentTile).getAdjacentTilesAndSetValues(lDungeon, new PathTile(this.currentTile), targetTile, this.closeToTarget));
         //We store this so that the final path is stored as a linked list.
 
-        //If the queue is empty, then there's no possible way to reach the target. :<
-        while(!atTarget && !potentialTileQueue.isEmpty())
+        //If the queue is empty, then there's no possible way to reach the target. :< I also cause this to short circuit if it attempts to place 1000 tiles on the potentialTileQueue. If it's that bad, then it's probably broken or impossible.
+        while(!atTarget && !potentialTileQueue.isEmpty() && checkedTiles.size() < 25)
         {
             //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
             PathTile possibleTile = potentialTileQueue.poll();
@@ -245,7 +281,7 @@ public abstract class Character extends Skills
             
             if (!checkedTiles.contains(possibleTile))
             {
-                System.out.println("Tile plucked");
+                System.out.println("Tile plucked" + possibleTile.thisTile);
 
                 checkedTiles.add(possibleTile);
                 //Even if there are dead ends, the priorityqueue just gets the next best value. 
@@ -255,97 +291,6 @@ public abstract class Character extends Skills
             }
         }
     }
-    
-/*
-    public void PathFinderCoarse(DungeonMain lDungeon, DungeonTile targetTile)
-    {
-        //These limits determine what are close enough to the target to justify PathFinderFine
-        final int FINE_LIMIT_X = lDungeon.numTilesX;
-        final int FINE_LIMIT_Y = lDungeon.numTilesY;
-        boolean atTarget = false;
-        //HashSets are great for checking if something is in it. Not good for recalling data. Useful for knowing if we already navigated this tile. If our heuristic is good enough (consistent) then it should work.
-        HashSet<DungeonTile> checkedTiles = new HashSet<DungeonTile>();
-        
-        //We only care about the minimum value so a priority queue is best for the job.
-        PriorityQueue<DungeonTile> potentialTileQueue = new PriorityQueue<DungeonTile>();
-        potentialTileQueue.addAll(this.currentTile.getAdjacentTilesAndSetValues(lDungeon, this.currentTile, targetTile));
-        //We store this so that the final path is stored as a linked list.
-
-        //If the queue is empty, then there's no possible way to reach the target. :<
-        while(!atTarget && !potentialTileQueue.isEmpty())
-        {
-            
-            //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
-            DungeonTile possibleTile = potentialTileQueue.poll();
-            
-            
-            //If this tile is near the target then we backtrack, following the previous tile pointers.
-            if (Math.abs(possibleTile.x - targetTile.x) < FINE_LIMIT_X && Math.abs(possibleTile.y - targetTile.y) < FINE_LIMIT_Y)
-            {
-                //Keep going until we reach this character again.
-                while(possibleTile != this.currentTile)
-                {
-                    currentPath.add(possibleTile);
-                    //Going back further.
-                    possibleTile = possibleTile.previousTile;
-                }
-            }
-            
-            if (!checkedTiles.contains(possibleTile))
-            {
-                //Even if there are dead ends, the priorityqueue just gets the next best value. 
-                ArrayList<DungeonTile> temp = possibleTile.getAdjacentTilesAndSetValues(lDungeon, possibleTile, storedTargetCharacter.currentTile);
-
-                potentialTileQueue.addAll(temp);
-            }
-        }
-    }
-    
-    public void PathFinderFine(DungeonMain lDungeon, DungeonTile targetTile)
-    {
-        boolean atTarget = false;
-        //HashSets are great for checking if something is in it. Not good for recalling data. Useful for knowing if we already navigated this tile. If our heuristic is good enough (consistent) then it should work.
-        HashSet<DungeonTile> checkedTiles = new HashSet<DungeonTile>();
-        
-        //We only care about the minimum value so a priority queue is best for the job.
-        PriorityQueue<DungeonTile> potentialTileQueue = new PriorityQueue<DungeonTile>();
-        potentialTileQueue.addAll(this.currentTile.getAdjacentTilesAndSetValues(lDungeon, this.currentTile, targetTile, true));
-        //We store this so that the final path is stored as a linked list.
-
-        //If the queue is empty, then there's no possible way to reach the target. :<
-        while(!atTarget && !potentialTileQueue.isEmpty())
-        {
-            
-            //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
-            DungeonTile possibleTile = potentialTileQueue.poll();
-            
-            
-            //If this tile is the target then we go back, following the previous tile pointers.
-            if (possibleTile == targetTile)
-            {
-                //Keep going until we reach this character again.
-                while(possibleTile != this.currentTile)
-                {
-                    currentPath.add(possibleTile);
-                    //Going back further.
-                    possibleTile = possibleTile.previousTile;
-                }
-            }
-            
-            if (!checkedTiles.contains(possibleTile))
-            {
-                //Even if there are dead ends, the priorityqueue just gets the next best value.
-                ArrayList<DungeonTile> temp = possibleTile.getAdjacentTilesAndSetValues(lDungeon, possibleTile, storedTargetCharacter.currentTile);
-                
-                //We hit a dead end and need to backtrack.
-                if (temp.isEmpty())
-                {
-                    
-                }
-                potentialTileQueue.addAll(temp);
-            }
-        }
-    }*/
     
     //Get distance from this character to another tile
     public int getDistance(DungeonTile tile)
@@ -429,7 +374,10 @@ public abstract class Character extends Skills
         charMove(deltaX, deltaY, lDungeon.dungeon);
     }
     
-    //Player can be replaced by an input target if allies become viable.
+    /**
+     * Player can be replaced by an input target if allies become viable.
+     * @param lDungeon
+     */
     public void AIAggressiveSemiRandom(DungeonMain lDungeon)//Combat Jam
     {
         //If no target is stored, get one.
@@ -539,7 +487,9 @@ public abstract class Character extends Skills
         }
     }
     
-    //Running from evil (or you). Hmm, this runs from only one scary creature, maybe directly into another :<. Need better AI.
+    /**
+     * Running from evil (or you). Hmm, this runs from only one scary creature, maybe directly into another :<. Need better AI.
+     */
     public void AIRun(DungeonMain lDungeon, Character scaryCharacter)
     {
         
@@ -547,10 +497,15 @@ public abstract class Character extends Skills
         
     }
     
-    //This should only be activated when the dead body is relatively nearby, because this hones in on the selected body.
-    //Note, need to make balanced. OP right now, especially with two revivers reviving each other.
-    //Somewhat inefficient, finds the closest dead char at each loop. Perhaps could rework to only refind when one dies.
-    //Run getDeadCharacter in character.act() to get potential deadCharacter
+    /**
+     * This should only be activated when the dead body is relatively nearby, because this hones in on the selected body.
+     * Note, need to make balanced. OP right now, especially with two revivers reviving each other.
+     * Somewhat inefficient, finds the closest dead char at each loop. Perhaps could rework to only refind when one dies.
+     * Run getDeadCharacter in character.act() to get potential deadCharacter
+     * @param lDungeon
+     * @param chosenDead
+     */
+
     public void AIReviver(DungeonMain lDungeon, DeadCharacter chosenDead)//tba(Reviver)
     {
         //These control how much health the revived character has.
@@ -629,13 +584,13 @@ public abstract class Character extends Skills
     }
     
     
-    /*
+    /**
      * Pathfinder test
      * 
      */
     public void goToCharacter(DungeonMain lDungeon)
     {
-        if (pathFindingCooldown == 0)
+        if (pathFindingCooldown == 0 || currentPath.isEmpty())
         {
             PathFinder(lDungeon, storedTargetCharacter.currentTile);
             //If we are close to target, then we repeatedly find new paths. Maybe bad idea. Else there is a cooldown period.
@@ -645,15 +600,24 @@ public abstract class Character extends Skills
                 pathFindingCooldown = maxPathFindingCooldown;
             }
         }
-        DungeonTile NextTile = currentPath.peek();
-        if (lDungeon.dungeon.tileChecker(NextTile.x, NextTile.y, true))
+        
+        if (!currentPath.isEmpty())
         {
-            currentPath.pop();
-            charMove(NextTile, lDungeon.dungeon);
+            DungeonTile nextTile = currentPath.pop();
+            if(lDungeon.dungeon.tileChecker(nextTile.x, nextTile.y, true))
+            {
+                charMove(nextTile, lDungeon.dungeon);
+                //Is even incremented when unneeded, when fine. Hopefully doesn't matter much.
+                --pathFindingCooldown;
+            }
         }
     }
     
-    //Get closest enemy character. Currently only gives player.
+    /**
+     * Get closest enemy character. Currently only gives player.
+     * @param lDungeon
+     * @return closestEnemy
+     */
     public Character getEnemyCharacter(DungeonMain lDungeon)
     {
         //If this is a friendly character
@@ -685,7 +649,11 @@ public abstract class Character extends Skills
         }
     }
     
-    //Just find the closest deadChar to revive
+    /**
+     * Just find the closest deadChar to revive
+     * @param lDungeon
+     * @return
+     */
     private DeadCharacter getDeadCharacter(DungeonMain lDungeon)
     {
         //The target. If no deadcharacters, then return null
@@ -706,7 +674,11 @@ public abstract class Character extends Skills
         return closestDeadChar;
     }
     
-    //Try to revive stronger ones first (nasty)
+    /**
+     * Try to revive stronger ones first (nasty)
+     * @param lDungeon
+     * @return
+     */
     private DeadCharacter getDeadCharacterPrioritized(DungeonMain lDungeon)
     {
         //The target. If no deadcharacters, then 
@@ -728,12 +700,25 @@ public abstract class Character extends Skills
         return closestDeadChar;
     }
 
+
     public void act(DungeonMain lDungeon) throws InstantiationException, IllegalAccessException
     {
         System.out.println("Error");
-        
-        // TODO Auto-generated method stub
-        
+    }
+      
+     /**
+     * This is mostly end of turn stuff all characters undergo. overHealBurn and statusEffect.
+     * @param lDungeon
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    public void endTurn(DungeonMain lDungeon)
+    {
+        //Enemy overheals occur just after their turn.
+        if (this.currentHealth > this.maxHealth)
+        {
+            overHealBurn(lDungeon);
+        }
     }
     
     

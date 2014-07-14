@@ -90,19 +90,57 @@ public class DungeonBuilder
      */
     void buildTest()
     {
-        for (int i = 1; i < 6; i++)
+        for (int i = 1; i <= 10; i++)
         {
-            for (int j = 1; j < 6; j++)
+            for (int j = 1; j <= 10; j++)
             {
-                tileList[i][j] = new DungeonTile(i,j,1);
+                if (i == 5 && j == 5)
+                {
+                    
+                }
+                else
+                {
+                    tileList[i][j] = new DungeonTile(i,j,1);
+                }
             }
         }
         spawnPlayer(1,1);
-        tileList[5][5].character = new RandomJam();
-        tileList[5][5].character.isActive = true;
-        tileList[5][5].character.currentTile = tileList[5][5];
-        characterList.add(tileList[5][5].character);
+        tileList[4][4].character = new RandomJam();
+        tileList[4][4].character.isActive = true;
+        tileList[4][4].character.currentTile = tileList[4][4];
+        enemyList.add((Enemy) tileList[4][4].character);
+        characterList.add(tileList[4][4].character);
         
+        tileList[10][10].character = new RandomJam();
+        tileList[10][10].character.isActive = true;
+        tileList[10][10].character.currentTile = tileList[10][10];
+        enemyList.add((Enemy) tileList[10][10].character);
+        characterList.add(tileList[10][10].character);
+        
+        tileList[9][9].character = new RandomJam();
+        tileList[9][9].character.isActive = true;
+        tileList[9][9].character.currentTile = tileList[9][9];
+        enemyList.add((Enemy) tileList[9][9].character);
+        characterList.add(tileList[9][9].character);
+        
+        tileList[8][8].character = new RandomJam();
+        tileList[8][8].character.isActive = true;
+        tileList[8][8].character.currentTile = tileList[8][8];
+        enemyList.add((Enemy) tileList[8][8].character);
+        characterList.add(tileList[8][8].character);
+        
+        tileList[1][10].character = new RandomJam();
+        tileList[1][10].character.isActive = true;
+        tileList[1][10].character.currentTile = tileList[1][10];
+        enemyList.add((Enemy) tileList[1][10].character);
+        characterList.add(tileList[1][10].character);
+        
+        tileList[10][1].character = new RandomJam();
+        tileList[10][1].character.isActive = true;
+        tileList[10][1].character.currentTile = tileList[10][1];
+        enemyList.add((Enemy) tileList[10][1].character);
+        characterList.add(tileList[10][1].character);
+
         
     }
        
@@ -162,13 +200,14 @@ Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
 */
 
+    /*
     public static void main(String[] args) throws InstantiationException, IllegalAccessException
     {
         //Remove when done testing.
         DungeonBuilder dungeon = new DungeonBuilder(1,1,1,100,100,1);
         //generateItems();
     
-    }
+    }*/
 
 
 
@@ -193,6 +232,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //The first seed tile. Currently uses the middle tile. Perhaps have a random seed tile?
         tileList[xLength/2][yLength/2] = new DungeonTile(xLength/2, yLength/2, 1);
         connectorList.add(new DungeonTile(xLength/2, yLength/2, 1));
+        
         
         for (int i = 1; i < numTiles; i++)
         {
@@ -612,7 +652,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                             Class<? extends Enemy> temp = enemyTypes.get(j).getClass();
                             //This new instance will be used for everything.
                             Enemy something = temp.newInstance();
-                            something.enemyID = mainEnemyID;
                             something.currentTile = tileList[checkList.get(i).x][checkList.get(i).y];
                             tileList[checkList.get(i).x][checkList.get(i).y].character = something;
                             
@@ -664,20 +703,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         {
             return false;
         }
-    }
-    
-    public void buildTestRoom()
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            for (int j = 0; j < 6; j++)
-            {
-                tileList[i][j] = new DungeonTile(i,j,1);
-            }
-        }
-        
-        
-        
     }
     
     /* FIX WHEN ITEM SYSTEM IS SOLIDIFIED

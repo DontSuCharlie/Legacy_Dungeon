@@ -1,15 +1,11 @@
-import java.util.ArrayList;
 import java.awt.*;//includes Color, Dimension, Graphics, etc.
 import java.awt.image.BufferedImage;
-
-import javax.swing.*;//part of UI, includes JPanel
 // Used for input and actions
 public class Player extends Character{
     int xMovement;
     int yMovement;
     int goldAmount;
-    boolean goingToNewFloor = false; //Turned true to start process of going to next floor.
-    public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
+    boolean goingToNewFloor; //Turned true to start process of going to next floor.
 
     public Player(int inputRiches)
     {
@@ -23,6 +19,7 @@ public class Player extends Character{
         currentHealth = maxHealth;
         direction = 2;
         isActive = true;
+        
     }
         
     public void act(DungeonMain lDungeon) throws InstantiationException, IllegalAccessException
@@ -75,6 +72,8 @@ public class Player extends Character{
                 waitingForPlayer = false;
             }
         }
+        
+        endTurn(lDungeon);
     }
         
     public int playerMoveY()
@@ -179,7 +178,6 @@ public class Player extends Character{
     public void attack(DungeonMain lDungeon)
     {
         KeyboardInput.boolIsAttack = false;
-        lDungeon.isEnemyTurn = true;
         //isChange = true;
         System.out.println("punch him!");
         int damage = (int) (2 * Math.random()) + 1;

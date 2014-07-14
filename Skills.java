@@ -148,12 +148,13 @@ public class Skills
     public void Heal(DungeonMain lDungeon, Character sourceCharacter)
     {
         int healAmount = 30;
-        description = "Gives you " + healAmount +" health. If you heal above 100%, then the extra points will decay over turns." + lDungeon.overHealDecayPercent + "& of max health per turn. Max overheal is 200%";
+        description = "Gives you " + healAmount +" health. If you heal above 100%, then the extra points will decay over turns." + lDungeon.OVERHEAL_DECAY_PERCENT + "& of max health per turn. Max overheal is 200%";
         System.out.println("whoosh");
         sourceCharacter.heal(healAmount, sourceCharacter, lDungeon);
         
         skillHelper(lDungeon, sourceCharacter);
     }
+    
     
     public void revive(DungeonMain lDungeon, Character sourceCharacter)
     {

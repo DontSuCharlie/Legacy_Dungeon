@@ -48,5 +48,6 @@ public class RandomJam extends Jam{
         goToCharacter(lDungeon);
         
         System.out.println("RandomJam Acted");
+        endTurn(lDungeon);
     }
 }

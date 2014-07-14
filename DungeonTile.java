@@ -74,6 +74,128 @@ public class DungeonTile implements Comparable<DungeonTile>
         //We want the lowest score, so if the other is bigger then then this one should be placed lower. (Negative return values place this higher and positive ones place other higher.
         return (this.pathFindingHeuristic + this.pathFindingCost - other.pathFindingHeuristic - other.pathFindingCost);
     }*/
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((character == null) ? 0 : character.hashCode());
+        result = prime * result
+                + ((deadCharacter == null) ? 0 : deadCharacter.hashCode());
+        result = prime * result + goldAmount;
+        result = prime * result + itemID;
+        result = prime * result + ((number == null) ? 0 : number.hashCode());
+        result = prime * result
+                + ((projectile == null) ? 0 : projectile.hashCode());
+        result = prime * result + tileID;
+        result = prime * result
+                + ((tileImage == null) ? 0 : tileImage.hashCode());
+        result = prime * result + x;
+        result = prime * result + y;
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj instanceof DungeonTile))
+        {
+            return false;
+        }
+        DungeonTile other = (DungeonTile) obj;
+        if (character == null)
+        {
+            if (other.character != null)
+            {
+                return false;
+            }
+        }
+        else if (!character.equals(other.character))
+        {
+            return false;
+        }
+        if (deadCharacter == null)
+        {
+            if (other.deadCharacter != null)
+            {
+                return false;
+            }
+        }
+        else if (!deadCharacter.equals(other.deadCharacter))
+        {
+            return false;
+        }
+        if (goldAmount != other.goldAmount)
+        {
+            return false;
+        }
+        if (itemID != other.itemID)
+        {
+            return false;
+        }
+        if (number == null)
+        {
+            if (other.number != null)
+            {
+                return false;
+            }
+        }
+        else if (!number.equals(other.number))
+        {
+            return false;
+        }
+        if (projectile == null)
+        {
+            if (other.projectile != null)
+            {
+                return false;
+            }
+        }
+        else if (!projectile.equals(other.projectile))
+        {
+            return false;
+        }
+        if (tileID != other.tileID)
+        {
+            return false;
+        }
+        if (tileImage == null)
+        {
+            if (other.tileImage != null)
+            {
+                return false;
+            }
+        }
+        else if (!tileImage.equals(other.tileImage))
+        {
+            return false;
+        }
+        if (x != other.x)
+        {
+            return false;
+        }
+        if (y != other.y)
+        {
+            return false;
+        }
+        return true;
+    }
     
     /**
      * Return the tiles adjacent to the given one. Used in PathFinder(). The isFine adds the additional property of not having characters on it. Need to disable it for if the the target is a character though.

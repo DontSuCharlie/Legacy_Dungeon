@@ -16,16 +16,13 @@ public class Window extends JPanel
 	static int windowXPos;
 	static int windowYPos;
 	static ImageLoader imageLoader;
+	/*
 	public Window()
 	{
-		window = new JFrame("Legacy Dungeon");
-		screenRes = Toolkit.getDefaultToolkit().getScreenSize();
-		imageLoader = new ImageLoader();
-	}
+	}*/
 	public static void main(String[] args)
 	{
-		Window window = new Window();
-		createWindow();
+		Window.createWindow();
 		//window.addMouseListener();
 	}
 	public static void coord(int x, int y)
@@ -43,6 +40,9 @@ public class Window extends JPanel
 	}
 	public static void createWindow()
 	{
+	    window = new JFrame("Legacy Dungeon");
+		screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+		imageLoader = new ImageLoader();
 		//Reads save file to see current resolution; otherwise goes to default size
 		//windowX = (int)(screenRes.getWidth()/2);
 		//windowY = (int)(screenRes.getWidth()/2.2);//set Y to width because I wanted a square

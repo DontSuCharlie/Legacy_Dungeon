@@ -12,12 +12,50 @@ public class PathTile implements Comparable<PathTile>{
     int pathFindingHeuristic = 0;
     PathTile previousTile = null; //A pointer to the previous tile in a series. Used for pathFinding.
     
+    @Override
+    public String toString()
+    {
+        return "PathTile [thisTile=" + thisTile + ", pathFindingCost="
+                + pathFindingCost + ", pathFindingHeuristic="
+                + pathFindingHeuristic + "]";
+    }
+
     public PathTile(DungeonTile tile)
     {
         thisTile = tile;
         // TODO Auto-generated constructor stub
     }
-    
+        
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((thisTile == null) ? 0 : thisTile.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PathTile other = (PathTile) obj;
+        if (thisTile == null)
+        {
+            if (other.thisTile != null)
+                return false;
+        }
+        else if (!thisTile.equals(other.thisTile))
+            return false;
+        return true;
+    }
+
     public int compareTo(PathTile other)
     {
         //We want the lowest score, so if the other is bigger then then this one should be placed lower. (Negative return values place this higher and positive ones place other higher.
@@ -132,6 +170,7 @@ public class PathTile implements Comparable<PathTile>{
                     tile.pathFindingCost += getTileIDCosts(thisTile);
 
                 }
+                
                 tileList.remove(this);
             }
             
