@@ -7,7 +7,7 @@ public class RandomJam extends Jam{
     public RandomJam()
     {
         description = "More annoying than dangerous, this gelatinous creature simply gets in the way.";
-        spawnRate = 1;
+        spawnRate = .9;
         //characterID = 2;
         maxHealth = 5;
         currentHealth = 5;

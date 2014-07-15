@@ -259,26 +259,6 @@ public class DungeonMain extends JPanel implements Runnable
         			    System.out.println(i);
         				i.act(this);
                         System.out.println(i + "Has acted");
-    /*
-        				//Enemy overheals occur just after their turn.
-        				if (i.currentHealth > i.maxHealth)
-        	            {
-        	                //If the overheal amount is less than the threshold percentage, restore currentHealth to the normal MaxHealth
-        	                if (i.currentHealth < (1+overHealDecayPercent) * i.maxHealth)
-        	                {
-        	                    i.currentHealth = i.maxHealth;
-        	                    System.out.println("Reverted to normal max");
-        	                }
-        	                    
-        	                //Reduce the overheal percent in other case.
-        	                else 
-        	                {
-        	                    System.out.println("Overheal reduced");
-        	                    i.currentHealth -= (int)(overHealDecayPercent * i.maxHealth);
-        	                    System.out.println(i.currentHealth);
-        	                }
-        				}
-        				*/
     			    }
     			}
 			System.out.println("Relooping");	
@@ -299,6 +279,8 @@ public class DungeonMain extends JPanel implements Runnable
 	private void nextLevel() throws InstantiationException, IllegalAccessException
 	{
         changeSpawnRates();
+        dungeon.characterList = null;
+        dungeon.tileList = null;
         dungeon = new DungeonBuilder(dungeon);
         //dungeon.tileList = DungeonBuilder.tileList;
 	}

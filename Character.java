@@ -46,6 +46,7 @@ public abstract class Character extends Skills
     boolean closeToTarget = false;
     private int pathFindingCooldown = 0;
     private int maxPathFindingCooldown = 5;
+    public Inventory charInventory = new Inventory(5);
     
    //Constructor
     

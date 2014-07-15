@@ -19,9 +19,17 @@ public class Player extends Character{
         currentHealth = maxHealth;
         direction = 2;
         isActive = true;
-        
+        charInventory = new Inventory(64);
     }
-        
+    
+    /**
+     * All of the player's actions
+     * Moving
+     * Attacking
+     * Interacting
+     * Using Abilities
+     * Checking Inventory
+     */
     public void act(DungeonMain lDungeon) throws InstantiationException, IllegalAccessException
     {
         boolean waitingForPlayer = true;

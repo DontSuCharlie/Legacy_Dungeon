@@ -22,37 +22,51 @@ public class DungeonBuilder
     
     static int xLength;
     static int yLength;
-    //These four are designed to make picking a random tile more efficient by constraining the random area to a rectangle defined by these.
-    static int minX;
-    static int maxX;
-    static int minY;
-    static int maxY;
-    //End
     static int numTiles;
-    public Player playerCharacter;
+    
+    ////////////////////////////////////DATA///////////////////////////////////
     public int playerFloorDamage; //Keeps track of damage taken on this floor. Used in the difficultyHeuristic.
     public int difficultyHeuristic; //This collects data about what goes on in this floor and compares it to the optimalHeuristic in order to finetune difficulty. We want something like a wave with an upward trend in terms of difficulty. More difficulty may have more treasure being spawned.
     public int optimalHeuristic; //No damage, collecting all treasure, completion in some time(dunno how to measure a "good" time). Compared to difficultyHeuristic in order to finetune difficulty. Maybe having an easy difficulty will have less treasure spawned.
+    
+    ////////////////////////////////DUNGEON BUILDING STUFF/////////////////////
     //Stores all tiles.    
     public static DungeonTile[][] tileList;
     //Used for tile generation
     private ArrayList<DungeonTile> connectorList;
     //Used to pick a tile for enemy generation, player generation, item generation, etc. Random tile should be found in DRunner
     private ArrayList<DungeonTile> checkList;
+    ArrayList<Enemy> spawningEnemyList;
+
+    ////////////////////////////////THINGS IN DUNGEON//////////////////////////
+    public Player playerCharacter;
     static public ArrayList<Enemy> enemyList;
     static public ArrayList<Character> characterList = new ArrayList<Character>();
-    ArrayList<Enemy> spawningEnemyList = new ArrayList<Enemy>();
+    
+    ///////////////////////////////ITEM SPAWNING///////////////////////////////
     double goldChance = .4;
     double commonChance = .3;             
     double uncommonChance = .19;
     double rareChance = .1;
     double superChance = .01;
     
+    /*
+    private class Spawner{
+        
+        Character character;
+        double spawnRate;   
+        
+        public Spawner(Character character, double rate)
+        {
+            this.character = character;
+            spawnRate = rate;
+        }
+    }*/
    //Constructor for new dungeon
     public DungeonBuilder(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput, int currentFloorInput) throws InstantiationException, IllegalAccessException//Takes in the following parameters from NodeWorld.java
     {
         // If this is a completely new dungeon, then start with basic values.
-
+        
         this.theme = theme; //1 = default.
         this.skillID = skillID; //The skill found there 
         this.difficulty = difficulty;//insert random factor that will adjust difficulty
@@ -71,7 +85,9 @@ public class DungeonBuilder
         connectorList = new ArrayList<DungeonTile>();
         checkList = new ArrayList<DungeonTile>();
         enemyList = new ArrayList<Enemy>();
-
+        spawningEnemyList = new ArrayList<Enemy>();
+        spawningEnemyList.add(new RandomJam());
+        spawningEnemyList.add(new CombatJam());
        
         //Number of floors is based on the difficulty level
     }
@@ -148,9 +164,12 @@ public class DungeonBuilder
     {
         if (theme == 1)
         {
+            
+            /*
             spawningEnemyList = new ArrayList<Enemy>();
             spawningEnemyList.add(new RandomJam());
             spawningEnemyList.add(new CombatJam());
+            */
         }
     }
 
@@ -177,6 +196,8 @@ public class DungeonBuilder
         connectorList = new ArrayList<DungeonTile>();
         checkList = new ArrayList<DungeonTile>();
         enemyList = new ArrayList<Enemy>();
+        characterList = new ArrayList<Character>();
+        spawningEnemyList = dungeon.spawningEnemyList;
         this.assignTilePos(numTiles);
         this.spawnPlayer();       
         this.spawnStairs();
@@ -623,7 +644,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
     //When generating dungeons, we choose which sets of enemies spawn with these ArrayLists.
     private void spawnEnemies(ArrayList<Enemy> enemyTypes) throws InstantiationException, IllegalAccessException
     {
-        int mainEnemyID = 0;
         for (int i = 0; i < numTiles-1; i++)
         {
             if (!(checkList.get(i).character instanceof Character))
@@ -659,7 +679,6 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                             checkList.get(i).character = something;
                             
                             //System.out.println("I AM JAM");
-                            mainEnemyID++;
                         }
                 
                         else 
