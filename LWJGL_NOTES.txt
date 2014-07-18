@@ -1,0 +1,13 @@
+LWJGL Notes
+
+//What LWJGL is//
+JAR is basically a .zip folder for Java classes. It acts as a library where we can use LWJGL's pre-defined methods and classes.
+
+There are 4 JAR files in the game currently
+http://lwjgl.org/wiki/index.php?title=General_FAQ#How_can_I_load_images_and_sounds_with_LWJGL.3F
+
+lwjgl.jar = core of LWJGL
+jinput.jar = joystick and other similar stuff's functionality
+AppleJavaExtensions.jar = allows LWJGL to work on Macs (if the game is not created on a Mac)
+slick-util.jar = efficient sound and image loader that is designed to work with LWJGL
+

@@ -1,0 +1,35 @@
+Save File Text [unencrypted]
+============================
+
+In Game
+--------
+Name = "Charlie";
+ArrayList<Skill> skillList = skill0, skill1, skill5;
+ArrayList<Node> nodeList = ;
+inWorldMap = false;
+inDungeon = true;
+turnCounter = 5;
+
+AI
+------
+General1 Position = 
+
+Visual Settings
+---------------
+FullScreen = true;
+Window X Size = 1600;
+Window Y Size = 800;
+
+Music/Sound Settings
+--------------------
+playMusic = true;
+playSound = true;
+
+Key Bind Settings
+------------------
+//keycode only appears if binded
+UP = move up;
+DOWN = move down;
+LEFT = move left;
+RIGHT = move right;
+SPACE = normAttack;
