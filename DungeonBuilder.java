@@ -163,8 +163,7 @@ public class DungeonBuilder
     private void getSpawnLists(int theme)
     {
         if (theme == 1)
-        {
-            
+        {            
             /*
             spawningEnemyList = new ArrayList<Enemy>();
             spawningEnemyList.add(new RandomJam());

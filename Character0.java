@@ -11,7 +11,7 @@ public class Character0
 	public Character0()
 	{
 		imageLoader = new ImageLoader();
-		image = imageLoader.loadImage("images/playerNorth.png");
+		image = imageLoader.loadImage("images/player1.png");
 		width = image.getWidth();
 		height = image.getHeight();
 		x = Window.windowX/2;

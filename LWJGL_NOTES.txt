@@ -11,3 +11,27 @@ jinput.jar = joystick and other similar stuff's functionality
 AppleJavaExtensions.jar = allows LWJGL to work on Macs (if the game is not created on a Mac)
 slick-util.jar = efficient sound and image loader that is designed to work with LWJGL
 
+//"Setting up" LWJGL without IDE//
+It's simply actually. Every time you want to compile your .java file, add the following command in between javac and your file name:
+javac -cp .;<insert JAR file and their directories here> fileToBeCompiled.java
+
+NOTE: SPACES ARE IMPORTANT. If you're changing the classpath of multiple files, do not add spaces.
+
+FOR EXAMPLE, if your JAR file is located in C:/Desktop/Github/LegacyDungeon/Jar/lwjgl.jar
+
+javac -cp .;C:/Desktop/Github/LegacyDungeon/Jar/lwjgl.jar fileToBeCompiled.java
+
+IF your JAR file is located in a file subdirectory under your to-be-compiled file then just add onto the current subdirectory.
+
+FOR EXAMPLE, you're currently in C:/Desktop/Github/LegacyDungeon
+then
+
+javac -cp .;Jar/lwjgl.jar fileToBeCompiled.java
+
+IF you have multiple, then just add a semi-colon (if you're in Windows, apparently other OS's have their own divider)
+
+javac -cp .;Jar/lwjgl.jar;Jar/otherJar.jar
+
+Every time you run it, you have to include -Djava.library.path=<directoryToYourNatives>. Unlike -cp, you do not need to type in all the .dll files. Simply change the directory until you get to the folder with all your native files.
+
+Example: java -cp .;Jar/lwjgl.jar;Jar/otherJar.jar -Djava.library.path=native/windows fileThatWasCompiled

@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 public class Node extends JComponent implements MouseListener
 {	
-	musicPlayer musicPlayer = new musicPlayer();
+	MusicPlayer musicPlayer = new MusicPlayer();
 	boolean isClicked;
 	Mouse mouse;
 	int x;

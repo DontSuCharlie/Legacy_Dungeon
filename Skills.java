@@ -33,6 +33,15 @@ Can be used as Trap?
 23: Water Absorption: While in water, regenerate your health every few seconds. If bathed in steam, regenerate your health quicker.
 24: Levitation: Allows you to float. You become immune to any trap triggers/ground based moves
 25: QUAD FIREBALL: SHOOT FOUR FIREBALLS IN AN X PATTERN
+26: Invisibility: Visually invisible to monsters who use sight to navigate. Invisibility % is based on how still you remain.
+27: Circle Destruction: Creates a path of yellow-orange light that acts as solid barrier. If the end and beginning are connected, every tile within the barrier explodes.
+28: Bomb Rock: Throws a rock at one tile, runs away, explode
+29: Phasor: Walk through walls and other solid objects
+30: Ghost Transform: Possess monsters and use their HP as yours. You also gain their skills (if any)
+31: 
+
+Different bosses have different "modes":
+Anais: Chess - game becomes turn based - every turn you roll to become a different piece. Anais is only damage-able when she becomes a Queen Piece.
 */
 public class Skills
 {

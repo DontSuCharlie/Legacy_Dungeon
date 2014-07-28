@@ -1,6 +1,9 @@
-LEGACY DUNGEON
-A Game For Windows PC
+LEGACY DUNGEON (current name is a placeholder)
+================================
+A Video Game for Windows (for now)
+
 Copyright 2014 Charlie Su, Anish Kannan
+
 ==============
 Authors: Charlie Su and Anish Kannan
 Mentors: David Ma

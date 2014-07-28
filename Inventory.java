@@ -15,20 +15,15 @@ public class Inventory{
     int currentSize = 0;
     ArrayList<GameItem> itemList = new ArrayList<GameItem>();
     ArrayList<GameItem> displayedItems = new ArrayList<GameItem>();
-    
     public Inventory(int maxSize)
     {
-        
-        Collections.sort(itemList, );
+       // Collections.sort(itemList, );
     }
     
     public void sortArmor()
-    {
-        
-        Collections.sort(itemList, );
-
+    {        
+        //Collections.sort(itemList, );
     }
-    
     public void sortConsumable()
     {
         
