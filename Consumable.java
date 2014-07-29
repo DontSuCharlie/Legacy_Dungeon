@@ -4,7 +4,7 @@
  */
 public class Consumable extends GameItem {
 
-    int stackSize; //Amount you are carrying in a slot.
+    int stackSize = 1; //Amount you are carrying in a slot.
     int maxStackSize; //Max amount that can be carried in a slot.
     
     /**
@@ -16,7 +16,7 @@ public class Consumable extends GameItem {
         ((Consumable)sourceCharacter.charInventory.itemList.get(sourceCharacter.charInventory.itemList.indexOf(this))).stackSize -= 1;
         System.out.println("Consumable used");
         
-        if (stackSize == 0)
+        if (stackSize <= 0)
         {
             sourceCharacter.charInventory.itemList.remove(this);
             System.out.println("Stack exhausted");

@@ -74,6 +74,14 @@ public class Player extends Character{
                 KeyboardInput.boolIs3 = false;
                 waitingForPlayer = false;
             }
+            else if(KeyboardInput.boolIsHeal)
+            {
+                System.out.println("ItemHeal");
+                lDungeon.dungeon.playerCharacter.itemHeal(lDungeon);
+                KeyboardInput.boolIsHeal = false;
+                waitingForPlayer = false;
+            }
+            
             else if(KeyboardInput.diagnostic)
             {
                 System.out.println("Diagnostic " +lDungeon.dungeon.playerCharacter.currentTile.x + " " + lDungeon.dungeon.playerCharacter.currentTile.y);
@@ -206,7 +214,7 @@ public class Player extends Character{
         }
         if (targetTileX  >= 0 && targetTileX < DungeonBuilder.xLength && targetTileY >= 0 && targetTileY < DungeonBuilder.yLength && lDungeon.dungeon.tileList[targetTileX][targetTileY] instanceof DungeonTile && lDungeon.dungeon.tileList[targetTileX][targetTileY].character instanceof Character)
         {
-            dealDamage(damage, targetTileX, targetTileY, lDungeon);
+            dealDamage(damage, targetTileX, targetTileY, this, lDungeon);
         }
     }
     
@@ -225,14 +233,12 @@ public class Player extends Character{
                 lDungeon.dungeon.tileList[lDungeon.dungeon.playerCharacter.currentTile.x][lDungeon.dungeon.playerCharacter.currentTile.y].number = temp;
                 lDungeon.dungeon.playerCharacter.currentTile.itemID = 0;
                 lDungeon.dungeon.tileList[lDungeon.dungeon.playerCharacter.currentTile.x][lDungeon.dungeon.playerCharacter.currentTile.y].itemID = 0;
-                //isChange = true;
-
-                    
             }
             
+            //Normal inventory item.
             if (lDungeon.dungeon.playerCharacter.currentTile.itemID == 2)
             {
-                System.out.println("");
+                charInventory.add(this.currentTile);
             }
                 //lDungeon.tileArray = DungeonBuilder.tileList;
         }
@@ -286,7 +292,18 @@ public class Player extends Character{
         revive(lDungeon, this);
     }
         
-    
+    public void itemHeal(DungeonMain lDungeon)
+    {
+        if(charInventory.itemList.size() > 0)
+        {
+            charInventory.itemList.get(0).use(this, lDungeon);
+        }
+        
+        else
+        {
+            System.out.println("No heal items");
+        }
+    }
     
     /*
    static public void main(String[] args)

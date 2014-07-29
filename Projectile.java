@@ -6,13 +6,15 @@ public class Projectile {
     int speed = 5; //0 for stationary, 1 for 1 tile/turn, higher for faster objects.
     int movesLeft;
     DungeonTile currentTile;
+    Character sourceCharacter;
     
-    public Projectile(int inputDamage, int inputDirection, DungeonTile tile)
+    public Projectile(int inputDamage, int inputDirection, DungeonTile tile, Character sourceCharacter)
     {
         damage = inputDamage;
         direction = inputDirection;
         movesLeft = speed;
         currentTile = tile;
+        this.sourceCharacter = sourceCharacter;
     }
     
     public void act(DungeonMain lDungeon)
@@ -26,7 +28,7 @@ public class Projectile {
             
                 if(currentTile.character != null)
                 {
-                    currentTile.character.dealDamage(damage, currentTile.x, currentTile.y, lDungeon);
+                    currentTile.character.dealDamage(damage, currentTile.x, currentTile.y, sourceCharacter, lDungeon);
                     //Use deal damage method?
                     System.out.println("Shot");
                    

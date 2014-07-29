@@ -1,7 +1,10 @@
+import java.awt.image.BufferedImage;
 import java.util.Comparator;
 
 
 public class GameItem implements Comparable<GameItem>{
+    
+    int rarity; //1 is common. 2 is uncommon. 3 is  rare,  etc.
     //Selling items dealt with by a HashMap with Key as the object and the value as its worth. This is only handled by the seller.
     //No weight. Just max items.
     public final Comparator<GameItem> ARMOR_ORDER = new Armor_Order();
@@ -16,12 +19,21 @@ public class GameItem implements Comparable<GameItem>{
         sourceCharacter.charInventory.itemList.remove(this);
         System.out.println("Error");
     }
+    
+    public BufferedImage getImage(DungeonMain lDungeon)
+    {
+        System.out.println("Error: getImage not initialized properly");
+        return null;
+    }
 
     @Override
+    /**
+     * This allows for a sort prioritizing rarity. Used to display rarest item first.
+     * 
+     */
     public int compareTo(GameItem other)
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return (other.rarity - this.rarity);
     }
     
     private class Armor_Order implements Comparator<GameItem>

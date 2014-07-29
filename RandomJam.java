@@ -7,8 +7,6 @@ public class RandomJam extends Jam{
     public RandomJam()
     {
         description = "More annoying than dangerous, this gelatinous creature simply gets in the way.";
-        spawnRate = .9;
-        //characterID = 2;
         maxHealth = 5;
         currentHealth = 5;
         direction = 2;
@@ -19,26 +17,26 @@ public class RandomJam extends Jam{
         {
             return DungeonMain.slimeImages[direction];
         }
-        
+
         //Jam alt. image
         else if(this.imageID == 1 && this.isHit == false)
         {
             return DungeonMain.slimeImagesAlt[direction];
         }
-        
+
         else if(this.isHit == true)
         {
             return DungeonMain.slimeImagesHit[direction];
         }
-        
+
         else 
         {
             //Should not run.
             System.out.println("Error missing slime image");
-            return DungeonMain.slimeImages[direction];
+            return DungeonMain.slimeImages[6];
         }
     }
-    
+
     public void act(DungeonMain lDungeon)
     {
         storedTargetCharacter = this.getEnemyCharacter(lDungeon);
@@ -46,7 +44,7 @@ public class RandomJam extends Jam{
         //Picks random spot to go to. Including walls.
         //AIRandom(lDungeon);
         goToCharacter(lDungeon);
-        
+
         System.out.println("RandomJam Acted");
         endTurn(lDungeon);
     }

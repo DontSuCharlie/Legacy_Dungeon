@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * This shell class is used for pathfinding.
@@ -10,6 +11,9 @@ public class PathTile implements Comparable<PathTile>{
     DungeonTile thisTile = null;
     int pathFindingCost = 0;
     int pathFindingHeuristic = 0;
+        
+    public static final Comparator<PathTile> MAX_DISTANCE_ORDER = new MaxDistanceOrder();
+            
     PathTile previousTile = null; //A pointer to the previous tile in a series. Used for pathFinding.
     
     @Override
@@ -23,7 +27,6 @@ public class PathTile implements Comparable<PathTile>{
     public PathTile(DungeonTile tile)
     {
         thisTile = tile;
-        // TODO Auto-generated constructor stub
     }
         
     @Override
@@ -213,5 +216,28 @@ public class PathTile implements Comparable<PathTile>{
         {
             return 9999;
         }
+    }
+    
+    private static class MaxDistanceOrder implements Comparator<PathTile>
+    {
+
+        @Override
+       public int compare(PathTile pTile, PathTile that)
+        {
+            //We want the lowest score, but the further away the better, so if the other is farther away, then then this one should be placed lower. (Negative return values place this higher and positive ones place other higher.
+            int temp = that.pathFindingHeuristic + pTile.pathFindingCost - pTile.pathFindingHeuristic - that.pathFindingCost;
+            
+            if (temp != 0)
+            {
+                return (temp);
+            }
+            
+            //In the case of a tie, we want the larger cost, because that'll be further from the target.
+            else
+            {
+                return (that.pathFindingCost - pTile.pathFindingCost);
+            }
+        }
+        
     }
 }

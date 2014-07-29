@@ -148,7 +148,7 @@ public class Skills
         
         DungeonTile startTile = lDungeon.dungeon.tileList[sourceCharacter.currentTile.x][sourceCharacter.currentTile.y];
         
-        lDungeon.ProjectileList.add(new Projectile (5, sourceCharacter.direction, getSourceTile(lDungeon, sourceCharacter.direction, startTile)));
+        lDungeon.ProjectileList.add(new Projectile (5, sourceCharacter.direction, getSourceTile(lDungeon, sourceCharacter.direction, startTile), sourceCharacter));
         
         skillHelper(lDungeon, sourceCharacter);
     }

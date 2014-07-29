@@ -17,7 +17,6 @@ public class CombatJam extends Jam{
     }
     public final BufferedImage getImage()
     {
-        Image combatSlimeImage = null;
         if (this.imageID == 0 && this.isHit == false)
         {
             return DungeonMain.combatSlimeImages[direction];

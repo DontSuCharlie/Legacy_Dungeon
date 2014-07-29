@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.*;
+import java.io.File;
 
 import javax.swing.*;
 public class DungeonMain extends JPanel implements Runnable
@@ -21,14 +22,17 @@ public class DungeonMain extends JPanel implements Runnable
 	static ImageLoader imageLoader = new ImageLoader();//in charge of loading images
     final int numTilesX = 16;
     final int numTilesY = 9;
+    //Hashmap would be perfect for images. Will implement if have time.
 	//BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
-	BufferedImage money = imageLoader.loadImage("images/coinGold.png");
+
+    BufferedImage money = imageLoader.loadImage("images/coinGold.png");
 	BufferedImage redBarLeft = imageLoader.loadImage("images/redBarLeft.png");
 	BufferedImage redBarRight = imageLoader.loadImage("images/redBarRight.png");
 	BufferedImage redBarMiddle = imageLoader.loadImage("images/redBarMiddle.png");
 	BufferedImage greenBarLeft = imageLoader.loadImage("images/greenBarLeft.png");
 	BufferedImage greenBarRight = imageLoader.loadImage("images/greenBarRight.png");
 	BufferedImage greenBarMiddle = imageLoader.loadImage("images/greenBarMiddle.png");	
+	BufferedImage healthPot = imageLoader.loadImage("images/HealthPot.png");
     
     static BufferedImage[] slimeImages = new BufferedImage[10];
     static BufferedImage[] slimeImagesAlt = new BufferedImage[10];
@@ -61,6 +65,7 @@ public class DungeonMain extends JPanel implements Runnable
 	BufferedImage[] tileImagesDefault = new BufferedImage[10];
 	BufferedImage plusG = imageLoader.loadImage("images/PlusG.png");
 	BufferedImage plusGr = imageLoader.loadImage("images/PlusGr.png");
+	BufferedImage plusR = imageLoader.loadImage("images/PlusR.png");
 	BufferedImage minus = imageLoader.loadImage("images/Minus.png");
 	BufferedImage minusR = imageLoader.loadImage("images/MinusR.png");
 	BufferedImage divide = imageLoader.loadImage("images/Slash.png");
@@ -70,9 +75,9 @@ public class DungeonMain extends JPanel implements Runnable
 	public DungeonMain() throws InstantiationException, IllegalAccessException
 	{
 	    //Just a simple way to activate test mode.
-	    String buildSetting = "Nottest";
+	    String buildSetting = "test";
 		window = new JFrame("Hazardous Laboratory");
-		dungeon = new DungeonBuilder(1,1,1,100,100,1);
+		dungeon = new DungeonBuilder(1,1,1,100,100);
 		if (buildSetting.equals("test"))
 		{
 		    dungeon.buildTest();
@@ -93,6 +98,8 @@ public class DungeonMain extends JPanel implements Runnable
                 }
             }
         }
+        
+        System.out.println("Loading Character images");
 		for(int i = 0; i <= 9; i++)
 		{
 			num[i] = imageLoader.loadImage("images/" + i + ".png");
@@ -210,29 +217,37 @@ public class DungeonMain extends JPanel implements Runnable
             playerImagesDead[i] = imageLoader.loadImage("images/playerDead" + i + ".png");
         }
 	    */
-        /*
-        for(int i = 2; i <= 9; i+=2)
+        
+        for(int i = 1; i <= 9; i++)
         {
+            if(i == 5)
+            {
+                i = 6;
+            }
             ghostImages[i] = imageLoader.loadImage("images/ghost" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            if(i == 5)
+            {
+                i = 6;
+            }
             ghostImagesAlt[i] = imageLoader.loadImage("images/ghostAlt" + i + ".png");
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
-            ghostImagesHit[i] = imageLoader.loadImage("images/ghostHit" + i + ".png");
+            //Using same image for all hit animations
+            BufferedImage temp = imageLoader.loadImage("images/ghostHit.png");
+            ghostImagesHit[i] = temp;
         }
-        for(int i = 2; i <= 9; i+=2)
+        for(int i = 1; i <= 9; i++)
         {
+            if(i == 5)
+            {
+                i = 6;
+            }
             ghostImagesDead[i] = imageLoader.loadImage("images/ghostDead" + i + ".png");
         }
-	    
-	    */
-	    
-        
-	    
-	    
 	}
 	//Basically runs the dungeonmain object. It goes into a loop
 	public void dungeonLoop() throws InstantiationException, IllegalAccessException
@@ -299,17 +314,17 @@ public class DungeonMain extends JPanel implements Runnable
 	    if (dungeon.theme == 1)
 	    {
 	        //If there was a way to get an element of its type, that would be helpful. As is, I if-bash with a for each loop for all elements.
-	        for(Enemy e : dungeon.spawningEnemyList)
+	        for(DungeonBuilder.Spawner s : dungeon.spawningEnemyList)
 	        {
 	            //Normal jams become less common.
-	            if(e instanceof RandomJam)
+	            if(s.charClass.isInstance(RandomJam.class))
 	            {
-	                e.spawnRate -= .1;
+	                s.spawnRate -= .1;
 	            }
 	           
-	            if(e instanceof CombatJam)
+	            if(s.charClass.isInstance(CombatJam.class))
 	            {
-	                e.spawnRate += .1;
+	                s.spawnRate += .1;
 	            }
 	        }
 	    }
@@ -406,12 +421,22 @@ public class DungeonMain extends JPanel implements Runnable
 						}*/
 						g.drawImage(slimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
 					}
-					if (drawnTile.deadCharacter.prevCharacter instanceof CombatJam)
+					
+					else if (drawnTile.deadCharacter.prevCharacter instanceof CombatJam)
 					{
 						Image combatSlimeImage = null;
 	                    combatSlimeImage = DungeonMain.combatSlimeImagesDead[drawnTile.deadCharacter.prevCharacter.direction];
 
 						g.drawImage(combatSlimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, combatSlimeImage.getWidth(null) + 50, combatSlimeImage.getHeight(null) + 100, null);
+					}
+					
+					else if (drawnTile.deadCharacter.prevCharacter instanceof Ghost)
+					{
+					    Image ghostImage = null;
+					    ghostImage = DungeonMain.ghostImagesDead[drawnTile.deadCharacter.prevCharacter.direction];
+					    
+	                       g.drawImage(ghostImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, ghostImage.getWidth(null) + 50, ghostImage.getHeight(null) + 100, null);
+
 					}
 				}
 				//Draw money
@@ -422,6 +447,13 @@ public class DungeonMain extends JPanel implements Runnable
 						image = money;
 						g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (int)((.5+j) * tileLengthY) + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
 					}
+				}
+				
+				//Anu helped me with a cool idea. Normally the rarest item is chosen (randomly between the same rarity) to be drawn. If moused over or inspected however, a bubble will appear with all of the items and descriptions as a tooltip.
+				if (drawnTile instanceof DungeonTile && drawnTile.items instanceof ArrayList)
+				{
+				    BufferedImage itemImage = drawnTile.getItemImage(this);
+				    g.drawImage(itemImage, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (int)((.5+j) * tileLengthY) + screenShakeY, 0, 0, itemImage.getWidth(null), itemImage.getHeight(null), null);
 				}
 				//Draw characters
 				if (drawnTile instanceof DungeonTile && drawnTile.character instanceof Character)
@@ -449,6 +481,13 @@ public class DungeonMain extends JPanel implements Runnable
                     {
                         BufferedImage slimeImage = ((CombatJam)drawnTile.character).getImage();
                         g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                    }
+					
+					//Draw Everything else
+                    else
+                    {
+                        BufferedImage temp = drawnTile.character.getImage();
+                        g.drawImage(temp, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, temp.getWidth(null), temp.getHeight(null), null);
                     }
 					
 					//Drawn above characters
@@ -552,17 +591,18 @@ public class DungeonMain extends JPanel implements Runnable
                                 healDisplayed = 0;
                                 numCounter++;
                             }
-                            //Draws white numbers if damage is dealt to an enemy
+                            //Draws green numbers if this heal is performed on an ally.
                             if(((HealNumber)drawnTile.number).targetIsFriendly == true)
                             {
                                 image = numGr[oneDigit];
                             }
-                            /*
-                            //Draws red damage numbers if damage is dealt to an ally.
-                            else if(((HitNumber)drawnTile.number).targetIsFriendly == true)
+                            
+                            //Draws red damage numbers if the heal is dealt to an enemy.
+                            else if(((HealNumber)drawnTile.number).targetIsFriendly == false)
                             {
                                 image = numR[oneDigit];
-                            }*/
+                            }
+                            
                             g.drawImage(image, i * tileLengthX - numCounter * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - numCounter * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, image.getWidth(null), image.getHeight(null), null);
 
                             
@@ -578,18 +618,19 @@ public class DungeonMain extends JPanel implements Runnable
                             g.drawImage(plusGr, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minus.getWidth(null), minus.getHeight(null), null);
                         }
                         
+                        else if(!((HealNumber)drawnTile.number).targetIsFriendly)
+                        {
+                            g.drawImage(plusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
+                        }
+                        
                         //Stop displaying number after some time.
                         if (drawnTile.number.timer <= 0)
                         {
                             drawnTile.number = null;
-                            //NumberList.remove(drawnTile.number.timer);
                         }    
                         
-                        /*
-                        else if(((HitNumber)drawnTile.number).targetIsFriendly)
-                        {
-                            g.drawImage(minusR, i * tileLengthX - (numCounter + 1) * tileLengthX/4, (int)(j * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), (int)((i+.25) * tileLengthX - (numCounter + 1) * tileLengthX/4), (int)((.25+j) * tileLengthY - tileLengthY/2 + tileLengthY * ((double)drawnTile.number.timer/drawnTile.number.initialTime)), 0, 0, minusR.getWidth(null), minusR.getHeight(null), null);
-                        }*/
+                        
+
                     }
 				}
 				//Floating gold numbers.
@@ -654,6 +695,11 @@ public class DungeonMain extends JPanel implements Runnable
 	             }
 	             g.drawImage(slimeImage, i.prevCharacter.currentTile.x * tileLengthX + 25, i.prevCharacter.currentTile.y * tileLengthY + 25, (i.prevCharacter.currentTile.x+1) * tileLengthX, (i.prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
 	         }
+	         
+	         else if (i.deathTimer <= 0)
+             {
+                 recentDeadCharList.remove(i);
+             }
 		}
 		//UI is drawn last so it's on top of everything else.
 		int floorNum = dungeon.currentFloor;

@@ -5,9 +5,9 @@ import java.awt.*;
 //Used to get keyboard input, similar in use to imageLoader
 public class KeyboardInput implements KeyListener
 {
-	public static boolean boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIsMoving, boolIs1, boolIs2, boolIs3, boolIs4, boolIs5,boolIs6, boolIs7, boolIs8, boolIs9, boolIs0, diagnostic;
-	static boolean[] actionArray = {boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIs1, boolIs2, boolIs3, boolIs4, boolIs5,boolIs6, boolIs7, boolIs8, boolIs9, boolIs0, diagnostic};
-	int[] keyArray = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE, KeyEvent.VK_SHIFT, KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5, KeyEvent.VK_6, KeyEvent.VK_7, KeyEvent.VK_8, KeyEvent.VK_9,KeyEvent.VK_0, KeyEvent.VK_TAB};
+	public static boolean boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIsMoving, boolIs1, boolIs2, boolIs3, boolIs4, boolIs5,boolIs6, boolIs7, boolIs8, boolIs9, boolIs0, diagnostic, boolIsHeal;
+	static boolean[] actionArray = {boolIsUp, boolIsDown, boolIsLeft, boolIsRight, boolIsAttack, boolIsInteracting, boolIs1, boolIs2, boolIs3, boolIs4, boolIs5,boolIs6, boolIs7, boolIs8, boolIs9, boolIs0, diagnostic, boolIsHeal};
+	int[] keyArray = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_SPACE, KeyEvent.VK_SHIFT, KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5, KeyEvent.VK_6, KeyEvent.VK_7, KeyEvent.VK_8, KeyEvent.VK_9,KeyEvent.VK_0, KeyEvent.VK_TAB, KeyEvent.VK_H};
     public static int key;
 	
 	public static void update(boolean[] actionArray)
@@ -46,6 +46,8 @@ public class KeyboardInput implements KeyListener
 	        boolIs0 = true;	      
 		if(actionArray[16])
 		    diagnostic = true;
+		if(actionArray[17])
+		    boolIsHeal = true;
 	}
 	
 	public static void main(String[] args)

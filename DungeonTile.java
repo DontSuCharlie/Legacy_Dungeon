@@ -1,6 +1,7 @@
 /*This is the class that's in charge of drawing tiles?*/
 import java.awt.image.*;
 import java.util.ArrayList;
+import java.util.Collections;
 public class DungeonTile implements Comparable<DungeonTile>
 {
 	int x;
@@ -8,7 +9,8 @@ public class DungeonTile implements Comparable<DungeonTile>
 	int tileID; //0 = wall, 1 = regular floor, 2 = trap 3 = stairs
 	int connectionCap;
 	int numConnections;
-	int itemID; //0 = nothing, 1 = money, 2 = ?
+	int itemID; //0 = nothing, 1 = money, 2 = Show item icon. 3= Show multiple item icon.
+	ArrayList<GameItem> items;
 	int goldAmount;
 	//int characterID; //0 = nothing, 1 = player, 2 = enemy
 	Character character;
@@ -30,6 +32,18 @@ public class DungeonTile implements Comparable<DungeonTile>
 		connectionCap = 2;
 		itemID = 0;
 		//characterID = 0;
+	}
+	
+	/**
+	 * Because multiple items can be on a tile, I have to pick which one to use. I just get the first one, because items are sorted when they are placed on a tile.
+	 * @return Image of highest priority item.
+	 */
+	public BufferedImage getItemImage(DungeonMain lDungeon)
+	{
+	    assert (itemID != 0);
+	    //Sorted when items are placed on this tile.
+	    //Collections.sort(items);
+	    return items.get(0).getImage(lDungeon);
 	}
 	
 	// main and toString for testing/debugging purposes.

@@ -29,25 +29,27 @@ public abstract class Character extends Skills
     public String description;
     public DungeonTile currentTile;
     public Character storedTargetCharacter;// The character this character is basing it's movement off of. Running from it or going to it are just a few examples.
-    public int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
+    int altTimer = (int)((800/DungeonMain.DELAY - 500/DungeonMain.DELAY)*Math.random() + 500/DungeonMain.DELAY); //Ranges from .8 to .5 seconds for alt. image. Counter occurs every 25 ms.
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
     public int direction; // Used for direction of sprite and attacks 6=east, 8=north, 4=west, 2=south, 9=NE, 7=NW, 3=SE, 1=SW
     public boolean isHit = false;
     final int hitTimer = (int) (100/DungeonMain.DELAY); //Used for length of hit animation. Currently set to 250 ms delay.
     private int cooldownTimer1Max = 10; //Time to charge abilities. Reduced by one each turn.
     public int cooldownTimer1 = cooldownTimer1Max;//Deals with cooldowns for the first ability of this creature. 
-    public int currentHitTime = hitTimer;
+    int currentHitTime = hitTimer;
     public int dangerLevel = 1; //This is used to determine how abilities work with this character, ex. revives should not work on bosses.
     public boolean isFriendly; //Used to check attacks and determine which animating number to be shown.
     boolean getNewTarget = true;
     boolean isActive = false;
-    int status = 0; //Keeps track of necessary effects, such as damaging this from poison. 0 is normal.
+    int[] status = new int[5]; //Keeps track of necessary effects, such as damaging this from poison. 0 is normal.
     Stack<DungeonTile> currentPath = new Stack<DungeonTile>();
     boolean closeToTarget = false;
     private int pathFindingCooldown = 0;
     private int maxPathFindingCooldown = 5;
+    public boolean wasHit = false; //Used for enemies that run. 
     public Inventory charInventory = new Inventory(5);
     
+    public boolean IS_RUNNING = false;
    //Constructor
     
 /*
@@ -86,6 +88,16 @@ public abstract class Character extends Skills
     private void statusEffects(DungeonMain lDungeon)
     {
         
+    }
+    
+    /**
+     * Each character uses this method to display itself.
+     * 
+     */
+    public BufferedImage getImage()
+    {
+        System.out.println("Error");
+        return null;
     }
     
     /* charMove: moves this character some given distance and sets their direction appropriately.
@@ -142,8 +154,14 @@ public abstract class Character extends Skills
         //Animation
         //Remnant on Tile
     }
-    
-    public void dealDamage(int damage, int targetX, int targetY, DungeonMain lDungeon)
+    /**
+     * 
+     * @param damage
+     * @param targetX
+     * @param targetY
+     * @param sourceCharacterDungeonMain
+     */
+    public void dealDamage(int damage, int targetX, int targetY, Character sourceCharacter, DungeonMain lDungeon)
     {
         //Create a new damage number
         HitNumber temp = new HitNumber(damage, targetX, targetY, lDungeon.dungeon.tileList[targetX][targetY].character.isFriendly);
@@ -151,6 +169,14 @@ public abstract class Character extends Skills
         lDungeon.dungeon.tileList[targetX][targetY].number = temp;
         //Subtract health
         lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth -= damage;
+        
+        //Make wasHit true.
+        lDungeon.dungeon.tileList[targetX][targetY].character.wasHit = true;
+        
+        if (lDungeon.dungeon.tileList[targetX][targetY].character.IS_RUNNING)
+        {
+            lDungeon.dungeon.tileList[targetX][targetY].character.storedTargetCharacter = sourceCharacter;
+        }
         
         //Used for stats and the heuristic for finetuning difficulty when building new floors.
         if(lDungeon.dungeon.tileList[targetX][targetY].character instanceof Player)
@@ -189,12 +215,6 @@ public abstract class Character extends Skills
         //Get the dead deadChar and place it as a deadChar again. (Note still 0 health)
         lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character = deadChar.prevCharacter;
         //Replace health based on maxHealth
-        /*
-        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.currentHealth = (int)(lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.maxHealth * healPercent);
-        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.isFriendly = this.isFriendly;
-        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].character.isActive = true;
-        lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].deadCharacter = null;
-*/
         deadChar.prevCharacter.currentHealth = (int)(deadChar.prevCharacter.maxHealth * healPercent);
         deadChar.prevCharacter.isFriendly = this.isFriendly;
         deadChar.prevCharacter.isActive = true;
@@ -212,7 +232,34 @@ public abstract class Character extends Skills
         lDungeon.dungeon.tileList[deadChar.prevCharacter.currentTile.x][deadChar.prevCharacter.currentTile.y].number = temp;
         
     }
-     
+    /**
+     * An overloaded method that is used in the reviver AI because storedTargetCharacter keeps track of the tile its on.
+     * Assumes valid DungeonTile with dead enemy on it.
+     */
+    public void revive(double healPercent, DungeonTile charTile, DungeonMain lDungeon)
+    {
+        
+        //Get the dead deadChar and place it as a deadChar again. (Note still 0 health)
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].character = lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharacter.prevCharacter;
+        //Replace health based on maxHealth
+        
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].character.currentHealth = (int)(lDungeon.dungeon.tileList[charTile.x][charTile.y].character.maxHealth * healPercent);
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].character.isFriendly = this.isFriendly; //Attains faction of the reviver.
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].character.isActive = true;
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharacter = null;
+        //If this revived character is an enemy, we add it to the enemyList so, it can be checked for other applications 
+        if(!this.isFriendly)
+        {
+            lDungeon.dungeon.enemyList.add((Enemy) lDungeon.dungeon.tileList[charTile.x][charTile.y].character);
+        }
+        
+        //Add a new heal number to show what happened.
+        //Perhaps add another fancy image to show the revival.
+        HealNumber temp = new HealNumber(lDungeon.dungeon.tileList[charTile.x][charTile.y].character.currentHealth, charTile.x, charTile.y, lDungeon.dungeon.tileList[charTile.x][charTile.y].character.isFriendly);
+        DungeonMain.NumberList.add(temp);
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].number = temp;
+    }
+    
     /**
     * Using A* pathing, we get beautiful paths. Diagonals suck though. There is no reason not to use diagonal movement when x and y coordinates differ. I have currently set it so that paths are found diagonals
     * Start by calculating the 
@@ -220,7 +267,7 @@ public abstract class Character extends Skills
     * The fine finder takes other characters in account but also reprocesses each turn.
     * 
     */
-    public void PathFinder(DungeonMain lDungeon, DungeonTile targetTile)
+    public boolean PathFinder(DungeonMain lDungeon, DungeonTile targetTile)
     {
         System.out.println("Path Finding");
 
@@ -242,7 +289,7 @@ public abstract class Character extends Skills
         potentialTileQueue.addAll(new PathTile(this.currentTile).getAdjacentTilesAndSetValues(lDungeon, new PathTile(this.currentTile), targetTile, this.closeToTarget));
         //We store this so that the final path is stored as a linked list.
 
-        //If the queue is empty, then there's no possible way to reach the target. :< I also cause this to short circuit if it attempts to place 1000 tiles on the potentialTileQueue. If it's that bad, then it's probably broken or impossible.
+        //If the queue is empty, then there's no possible way to reach the target. :< I also cause this to short circuit if it attempts to check more that 25 tiles. If it's that bad, then it's probably broken or impossible. Legitimately far away creatures on the other hand do nothing... Perhaps a separate pathfinder for those further?
         while(!atTarget && !potentialTileQueue.isEmpty() && checkedTiles.size() < 25)
         {
             //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
@@ -262,6 +309,7 @@ public abstract class Character extends Skills
                     //Going back further.
                     possibleTile = possibleTile.previousTile;
                 }
+                return true;
             }
             
             //If the possibleTile is the targetTile, then we backtrack to find the path.
@@ -278,6 +326,7 @@ public abstract class Character extends Skills
                     //Going back further.
                     possibleTile = possibleTile.previousTile;
                 }
+                return true;
             }
             
             if (!checkedTiles.contains(possibleTile))
@@ -291,6 +340,70 @@ public abstract class Character extends Skills
                 potentialTileQueue.addAll(temp);
             }
         }
+        
+        return false;
+    }
+    
+    /*
+     * This specialized pathfinder is used to run away from a certain character.
+     * I want it to run from all instances of the character, but that would require a scan through the character list for all instances and then checking if this tile is far enough from all of them.
+     * May fail if cannot find a far enough path.
+     * 
+     * Returns true if successful, false if not.
+     */
+    public boolean RunningPathFinder(DungeonMain lDungeon, Character scaryCharacter)
+    {
+        System.out.println("Running Path Finding");
+
+        //These limits determine what are close enough to the target to justify PathFinderFine
+        final int LIMIT_X = lDungeon.numTilesX;
+        final int LIMIT_Y = lDungeon.numTilesY;
+
+        boolean atTarget = false;
+        //HashSets are great for checking if something is in it. Not good for recalling data. Useful for knowing if we already navigated this tile. If we have already went past this tile then we don't add it again. If our heuristic is good enough (consistent) then it should work.
+        HashSet<PathTile> checkedTiles = new HashSet<PathTile>();
+        
+        //We only care about the minimum value so a priority queue is best for the job.
+        PriorityQueue<PathTile> potentialTileQueue = new PriorityQueue<PathTile>(PathTile.MAX_DISTANCE_ORDER);
+        potentialTileQueue.addAll(new PathTile(this.currentTile).getAdjacentTilesAndSetValues(lDungeon, new PathTile(this.currentTile), scaryCharacter.currentTile, this.closeToTarget));
+
+        //If the queue is empty, then there's no possible way to reach the target. :< I also cause this to short circuit if it attempts to check more that 25 tiles. If it's that bad, then it's probably broken or impossible. Legitimately far away creatures on the other hand do nothing... Perhaps a separate 
+        while(!atTarget && !potentialTileQueue.isEmpty() && checkedTiles.size() < 25)
+        {
+            //Get the tile the minimum cost away. The sorting is handled by the priorityQueue based on the compareTo() method in DungeonTile
+            PathTile possibleTile = potentialTileQueue.poll();
+            
+            //If the possibleTile is far away then we're done and backtrack to find the path.
+            if (this.closeToTarget && Math.abs(possibleTile.thisTile.x - scaryCharacter.currentTile.x) > LIMIT_X && Math.abs(possibleTile.thisTile.y - scaryCharacter.currentTile.y) > LIMIT_Y)
+            {
+                System.out.println("Far Target");
+                atTarget = true;
+                //Keep going back until we reach the source character again.
+                while(possibleTile.thisTile != this.currentTile)
+                {
+                    System.out.println(possibleTile.thisTile);
+                    currentPath.add(possibleTile.thisTile);
+                                        
+                    //Going back further.
+                    possibleTile = possibleTile.previousTile;
+                }
+                return true;
+            }
+            
+            if (!checkedTiles.contains(possibleTile))
+            {
+                System.out.println("Tile plucked" + possibleTile.thisTile);
+
+                checkedTiles.add(possibleTile);
+                //Even if there are dead ends, the priorityqueue just gets the next best value. 
+                ArrayList<PathTile> temp = possibleTile.getAdjacentTilesAndSetValues(lDungeon, possibleTile, storedTargetCharacter.currentTile, this.closeToTarget);
+
+                potentialTileQueue.addAll(temp);
+            }
+        }
+        
+        //If it gets here, then there was no possible path. Not enough space
+        return false;
     }
     
     //Get distance from this character to another tile
@@ -396,7 +509,7 @@ public abstract class Character extends Skills
             int storedTargetCharacterTileY = storedTargetCharacter.currentTile.y;
             this.setDirection(storedTargetCharacterTileX, storedTargetCharacterTileY);
             
-            dealDamage(damage, storedTargetCharacterTileX, storedTargetCharacterTileY, lDungeon);
+            dealDamage(damage, storedTargetCharacterTileX, storedTargetCharacterTileY, this, lDungeon);
         }
 
         
@@ -413,12 +526,12 @@ public abstract class Character extends Skills
                 //If the player is further to the right, then go right.
                 if (temp > 0)
                 {
-                deltaX = 1;
+                    deltaX = 1;
                 }
                 
                 else if (temp < 0)
                 {
-                deltaX = -1;
+                    deltaX = -1;
                 }
                 
                 else if (temp == 0)
@@ -490,13 +603,81 @@ public abstract class Character extends Skills
     
     /**
      * Running from evil (or you). Hmm, this runs from only one scary creature, maybe directly into another :<. Need better AI.
+     * Slimes run from the slime eater, ghosts run from attackers.
      */
     public void AIRun(DungeonMain lDungeon, Character scaryCharacter)
     {
         
-        
-        
+        if(this.pathFindingCooldown == 0 && !RunningPathFinder(lDungeon, scaryCharacter))
+        {
+            //If the pathfinder doesn't find a path. Then dumb running. Unhappy, reflective.
+            double directionChoice = Math.random();
+            int deltaX = 0;
+            int deltaY = 0;
+            //Get closer in x axis.
+            if(directionChoice < .50)
+            {
+                int temp = storedTargetCharacter.currentTile.x - this.currentTile.x;
+                //If the scaryChar is further to the right, then go left.
+                if (temp > 0)
+                {
+                    deltaX = -1;
+                }
+                
+                else if (temp < 0)
+                {
+                    deltaX = 1;
+                }
+                
+                else if (temp == 0)
+                {
+                    //If on same x level, then randomly decide to go left or right.
+                    if(directionChoice < .2)
+                    {
+                        deltaX = 1;
+                    }
+                    
+                    else
+                    {
+                        deltaX = -1;
+                    }
+                }
+                
+            }
+            
+            else if(directionChoice < .80)
+            {
+                int temp = storedTargetCharacter.currentTile.y - this.currentTile.y;
+                //If the scaryChar is above, then go down.
+                if (temp > 0)
+                {
+                    deltaY = -1;
+                }
+                
+                else if (temp < 0)
+                {
+                    deltaY = 1;
+                }
+                
+                else if (temp == 0)
+                {
+                    //If on same y level, then randomly decide to go up or down.
+                    if(directionChoice < .6)
+                    {
+                        deltaY = 1;
+                    }
+                    
+                    else
+                    {
+                        deltaY = -1;
+                    }
+                }
+            }
+            
+        }
     }
+    
+    
     
     /**
      * This should only be activated when the dead body is relatively nearby, because this hones in on the selected body.
@@ -506,82 +687,40 @@ public abstract class Character extends Skills
      * @param lDungeon
      * @param chosenDead
      */
-
-    public void AIReviver(DungeonMain lDungeon, DeadCharacter chosenDead)//tba(Reviver)
+    public void AIReviver(DungeonMain lDungeon)//tba(Reviver)
     {
+        if (!(storedTargetCharacter instanceof Character))
+        {
+            storedTargetCharacter = getDeadCharacter(lDungeon).prevCharacter; 
+        }
         //These control how much health the revived character has.
         double minReviveHealth = .25;
         double maxReviveHealth = .75;
         
         //Math.abs(this.currentTile.x - lDungeon.dungeon.playerCharacter.currentTile.x) == 1 || Math.abs(this.currentTile.y - lDungeon.dungeon.playerCharacter.currentTile.y) == 1 
         
-        //Try to use Revive if off cooldown. Currently does not revive if another character is there (Including itself).
-        if (cooldownTimer1 <= 0 && Math.abs(chosenDead.prevCharacter.currentTile.x - this.currentTile.x) <= 1 && Math.abs(chosenDead.prevCharacter.currentTile.y - this.currentTile.y) <= 1 && !(chosenDead.prevCharacter.currentTile.character instanceof Character))
+        //Try to use Revive if off cooldown. Currently does not revive if another character is there (Including itself). If not, do nothing.
+        if (cooldownTimer1 <= 0 && Math.abs(storedTargetCharacter.currentTile.x - this.currentTile.x) <= 1 && Math.abs(storedTargetCharacter.currentTile.y - this.currentTile.y) <= 1 && !(storedTargetCharacter.currentTile.character instanceof Character))
         {
             System.out.println("revived!");
             //Pick amount of health the character respawns with.
             double healthPercent = ((maxReviveHealth - minReviveHealth) * Math.random()) + minReviveHealth;
-            this.setDirection(chosenDead.prevCharacter.currentTile.x, chosenDead.prevCharacter.currentTile.y);
-            
-            revive(healthPercent, chosenDead, lDungeon);
+            this.setDirection(storedTargetCharacter.currentTile.x, storedTargetCharacter.currentTile.y);
+            revive(healthPercent, storedTargetCharacter.currentTile, lDungeon);
+            storedTargetCharacter = null;
+
             //Reset cooldown. Also prevents multiple respawns at a time.
             this.cooldownTimer1 = this.cooldownTimer1Max;
         }
         
-        //Go to nearest body. Moves if not reviving. Waits if in range of target
-        else if (Math.abs(chosenDead.prevCharacter.currentTile.x - this.currentTile.x) > 1 || Math.abs(chosenDead.prevCharacter.currentTile.y - this.currentTile.y) > 1)
+        //Go to storedDead body. Moves if not reviving. Waits if in range of target
+        
+        else
         {
-            double directionChoice = Math.random();
-            int deltaX = 0;
-            int deltaY = 0;
-            //Get closer in x axis.
-            if(directionChoice < .50)
-            {
-                int temp = chosenDead.prevCharacter.currentTile.x - this.currentTile.x;
-                //If the player is further to the right, then go right.
-                if (temp > 0)
-                {
-                    deltaX = 1;
-                }
-                
-                else if (temp < 0)
-                {
-                deltaX = -1;
-                }
-                
-                else if (temp == 0)
-                {
-                    //If on same x level, then randomly decide to go left or right.
-                    deltaX = (int) (2 * Math.random() - 1);
-                }
-                
-            }
-            
-            else
-            {
-                int temp = chosenDead.prevCharacter.currentTile.y - this.currentTile.y;
-                //If the player is further to the right, then go right.
-                if (temp > 0)
-                {
-                    deltaY = 1;
-                }
-                
-                else if (temp < 0)
-                {
-                    deltaY = -1;
-                }
-                
-                else if (temp == 0)
-                {
-                    //If on same x level, then randomly decide to left or right.
-                    deltaY = (int) (2 * Math.random() - 1);
-                }
-            }
-            
-            charMove(deltaX, deltaY, lDungeon.dungeon);
+            goToCharacter(lDungeon);
         }
+            
         cooldownTimer1--;
-
     }
     
     
@@ -608,8 +747,10 @@ public abstract class Character extends Skills
             if(lDungeon.dungeon.tileChecker(nextTile.x, nextTile.y, true))
             {
                 charMove(nextTile, lDungeon.dungeon);
-                //Is even incremented when unneeded, when fine. Hopefully doesn't matter much.
-                --pathFindingCooldown;
+                if (pathFindingCooldown != 0)
+                {
+                    --pathFindingCooldown;
+                }
             }
         }
     }
