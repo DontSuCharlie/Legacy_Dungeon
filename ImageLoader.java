@@ -1,9 +1,11 @@
 //package LegacyDungeon;
 //NOTE: Difference between ImageIO and Toolkit is that Toolkit uses a separate thread to run it, which means that the game will continue even if the image is not completely loaded. This means that we have to somehow stop it.
 //
+//7/31 Update: 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.nio.ByteBuffer;
 
 public class ImageLoader
 {    
@@ -20,6 +22,8 @@ public class ImageLoader
 		}
 		return null;
 	}
+	//imageLoader.convertToBuffer(imageLoader.loadImage);
+
 }
 /*
 HOW TO USE IN 3 EASY STEPS!:

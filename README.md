@@ -1,6 +1,25 @@
-LEGACY DUNGEON (current name is a placeholder)
+LEGACY DUNGEON
 ================================
-A Video Game for Windows (for now)
+A top-down 2-D dungeon crawler with randomly generated maps. The game is currently in pre-alpha stage.
+
+[0] {Inspiration Stage - Basic concepts and ideas for game are created. Programming commences!}
+[1] {Pre-Alpha Stage - Basic structures (window, image/sound loading, map generation, map management, world map, menu screen, GUI implementors, the blueprints for characters, monsters, NPC, items, tiles, and skills) are finished.}
+[2] {Alpha Stage - Begin fleshing out blueprints (characters, monsters, NPC, items, tiles, and skills). New idea round}
+[3] {Pre-Beta Stage -Game is completable (for player). Work is reviewed by peers/mentors/people with lots of experience and knowledge, then updated}
+[4] {Beta Stage - Game is tested by close people/classmates who liek playing games. Lots of re-iteration. Start looking for musicians, artists, and writers}
+[5] {Pre-Gamma Stage - Game implements new art, music, and writing. Game might become more ambitious at this stage.}
+[6] {Gamma Stage - Testing once more. Final feedback.}
+[7] {Pre-Release - Begin getting information out there.}
+[8] {Release!}
+
+Inspiration Stage - This is the stage where we came up with the concepts and ideas for the game. Commence programming!
+Pre-Alpha Stage - This is the stage where we have already laid out the most basic structures of our game.
+Alpha Stage - This is the stage where we begin adding unique objects to the game along
+Pre-Beta Stage - This is the 
+Progress:
+
+Inspiration -> Pre-Alpha Stage ->
+
 
 Copyright 2014 Charlie Su, Anish Kannan
 
