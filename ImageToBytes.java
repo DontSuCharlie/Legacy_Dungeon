@@ -18,7 +18,7 @@ public class ImageToBytes
 				{
 					imageBytes[(i*image.getWidth()*RGBA_BitDepth)+j] = (byte)((currentPixel >> 8*(3-k))&0xFF);//RGBA
 					//System.out.print(" " + i + " "  + j + " "+ k + ": " + (byte)((currentPixel >> 8*(3-k))&0xFF));// -^
-					System.out.print(" " + k + ": " + (byte)(((~currentPixel << 8*k) >> 8*(3-k)) ^ 255)); //-v
+					//System.out.print(" " + k + ": " + (byte)(((~currentPixel << 8*k) >> 8*(3-k)) ^ 255)); //-v
 					//imageBytes[(i*image.getWidth()*RGBA_BitDepth)+j] = (byte)(((~currentPixel << 8*k) >> 8*(3-k)) ^ 255);//RGBA
 					//Explaining the index of imageBytes: (i = current row) * (image.getWidth() = total # of j's would've iterated thru) * (RGBA_BitDepth = since we're translating R,G,B, and A one by one, that means 1 full pixel iteration = 4 bytes) + (j = current column))
 					
@@ -34,7 +34,7 @@ public class ImageToBytes
 				}
 					imageBytes[(i*image.getWidth()*RGBA_BitDepth)+j] = (byte)((currentPixel >> 24) & 255); //Alpha
 					//imageBytes[(i*image.getWidth()*RGBA_BitDepth)+j] = (byte)(((~currentPixel) >> 24) ^ 255); //Alpha
-					System.out.println("Alpha: " + (byte)((currentPixel >> 24) & 0xFF));
+					//System.out.println("Alpha: " + (byte)((currentPixel >> 24) & 0xFF));
 					//System.out.println(" Alpha: " + (byte)(((~currentPixel) >> 24) ^ 0xFF));
 			}
 		}

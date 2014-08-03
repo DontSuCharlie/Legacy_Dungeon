@@ -35,3 +35,5 @@ javac -cp .;Jar/lwjgl.jar;Jar/otherJar.jar
 Every time you run it, you have to include -Djava.library.path=<directoryToYourNatives>. Unlike -cp, you do not need to type in all the .dll files. Simply change the directory until you get to the folder with all your native files.
 
 Example: java -cp .;Jar/lwjgl.jar;Jar/otherJar.jar -Djava.library.path=native/windows fileThatWasCompiled
+
+Compiling user-custom packages: http://en.wikipedia.org/wiki/Classpath_%28Java%29
