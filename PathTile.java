@@ -6,16 +6,16 @@ import java.util.Comparator;
  * 
  *
  */
-        
+
 public class PathTile implements Comparable<PathTile>{
     DungeonTile thisTile = null;
     int pathFindingCost = 0;
     int pathFindingHeuristic = 0;
-        
+
     public static final Comparator<PathTile> MAX_DISTANCE_ORDER = new MaxDistanceOrder();
-            
+
     PathTile previousTile = null; //A pointer to the previous tile in a series. Used for pathFinding.
-    
+
     @Override
     public String toString()
     {
@@ -28,7 +28,7 @@ public class PathTile implements Comparable<PathTile>{
     {
         thisTile = tile;
     }
-        
+
     @Override
     public int hashCode()
     {
@@ -63,19 +63,19 @@ public class PathTile implements Comparable<PathTile>{
     {
         //We want the lowest score, so if the other is bigger then then this one should be placed lower. (Negative return values place this higher and positive ones place other higher.
         int temp = this.pathFindingHeuristic + this.pathFindingCost - other.pathFindingHeuristic - other.pathFindingCost;
-        
+
         if (temp != 0)
         {
             return (temp);
         }
-        
+
         //In the case of a tie, we want the larger cost, because that'll be closer to the target.
         else
         {
             return (other.pathFindingCost - this.pathFindingCost);
         }
     }
-    
+
     /**
      * Return the tiles adjacent to the given one. Used in PathFinder(). The isFine adds the additional property of not having characters on it. Need to disable it for if the the target is a character though.
      * Note: Returns diagonals. Undecided about what to do about them. Could add penalty for diags.
@@ -88,52 +88,52 @@ public class PathTile implements Comparable<PathTile>{
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x + 1][sourceTile.thisTile.y]));
         }
-        
+
         if (lDungeon.dungeon.tileChecker(sourceTile.thisTile.x-1,  sourceTile.thisTile.y, isFine))
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x - 1][sourceTile.thisTile.y]));
         }
-        
+
         if (lDungeon.dungeon.tileChecker(sourceTile.thisTile.x,  sourceTile.thisTile.y+1, isFine))
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x][sourceTile.thisTile.y + 1]));
         }
-        
+
         if (lDungeon.dungeon.tileChecker(sourceTile.thisTile.x,  sourceTile.thisTile.y-1, isFine))
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x][sourceTile.thisTile.y - 1]));
         }
-        
+
         if (lDungeon.dungeon.tileChecker(sourceTile.thisTile.x+1,  sourceTile.thisTile.y+1, isFine))
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x+1][sourceTile.thisTile.y+1]));
         }
-        
+
         if (lDungeon.dungeon.tileChecker(sourceTile.thisTile.x+1,  sourceTile.thisTile.y-1, isFine))
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x+1][sourceTile.thisTile.y - 1]));
         }
-        
+
         if (lDungeon.dungeon.tileChecker(sourceTile.thisTile.x-1,  sourceTile.thisTile.y+1, isFine))
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x-1][sourceTile.thisTile.y + 1]));
         }
-        
+
         if (lDungeon.dungeon.tileChecker(sourceTile.thisTile.x-1,  sourceTile.thisTile.y-1, isFine))
         {
             returnList.add(new PathTile(lDungeon.dungeon.tileList[sourceTile.thisTile.x-1][sourceTile.thisTile.y - 1]));
         }
-        
+
         //:< Inefficient check if we are next to the target. 
         if (Math.abs(sourceTile.thisTile.x - targetTile.x) <= 1 && Math.abs(sourceTile.thisTile.y - targetTile.y) <= 1)
         {
             returnList.add(new PathTile(targetTile));
         }
-        
+
         setPathFindingValues(returnList, sourceTile, targetTile);
-        
+
         return returnList;
-        
+
     }
     /**
      * The bread and butter of A* pathing.
@@ -151,15 +151,15 @@ public class PathTile implements Comparable<PathTile>{
         {
             //Using Chebychev distance to account for diagonal movement. If no diag, then better to use Manhattan distance.
             tile.pathFindingHeuristic = Math.max(Math.abs(targetTile.x - tile.thisTile.x), Math.abs(targetTile.y - tile.thisTile.y));
-            
+
             //Manhattan distance, better if no diagonals are needed.
             //tile.pathFindingHeuristic = Math.abs(targetTile.x - tile.x) + Math.abs(targetTile.y - tile.y);
-            
+
             /*
-            * In each pass, we need to find out the costs of the new tiles to be checked
-            * This involves the type of tile it is and the cost it took to get the tile just before this one.
-            */
-            
+             * In each pass, we need to find out the costs of the new tiles to be checked
+             * This involves the type of tile it is and the cost it took to get the tile just before this one.
+             */
+
             //If the cost is not 0, then this tile has been explored previously. 
             if (tile.pathFindingCost != 0)
             {
@@ -169,27 +169,27 @@ public class PathTile implements Comparable<PathTile>{
                 {
                     tile.pathFindingCost = sourceTile.pathFindingCost;
                     tile.previousTile = sourceTile;
-                    
+
                     tile.pathFindingCost += getTileIDCosts(thisTile);
 
                 }
-                
+
                 tileList.remove(this);
             }
-            
+
             //Add cost of getting to the tile previous this one.
             else
             {
                 tile.pathFindingCost += sourceTile.pathFindingCost;
                 tile.previousTile = sourceTile;
-                
+
                 tile.pathFindingCost += getTileIDCosts(thisTile);
 
             }
-            
+
         }
     }
-    
+
     private int getTileIDCosts(DungeonTile tile)
     {
         //Ugly adding costs due to tile movement.
@@ -198,46 +198,46 @@ public class PathTile implements Comparable<PathTile>{
         {
             return 1;
         }
-         
+
         //Trap tile
         else if(tile.tileID == 3)
         {
             return 3;
         }
-            
+
         //Stair tile
         else if(tile.tileID == 2)
         {
             return 1;
         }
-        
+
         //Should not run.
         else       
         {
             return 9999;
         }
     }
-    
+
     private static class MaxDistanceOrder implements Comparator<PathTile>
     {
 
         @Override
-       public int compare(PathTile pTile, PathTile that)
+        public int compare(PathTile pTile, PathTile that)
         {
             //We want the lowest score, but the further away the better, so if the other is farther away, then then this one should be placed lower. (Negative return values place this higher and positive ones place other higher.
             int temp = that.pathFindingHeuristic + pTile.pathFindingCost - pTile.pathFindingHeuristic - that.pathFindingCost;
-            
+
             if (temp != 0)
             {
                 return (temp);
             }
-            
+
             //In the case of a tie, we want the larger cost, because that'll be further from the target.
             else
             {
                 return (that.pathFindingCost - pTile.pathFindingCost);
             }
         }
-        
+
     }
 }

@@ -13,7 +13,7 @@ public class CombatJam extends Jam{
         maxHealth = 5;
         currentHealth = 5;
         isFriendly = false;
-        direction = 6;
+        direction = 2;
     }
     public final BufferedImage getImage()
     {
@@ -40,6 +40,20 @@ public class CombatJam extends Jam{
             System.out.println("Error combatSlime image not found");
             return DungeonMain.combatSlimeImages[6];
         }
+    }
+    
+    /**
+     * Mostly just test usage. Trying to see what looks good.
+     * @return
+     */
+    public BufferedImage getImageHit()
+    {
+        return DungeonMain.slimeImagesHit[direction];
+    }
+
+    public BufferedImage getImageDead()
+    {
+        return DungeonMain.combatSlimeImagesDead[direction];
     }
     
     public void act(final DungeonMain lDungeon)

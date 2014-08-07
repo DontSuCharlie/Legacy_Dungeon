@@ -69,4 +69,54 @@ public class Inventory{
             currentTile.itemID = 0;
         }
     }
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((itemList == null) ? 0 : itemList.hashCode());
+        result = prime * result + maxSize;
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj instanceof Inventory))
+        {
+            return false;
+        }
+        Inventory other = (Inventory) obj;
+        if (itemList == null)
+        {
+            if (other.itemList != null)
+            {
+                return false;
+            }
+        }
+        else if (!itemList.equals(other.itemList))
+        {
+            return false;
+        }
+        if (maxSize != other.maxSize)
+        {
+            return false;
+        }
+        return true;
+    }
 }

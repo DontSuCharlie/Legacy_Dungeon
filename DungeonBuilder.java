@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 Progress Bar: [||        ]
 DungeonBuilder.java is the file that generates the dungeon based on the information included in NodeWorld.java
 DungeonBuilder.java will tell LegacyDungeon.java (the main runner) what to display on the screen, so yeah.
-*/
+ */
 //RANDOM NOTES
 //difficulty should also increase with skill level
 //skills level can increase by # of monsters
@@ -19,16 +19,16 @@ public class DungeonBuilder
     int theme;//theme of the dungeon
     int skillID;//skill reward at bottom of dungeon
     int difficulty;//difficulty of dungeon
-    
+
     static int xLength;
     static int yLength;
     static int numTiles;
-    
+
     ////////////////////////////////////DATA///////////////////////////////////
     public int playerFloorDamage; //Keeps track of damage taken on this floor. Used in the difficultyHeuristic.
     public int difficultyHeuristic; //This collects data about what goes on in this floor and compares it to the optimalHeuristic in order to finetune difficulty. We want something like a wave with an upward trend in terms of difficulty. More difficulty may have more treasure being spawned.
     public int optimalHeuristic; //No damage, collecting all treasure, completion in some time(dunno how to measure a "good" time). Compared to difficultyHeuristic in order to finetune difficulty. Maybe having an easy difficulty will have less treasure spawned.
-    
+
     ////////////////////////////////DUNGEON BUILDING STUFF/////////////////////
     //Stores all tiles.    
     public static DungeonTile[][] tileList;
@@ -38,22 +38,23 @@ public class DungeonBuilder
     public Player playerCharacter;
     static public ArrayList<Enemy> enemyList; //Perhaps unnecessary memory usage? Just iterate through characterList.
     static public ArrayList<Character> characterList = new ArrayList<Character>();
-    
+    static int firstInactiveChar = 0; //Sets up invariant of all active characters to left of this and all inactive characters to right and including this one.
+
     ///////////////////////////////ITEM SPAWNING///////////////////////////////
     double goldChance = .4;
     ArrayList<ItemSpawner> spawningItemList;
 
-    
+
     /**
      * This helper class stores all needed components for Character spawning.
      * @author Anish
      *
      */
     class Spawner{
-        
+
         Class<? extends Enemy> charClass;
         double spawnRate;   
-        
+
         public Spawner(Class<? extends Enemy> inputClass, double rate)
         {
             charClass = inputClass;
@@ -68,29 +69,29 @@ public class DungeonBuilder
             spawnRate += rateChange;
         }
     }
-    
-    
+
+
     class ItemSpawner{
-        
+
         Class<? extends GameItem> itemClass;
         double spawnRate;   
-        
+
         public ItemSpawner(Class<? extends GameItem> inputClass, double rate)
         {
             itemClass = inputClass;
             spawnRate = rate;
         }
-        
+
         public void changeRate(double rateChange)
         {
             spawnRate += rateChange;
         }
     }
-   //Constructor for new dungeon
+    //Constructor for new dungeon
     public DungeonBuilder(int theme, int skillID, int difficulty, int xLengthInput, int yLengthInput) throws InstantiationException, IllegalAccessException//Takes in the following parameters from NodeWorld.java
     {
         // If this is a completely new dungeon, then start with basic values.
-        
+
         this.theme = theme; //1 = default.
         this.skillID = skillID; //The skill found there 
         this.difficulty = difficulty;//insert random factor that will adjust difficulty
@@ -102,14 +103,14 @@ public class DungeonBuilder
         //May be randomly chosen.
         playerCharacter = new Player(0);
         getSpawnLists(theme);
-       
+
         tileList = new DungeonTile[xLength][yLength];
         enemyList = new ArrayList<Enemy>();
         getSpawnLists(theme);
-       
+
         //Number of floors is based on the difficulty level
     }
-    
+
     //This overloaded constructor runs when a new floor is spawned. Only issue is changing floor size may be tricky.
     public DungeonBuilder(DungeonBuilder dungeon) throws InstantiationException, IllegalAccessException
     {
@@ -117,7 +118,7 @@ public class DungeonBuilder
         this.theme = dungeon.theme; //1 = default.
         this.skillID = dungeon.skillID; //The skill found there 
         this.difficulty = dungeon.difficulty;//insert random factor that will adjust difficulty
-        
+
         currentFloor = ++dungeon.currentFloor;
         //Will put this in legacyDungeon. Fix next line later
         numFloor = dungeon.currentFloor;
@@ -127,7 +128,7 @@ public class DungeonBuilder
         numTiles = 1000;
         //May be randomly chosen.
         playerCharacter = dungeon.playerCharacter;        
-       
+
         tileList = new DungeonTile[xLength][yLength];
 
         enemyList = new ArrayList<Enemy>();
@@ -136,12 +137,12 @@ public class DungeonBuilder
         spawningItemList = dungeon.spawningItemList;
         this.build();
     }
-    
+
     void build() throws InstantiationException, IllegalAccessException
     {
         this.assignTilePos(numTiles);
     }
-    
+
     /*
      * Use this to test new stuff. This builds a 5x5 room to mess around in.
      */
@@ -153,7 +154,7 @@ public class DungeonBuilder
             {
                 if (i == 5 && j == 5)
                 {
-                    
+
                 }
                 else
                 {
@@ -162,17 +163,17 @@ public class DungeonBuilder
             }
         }
         spawnPlayer(1,1);
-        
+
         spawnIndividualCharacter(new CombatJam(), 4, 4);
         //spawnIndividualCharacter(new RandomJam(), 10, 10);
         //spawnIndividualCharacter(new RandomJam(), 9, 9);
         spawnIndividualCharacter(new Ghost(), 8, 8);
-        
+
         spawnIndividualItem(new HealthPot(), 2,2);
         //spawnIndividualCharacter(new RandomJam(), 1, 10);
         //spawnIndividualCharacter(new RandomJam(), 10, 1);
     }
-       
+
     private void getSpawnLists(int theme)
     {
         if (theme == 1)
@@ -181,14 +182,14 @@ public class DungeonBuilder
             spawningEnemyList.add(new Spawner(RandomJam.class, .7));
             spawningEnemyList.add(new Spawner(CombatJam.class, .2));     
             spawningEnemyList.add(new Spawner(Ghost.class, .1));
-           
+
             spawningItemList = new ArrayList<ItemSpawner>();
             spawningItemList.add(new ItemSpawner(HealthPot.class, 1));
         }
     }
 
-//////////////////////////////////METHODS HERE///////////////////////////////////////
-/* List of Methods:
+    //////////////////////////////////METHODS HERE///////////////////////////////////////
+    /* List of Methods:
 Method 0: .checkSpace() runs every time the character moves. It makes sure the player doesn't sit on the same tile as a monster.
 Method 1: .checkStairs() runs every time the character interacts with an Item. It starts off a chain of functions that generates a new map.
 Method 2: .checkLastFloor() runs to make sure it's not the last floor
@@ -198,7 +199,7 @@ Method 5: .spawnPlayer() spawns the player at a random coordinate point
 Method 6: .spawnStairs() spawns the stairs. It will be located as far from the player as possible
 Method 7: .loadLastFloor() creates the last floor
 Method 8: .checkAtBorder() runs every time the character moves. It makes sure the character doesn't run off map.
-*/
+     */
 
     /*
     public static void main(String[] args) throws InstantiationException, IllegalAccessException
@@ -206,7 +207,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //Remove when done testing.
         DungeonBuilder dungeon = new DungeonBuilder(1,1,1,100,100,1);
         //generateItems();
-    
+
     }*/
 
 
@@ -230,32 +231,32 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         ArrayList<DungeonTile> connectorList = new ArrayList<DungeonTile>();
         //Used to pick a tile for enemy generation, player generation, item generation, etc.
         ArrayList<DungeonTile> checkList = new ArrayList<DungeonTile>();
-               
+
         if (theme == 1)
         {
 
-            
+
             double chooser = Math.random();
             if (chooser < BLOB_CHANCE)
             {
                 setSeed(connectorList);
                 spawnBasic(connectorList, checkList);
             }
-            
+
             else 
             {
                 setSeed(connectorList);
                 spawnBlob(connectorList, checkList);
             }
         }
-        
+
         //Spawn everything else.
         this.spawnPlayer(checkList);       
         this.spawnStairs(checkList);
         this.spawnItems(spawningItemList, checkList);
         this.spawnEnemies(spawningEnemyList, checkList);
     }
-    
+
 
     /**
      * Set the starting seed for floor building.
@@ -263,19 +264,19 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
      */
     private void setSeed(ArrayList<DungeonTile> connectorList)
     {
-         //Spawn seed tile. Variation from .25 to .75 of x and y lengths.
+        //Spawn seed tile. Variation from .25 to .75 of x and y lengths.
         //Maybe have multiple seeds?
-        
+
         double xSeed = .5*Math.random() + .25;
         double ySeed = .5*Math.random() + .25;
-            
+
         tileList[(int)(xSeed*xLength)][(int)(ySeed*yLength)] = new DungeonTile((int)(xSeed*xLength), (int)(ySeed*yLength), 1);
         connectorList.add(new DungeonTile((int)(xSeed*xLength), (int)(ySeed*yLength), 1));
 
     }
-    
-    
-        /**
+
+
+    /**
      * The first decent algorithm.
      * 
      * Essentially, how this works is that each tile can spawn one tile in an unoccupied space. If it tries and fails 4 times, a previously spawned tile is randomly chosen to continue spawning. 
@@ -299,12 +300,12 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             connectorNumber = (int) (connectorList.size() * Math.random());
             DungeonTile possibleTile = null;
             int failCount = 0;
-            
+
             while (boolBadTile)
             {   
                 //Gets the index of a random connector from the connectorList.
                 //Gets a random tile adjacent to picked connector.
-                    //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
+                //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
                 actualY = connectorList.get(connectorNumber).y;
                 actualX = connectorList.get(connectorNumber).x;
                 possibleTile = getAdjacentTile(actualX, actualY);
@@ -312,9 +313,9 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 {
                     boolBadTile = false;  
                     failCount = 0;
-                    
+
                 }
-                    
+
                 else 
                 {
                     boolBadTile = true;
@@ -325,7 +326,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                     {
                         connectorList.remove(connectorNumber);
                         connectorList.add(checkList.get((int) (Math.random()*checkList.size())));
-                        System.out.println("connectorList");
+                        System.out.println("connectorList modified");
                         failCount = 0;
                     }  
                 }
@@ -337,18 +338,18 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             connectorList.add(possibleTile);
             //Testing this for generation.
             checkList.add(possibleTile);
-    
+
             //Checks if the latest connector reaches the max number of connections and deletes it if it has.
             if (connectorList.get(connectorNumber).numConnections >= connectionCap)
             {
                 connectorList.remove(connectorNumber);
             }
-            
+
             //FOR TESTING
             //System.out.println(possibleTile.x + " " + possibleTile.y);
         }
     }
-    
+
     private void spawnBlob(ArrayList<DungeonTile> connectorList, ArrayList<DungeonTile> checkList)
     {
         //Starting at 1 because seed is 0.
@@ -363,12 +364,12 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             int connectorNumber = 0;
             connectorNumber = (int) (connectorList.size() * Math.random());
             DungeonTile possibleTile = null;
-            
+
             while (boolBadTile)
             {   
                 //Gets the index of a random connector from the connectorList.
                 //Gets a random tile adjacent to picked connector.
-                    //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
+                //Returns a valid adjacent tile. Note, picks one tile adjacent to this and starts entire loop if bad. Theoretically, this promotes branches and unconnected parts to grow (ex. 3 open tiles instead of fewer).
                 actualY = connectorList.get(connectorNumber).y;
                 actualX = connectorList.get(connectorNumber).x;
                 possibleTile = getAdjacentTile(actualX, actualY);
@@ -378,10 +379,10 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                     boolBadTile = true;  
                     connectorNumber = (int) (connectorList.size() * Math.random());
                 }
-                    
+
                 else boolBadTile = false;
-                    
-                    //If picked tile is invalid, then restart with another connector.          
+
+                //If picked tile is invalid, then restart with another connector.          
             }         
             //Add a connection to the picked tile.
             connectorList.get(connectorNumber).numConnections += 1;
@@ -389,56 +390,56 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             connectorList.add(possibleTile);
             //Testing this for generation.
             checkList.add(possibleTile);
-            
+
             //Checks if the latest connector reaches the max number of connections and deletes it if it has.
             if (connectorList.get(connectorNumber).numConnections >= connectionCap)
             {
                 connectorList.remove(connectorNumber);
             }
-            
+
             //FOR TESTING
             System.out.println(possibleTile.x + " " + possibleTile.y);
         }    
-    
+
         //Must fill remaining area with walls. Same unneeded note as above.
         //tileList.addAll(unusedTileList);
-        
+
         System.out.println("Done :>");
-        
+
     }
-  
+
     private DungeonTile getAdjacentTile(int xInput, int yInput)
     {         
-            double randomNumber = Math.random();
-            if (randomNumber <= .25)
-            {
-                xInput++;
-            }
-        
-            else if (randomNumber <= .5)
-            {
-                xInput--;
-            }
-            
-            else if (randomNumber <= .75)
-            {
-                yInput++;
-            }
-            
-            else if (randomNumber < 1)
-            {
-                yInput--;
-            }
-            DungeonTile returnTile = new DungeonTile(xInput, yInput, 1);
-            return returnTile;
+        double randomNumber = Math.random();
+        if (randomNumber <= .25)
+        {
+            xInput++;
+        }
+
+        else if (randomNumber <= .5)
+        {
+            xInput--;
+        }
+
+        else if (randomNumber <= .75)
+        {
+            yInput++;
+        }
+
+        else if (randomNumber < 1)
+        {
+            yInput--;
+        }
+        DungeonTile returnTile = new DungeonTile(xInput, yInput, 1);
+        return returnTile;
     }
-    
+
     //Player and enemy locations will be defined by two ways- a dungeonTile stored in each character and a character stored in the dungeonTile on the tileList. Maybe not efficient enough.
     private void spawnPlayer(ArrayList<DungeonTile> checkList)
     {
         boolean isBadTile = true;
         int tileNumber = 0;
-        
+
         //Loops until a good tile is found
         while (isBadTile)
         {
@@ -451,7 +452,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
 
             else 
                 isBadTile = true;    
-        
+
         }
         //Set a tile for the player.
         playerCharacter.currentTile = checkList.get(tileNumber);
@@ -460,9 +461,10 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //Add this to the list of characters that will be cycled through for the turns.
         characterList.add(playerCharacter);
         playerCharacter.isActive = true;
-        
+        ++firstInactiveChar;
+
         //System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
-        
+
     }
     //Player and enemy locations will be defined by two ways- a dungeonTile for each character and a different characterID on the tileList. Maybe not efficient enough.
     //OVERLOADED: For spawning in a given location. Assumed correct.
@@ -475,16 +477,17 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         //Add this to the list of characters that will be cycled through for the turns.
         characterList.add(playerCharacter);
         playerCharacter.isActive = true;
+        ++firstInactiveChar;
         
         //System.out.println("I am at: " + playerCharacter.currentTile.x + ", " + playerCharacter.currentTile.y);
-        
+
     }
-    
+
     private void spawnStairs(ArrayList<DungeonTile> checkList)
     {
         boolean isBadTile = true;
         int tileNumber = 0;
-        
+
         while (isBadTile)
         {
             tileNumber = (int) (Math.random() * checkList.size());
@@ -496,15 +499,15 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
 
             else 
                 isBadTile = true;    
-        
+
         }
-        
+
         tileList[checkList.get(tileNumber).x][checkList.get(tileNumber).y].tileID = 2;
         checkList.get(tileNumber).tileID = 2;
         //System.out.println("Stairs are at: " + checkList.get(tileNumber));
-        
+
     }
-    
+
     /**
      * This will work a very similar way to enemy spawning.
      * Check every tile for spawning. If it passes, then check which item to spawn.
@@ -521,63 +524,72 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             {
                 double chooser = Math.random();
                 int prevSpawnRate = 0;
-            
+
                 if (chooser < GOLD_CHANCE)
                 {
+                    System.out.println("Gold");
                     tileList[checkList.get(i).x][checkList.get(i).y].itemID = 1;
                     int amount = (int) (this.currentFloor * (1 + Math.random()));
-                    tileList[checkList.get(i).x][checkList.get(i).y].goldAmount = this.currentFloor;     
+                    tileList[checkList.get(i).x][checkList.get(i).y].goldAmount = amount;     
                     optimalHeuristic++;
+                    System.out.println(amount);
+                    
                 }
-                if (!(checkList.get(i).items instanceof ArrayList))
-                {
-                    //Single item.
-                    checkList.get(i).items = new ArrayList<GameItem>();
-                    checkList.get(i).itemID = 2;
-                }
-                
+
                 else
                 {
-                    //Multiple items.
-                    checkList.get(i).itemID = 3;
-                }
-                //Pick a random item to spawn. Only gets here after Gold failed to spawn.
-                for(int j = 0; j < spawningItemList.size(); j++)
-                {
-            
-                    //Theoretically should not depends on order in itemTypes.
-                    //Using example from enemy, a RandomJam has a spawn rate of .4 while a combatJam has .05.
-                    //If my chooser is .43, then it would first check the RandomJam's spawn rate, and fail. Then it would loop back. Because the combatJam spawns if the RandomJam does not spawn, I add the RandomJam's spawn rate and get .45 which would pass.
-                     
-                    if (chooser < spawningItemList.get(j).spawnRate + prevSpawnRate)
+
+                    System.out.println("Item");
+                    if (!(checkList.get(i).items instanceof ArrayList))
                     {
-                        //This new instance will be used for everything.
-                        GameItem something = null;
-                        try
-                        {
-                            something = spawningItemList.get(j).itemClass.newInstance();
-                            
-                        }
-                        catch (InstantiationException | IllegalAccessException e)
-                        {
-                            e.printStackTrace();
-                            System.out.println("Something bad happened");
-                        }
-                        tileList[checkList.get(i).x][checkList.get(i).y].items.add(something);
-                        tileList[checkList.get(i).x][checkList.get(i).y].itemID = 2;
-                        //optimalHeuristic += something.rarity;
-                        System.out.println("I AM HEALTHPOT");
+                        //Single item.
+                        checkList.get(i).items = new ArrayList<GameItem>();
+                        checkList.get(i).itemID = 2;
                     }
-            
-                    else 
+
+                    else
                     {
-                        prevSpawnRate += spawningItemList.get(j).spawnRate;                                
+                        //Multiple items.
+                        checkList.get(i).itemID = 3;
+                    }
+                    //Pick a random item to spawn. Only gets here after Gold failed to spawn.
+                    for(int j = 0; j < spawningItemList.size(); j++)
+                    {
+
+                        //Theoretically should not depends on order in itemTypes.
+                        //Using example from enemy, a RandomJam has a spawn rate of .4 while a combatJam has .05.
+                        //If my chooser is .43, then it would first check the RandomJam's spawn rate, and fail. Then it would loop back. Because the combatJam spawns if the RandomJam does not spawn, I add the RandomJam's spawn rate and get .45 which would pass.
+
+                        if (chooser < spawningItemList.get(j).spawnRate + prevSpawnRate)
+                        {
+                            //This new instance will be used for everything.
+                            GameItem something = null;
+                            try
+                            {
+                                something = spawningItemList.get(j).itemClass.newInstance();
+
+                            }
+                            catch (InstantiationException | IllegalAccessException e)
+                            {
+                                e.printStackTrace();
+                                System.out.println("Something bad happened");
+                            }
+                            tileList[checkList.get(i).x][checkList.get(i).y].items.add(something);
+                            tileList[checkList.get(i).x][checkList.get(i).y].itemID = 2;
+                            //optimalHeuristic += something.rarity;
+                            System.out.println("I AM a teaPOT");
+                        }
+
+                        else 
+                        {
+                            prevSpawnRate += spawningItemList.get(j).spawnRate;                                
+                        }
                     }
                 }
-            }
-            
+                
             }
         }
+    }
     //When generating dungeons, we choose which sets of enemies spawn with these ArrayLists.
     private void spawnEnemies(ArrayList<Spawner> spawningEnemyList, ArrayList<DungeonTile> checkList) throws InstantiationException, IllegalAccessException
     {
@@ -591,15 +603,15 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 {
                     double chooser = Math.random();
                     int prevSpawnRate = 0;
-                
+
                     //Pick a random enemy to spawn
                     for(int j = 0; j < spawningEnemyList.size(); j++)
                     {
-                
+
                         //Theoretically should not depends on order in enemyTypes.
                         //Example, a RandomJam has a spawn rate of .4 while a combatJam has .05.
                         //If my chooser is .43, then it would first check the RandomJam's spawn rate, and fail. Then it would loop back. Because the combatJam spawns if the RandomJam does not spawn, I add the RandomJam's spawn rate and get .45 which would pass.
-                        
+
                         if (chooser < spawningEnemyList.get(j).spawnRate + prevSpawnRate)
                         {
                             //checkList.get(i).character = enemyTypes.get(j).characterID;
@@ -609,13 +621,13 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                             Enemy something = spawningEnemyList.get(j).charClass.newInstance();
                             something.currentTile = tileList[checkList.get(i).x][checkList.get(i).y];
                             tileList[checkList.get(i).x][checkList.get(i).y].character = something;
-                            
+
                             enemyList.add(something);
                             checkList.get(i).character = something;
-                            
+
                             //System.out.println("I AM JAM");
                         }
-                
+
                         else 
                         {
                             prevSpawnRate += spawningEnemyList.get(j).spawnRate;                                
@@ -624,11 +636,11 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 }
             }
         }  
-        
+
         //Add these enemies to the list to be looped through.
         characterList.addAll(enemyList);
     }
-    
+
     /**
      * When one character in specific needs to be spawned, this will do the job.
      * Assumes tile is good and unoccupied.
@@ -643,13 +655,14 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
         tileList[x][y].character = temp.newInstance();
         tileList[x][y].character.currentTile = tileList[x][x];
         characterList.add(tileList[x][x].character);
-        
+        tileList[x][y].character.activate(this);
+
         if (!(tileList[x][y].character.isFriendly))
         {
             enemyList.add((Enemy) tileList[x][x].character);
         }
     }
-    
+
     private void spawnIndividualItem(GameItem inputItem, int x, int y) throws InstantiationException, IllegalAccessException 
     {
         Class<? extends GameItem> temp = inputItem.getClass();
@@ -659,14 +672,14 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             tileList[x][y].items = new ArrayList<GameItem>();
             tileList[x][y].itemID = 2;
         }
-        
+
         else 
         {
             tileList[x][y].itemID = 3;
         }
         tileList[x][y].items.add(temp.newInstance());
     }
-    
+
     /**
      * A method that returns true if an input DungeonTile is in bounds and is a valid tile (i.e. not a wall)
      * Else returns false.
@@ -683,7 +696,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 {
                     return true;
                 }
-                
+
                 else
                 {
                     return false;
@@ -696,7 +709,7 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
             return false;
         }
     }
-    
+
     /* FIX WHEN ITEM SYSTEM IS SOLIDIFIED
     private void generateItems()
     {
@@ -715,49 +728,49 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
                 int highRare;
                 int lowSuper;
                 int highSuper;
-                
+
                 double chooser = Math.random();
                 double goldChance = .4;
                 double commonChance = .3;             
                 double uncommonChance = .19;
                 double rareChance = .1;
                 double superChance = .01;
-                
+
                 if (chooser < goldChance)
                 {
                     tileList.get(i).itemID = 1;
                     //Need to decide how to do this.
                     //tileList.get(i).goldAmount =                 
                 }
-                
+
                 else if (chooser < commonChance)
                 {
                     tileList.get(i).itemID = (int)((Math.random() * (highCommon - lowCommon)) + lowCommon);                                
                 }
-            
+
                 else if (chooser < uncommonChance)
                 {
                     tileList.get(i).itemID = (int)((Math.random() * (highUncommon - lowUncommon)) + lowUncommon);
                 }
-            
+
                 else if (chooser < rareChance)
                 {
                     tileList.get(i).itemID = (int)((Math.random() * (highRare - lowRare)) + lowRare);
                 }
-            
+
                 else if (chooser < superChance)
                 {
                     tileList.get(i).itemID = (int)((Math.random() * (highSuper - lowSuper)) + lowSuper);
                 }
-            
+
             }
         }
     }
-    */
-    
-    
-    
-/*
+     */
+
+
+
+    /*
    //Method 1: .checkStairs() checks whether or not the player reached the stairs. Note that on LegacyDungeon.java, it will run this method first, and if it returns true, it will run every other method.
    public static boolean checkStairs(boolean reachStairs)
    {

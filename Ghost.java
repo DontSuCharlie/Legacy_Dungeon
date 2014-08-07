@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 public class Ghost extends Enemy{
 
     private int runTimer = 0;
+    private int cooldownTimer1Max = 10; //Time to charge abilities. Reduced by one each turn.
+    public int cooldownTimer1 = cooldownTimer1Max;//Deals with cooldowns for the first ability of this creature. 
+
     public Ghost()
     {
         description = "This is a lost spirit seeking revenge for long forgotten"
@@ -14,10 +17,11 @@ public class Ghost extends Enemy{
         maxHealth = 10;
         currentHealth = 10;
         IS_RUNNING = true;
-        
+        direction = 2;
+
 
     }
-    
+
     public BufferedImage getImage()
     {
         if (this.imageID == 0 && this.isHit == false)
@@ -30,7 +34,7 @@ public class Ghost extends Enemy{
         {
             return DungeonMain.ghostImagesAlt[direction];
         }
-            
+
         else if(this.isHit == true)
         {
             return DungeonMain.ghostImagesHit[direction];
@@ -43,36 +47,69 @@ public class Ghost extends Enemy{
             return DungeonMain.ghostImages[6];
         }
     }
-        
+    
+    /**
+     * Mostly just test usage. Trying to see what looks good.
+     * @return
+     */
+    public BufferedImage getImageHit()
+    {
+        return DungeonMain.ghostImagesHit[direction];
+    }
+
+    public BufferedImage getImageDead()
+    {
+        return DungeonMain.ghostImagesDead[direction];
+    }
+    
+    public void endTurn(DungeonMain lDungeon)
+    {
+        super.endTurn(lDungeon);
+        cooldownTimer1--;
+    }
+
+    public void resetCooldown()
+    {
+        cooldownTimer1 = cooldownTimer1Max;
+    }
     /**
      * The ghost revives the closest thing. If it is hit, it runs away from the aggressor for a time dependent on the amount of health it has.
      * If none of these are true, it just runs around randomly.
+     * Weird structure, hope it makes sense.
      */
-        public void act(DungeonMain lDungeon)
+    public void act(DungeonMain lDungeon)
+    {
+        final int RUN_TIME = 10;//Runs for 10 turns.
+        //If hit, try to run away.
+        //First, if hit then plan run.
+        if(this.wasHit)
         {
-            final int RUN_TIME = 10;//Runs for 10 turns.
-            //If hit, try to run away.
-            if(this.wasHit)
-            {
-                runTimer = (RUN_TIME * this.currentHealth / this.maxHealth);
-                this.wasHit = false;
-            }
+            runTimer = (RUN_TIME * this.currentHealth / this.maxHealth);
+            this.wasHit = false;
+        }
 
-            if (runTimer != 0)
+        //If hit, then run.
+        if (runTimer != 0)
+        {
+            AIRun(lDungeon, storedTargetCharacter);
+            runTimer--;
+        }
+
+        //Try to move to heal someone. If that fails, then move randomly.
+        //Bah, too much if-bashing.
+        else
+        {
+            if (this.AIReviver(lDungeon, (cooldownTimer1 <= 0)))
             {
-                AIRun(lDungeon, storedTargetCharacter);
-                runTimer--;
+                resetCooldown();
             }
             
-            else if (!(lDungeon.deadCharList.isEmpty()))
-            {
-                this.AIReviver(lDungeon);
-            }
-            
-            else
+            else if (!(storedTargetCharacter instanceof Character))
             {
                 AIRandom(lDungeon);
             }
-            endTurn(lDungeon);
         }
+        endTurn(lDungeon);
+
+    }
 }

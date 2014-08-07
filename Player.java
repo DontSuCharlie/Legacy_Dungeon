@@ -253,11 +253,53 @@ public class Player extends Character{
         KeyboardInput.boolIsInteracting = false; 
     }
     
+    /**
+     * Simple single tile movement(supports diagonals). First take in input and store the values (1,-1, or 0). 
+     * Then perform charMove().
+     * Then activate any potential enemies.
+     * Note that teleportation must scan more to activate enemies in new area, so that must be separate.
+     * @param lDungeon
+     */
     public void move(DungeonMain lDungeon)
     {
         System.out.println("Moving");
-        lDungeon.dungeon.playerCharacter.charMove(lDungeon.dungeon.playerCharacter.playerMoveX(), lDungeon.dungeon.playerCharacter.playerMoveY(), lDungeon.dungeon);
+        int x = lDungeon.dungeon.playerCharacter.playerMoveX();
+        int y = lDungeon.dungeon.playerCharacter.playerMoveY();
+        lDungeon.dungeon.playerCharacter.charMove(x, y, lDungeon.dungeon);
         
+        //Activate enemies to column left or right depending on player motion.
+        if (x != 0)
+        {
+            //This picks the correct column to scan. If moving right, x is 1.
+            int xPos = this.currentTile.x + x * lDungeon.numTilesX;
+            int yPos = this.currentTile.y - lDungeon.numTilesY;
+
+            for (int j = 0; j < 2 * lDungeon.numTilesY; j++)
+            {
+                if (lDungeon.dungeon.tileChecker(xPos, yPos, false) && lDungeon.dungeon.tileList[xPos][yPos].character instanceof Character && !lDungeon.dungeon.tileList[xPos][yPos].character.isActive)
+                {
+                    lDungeon.dungeon.tileList[xPos][yPos].character.activate(lDungeon.dungeon);
+                }
+                ++yPos;
+            }
+        }
+        
+        if (y != 0)
+        {
+            //This picks the correct column to scan. If moving up, y is -1 and the above column is scanner.
+            int xPos = this.currentTile.x - lDungeon.numTilesX;
+            int yPos = this.currentTile.y + y * lDungeon.numTilesY;
+
+            for (int i = 0; i < 2 * lDungeon.numTilesX; i++)
+            {
+                if (lDungeon.dungeon.tileChecker(xPos, yPos, false) && lDungeon.dungeon.tileList[xPos][yPos].character instanceof Character && !lDungeon.dungeon.tileList[xPos][yPos].character.isActive)
+                {
+                    lDungeon.dungeon.tileList[xPos][yPos].character.activate(lDungeon.dungeon);
+                }
+                ++xPos;
+            }
+        }
+        /*
       //Need to activate nearby enemies. Trying to do it in paintComponent breaks stuff :<. Not entirely sure about the incrementation.
         for (int i = lDungeon.dungeon.playerCharacter.currentTile.x - lDungeon.numTilesX; i < lDungeon.dungeon.playerCharacter.currentTile.x + lDungeon.numTilesX; i++)
         {
@@ -270,6 +312,7 @@ public class Player extends Character{
                 }
             }
         }
+        */
         //lDungeon.activeCharacterList.addAll(bufferList);
         System.out.println(lDungeon.dungeon.playerCharacter.currentTile);
         KeyboardInput.boolIsMoving = false;

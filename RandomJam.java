@@ -36,6 +36,20 @@ public class RandomJam extends Jam{
             return DungeonMain.slimeImages[6];
         }
     }
+    
+    /**
+     * Mostly just test usage. Trying to see what looks good.
+     * @return
+     */
+    public BufferedImage getImageHit()
+    {
+        return DungeonMain.slimeImagesHit[direction];
+    }
+
+    public BufferedImage getImageDead()
+    {
+        return DungeonMain.slimeImagesDead[direction];
+    }
 
     public void act(DungeonMain lDungeon)
     {

@@ -97,10 +97,6 @@ public class DungeonTile implements Comparable<DungeonTile>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((character == null) ? 0 : character.hashCode());
-        result = prime * result
-                + ((deadCharacter == null) ? 0 : deadCharacter.hashCode());
         result = prime * result + goldAmount;
         result = prime * result + itemID;
         result = prime * result + ((number == null) ? 0 : number.hashCode());
@@ -133,28 +129,6 @@ public class DungeonTile implements Comparable<DungeonTile>
             return false;
         }
         DungeonTile other = (DungeonTile) obj;
-        if (character == null)
-        {
-            if (other.character != null)
-            {
-                return false;
-            }
-        }
-        else if (!character.equals(other.character))
-        {
-            return false;
-        }
-        if (deadCharacter == null)
-        {
-            if (other.deadCharacter != null)
-            {
-                return false;
-            }
-        }
-        else if (!deadCharacter.equals(other.deadCharacter))
-        {
-            return false;
-        }
         if (goldAmount != other.goldAmount)
         {
             return false;
