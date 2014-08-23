@@ -80,7 +80,7 @@ public class Ghost extends Enemy{
     public void act(DungeonMain lDungeon)
     {
         final int RUN_TIME = 10;//Runs for 10 turns.
-        //If hit, try to run away.
+        //If hit, try to run away. Amount of running depends on proportion of health.
         //First, if hit then plan run.
         if(this.wasHit)
         {
@@ -93,6 +93,12 @@ public class Ghost extends Enemy{
         {
             AIRun(lDungeon, storedTargetCharacter);
             runTimer--;
+            
+            //Sloppy way to take care of post-running, should fix later.
+            if (runTimer == 0)
+            {
+            	storedTargetCharacter = null;
+            }
         }
 
         //Try to move to heal someone. If that fails, then move randomly.

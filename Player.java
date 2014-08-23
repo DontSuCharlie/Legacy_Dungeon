@@ -6,6 +6,8 @@ public class Player extends Character{
     int yMovement;
     int goldAmount;
     boolean goingToNewFloor; //Turned true to start process of going to next floor.
+    int xVision;
+    int yVision;
 
     public Player(int inputRiches)
     {
@@ -20,6 +22,9 @@ public class Player extends Character{
         direction = 2;
         isActive = true;
         charInventory = new Inventory(64);
+        xVision = 16;
+        yVision = 9;
+        
     }
     
     /**

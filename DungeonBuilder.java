@@ -639,7 +639,10 @@ Method 8: .checkAtBorder() runs every time the character moves. It makes sure th
 
         //Add these enemies to the list to be looped through.
         characterList.addAll(enemyList);
-    }
+        //After that activate those next to the player.
+        playerCharacter.activateArea(this, playerCharacter.xVision, playerCharacter.yVision);
+        //System.out.println("Activated");
+        }
 
     /**
      * When one character in specific needs to be spawned, this will do the job.

@@ -76,7 +76,7 @@ public class DungeonMain extends JPanel implements Runnable
     public DungeonMain() throws InstantiationException, IllegalAccessException
     {
         //Just a simple way to activate test mode.
-        String buildSetting = "Nottest";
+        String buildSetting = "Not test";
         System.out.println(buildSetting + " engaged");
         window = new JFrame("Hazardous Laboratory");
         dungeon = new DungeonBuilder(1,1,1,100,100);
@@ -89,8 +89,8 @@ public class DungeonMain extends JPanel implements Runnable
         {
             dungeon.build();
         }
-        //Activate all characters near spawn area.
-        dungeon.playerCharacter.activateArea(this);
+        
+        //dungeon.playerCharacter.activateArea(dungeon, dungeon.playerCharacter.xVision, dungeon.playerCharacter.yVision);
 
         System.out.println("Loading Character images");
         for(int i = 0; i <= 9; i++)
@@ -388,14 +388,14 @@ public class DungeonMain extends JPanel implements Runnable
                 }
                 g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
 
-                //Draw bodies :<
-                if (drawnTile instanceof DungeonTile && drawnTile.deadCharacter instanceof DeadCharacter)
+                //Draw bodies :<. Draws the oldest dead body. Meh, I should sort the list so that higher priority enemies are drawn first. Maybe later.
+                if (drawnTile instanceof DungeonTile && !drawnTile.deadCharTileList.isEmpty())
                 {
-                    if (drawnTile.deadCharacter.prevCharacter instanceof RandomJam)
+                    if (drawnTile.deadCharTileList.get(0).prevCharacter instanceof RandomJam)
                     {
                         Image slimeImage = null;
 
-                        slimeImage = DungeonMain.slimeImagesDead[drawnTile.deadCharacter.prevCharacter.direction];
+                        slimeImage = DungeonMain.slimeImagesDead[drawnTile.deadCharTileList.get(0).prevCharacter.direction];
 
                         /*
 						switch(drawnTile.deadCharacter.prevCharacter.direction)
@@ -413,20 +413,20 @@ public class DungeonMain extends JPanel implements Runnable
                         g.drawImage(slimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                     }
 
-                    else if (drawnTile.deadCharacter.prevCharacter instanceof CombatJam)
+                    else if (drawnTile.deadCharTileList.get(0).prevCharacter instanceof CombatJam)
                     {
                         Image combatSlimeImage = null;
-                        combatSlimeImage = DungeonMain.combatSlimeImagesDead[drawnTile.deadCharacter.prevCharacter.direction];
+                        combatSlimeImage = DungeonMain.combatSlimeImagesDead[drawnTile.deadCharTileList.get(0).prevCharacter.direction];
 
                         g.drawImage(combatSlimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, combatSlimeImage.getWidth(null) + 50, combatSlimeImage.getHeight(null) + 100, null);
                     }
 
                     
                     //Tiny ghost.
-                    else if (drawnTile.deadCharacter.prevCharacter instanceof Ghost)
+                    else if (drawnTile.deadCharTileList.get(0).prevCharacter instanceof Ghost)
                     {
                         Image ghostImage = null;
-                        ghostImage = DungeonMain.ghostImagesDead[drawnTile.deadCharacter.prevCharacter.direction];
+                        ghostImage = DungeonMain.ghostImagesDead[drawnTile.deadCharTileList.get(0).prevCharacter.direction];
 
                         g.drawImage(ghostImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, ghostImage.getWidth(null) + 50, ghostImage.getHeight(null) + 100, null);
                     }

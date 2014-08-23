@@ -170,13 +170,13 @@ public class Skills
         double healAmount = .25;
         System.out.println("pow");
         description = "Revives a dead creature to fight for you";
+        
         DungeonTile targetTile = getSourceTile(lDungeon, sourceCharacter.direction, sourceCharacter.currentTile);
-        if (targetTile instanceof DungeonTile && targetTile.deadCharacter instanceof DeadCharacter)
+        if (targetTile instanceof DungeonTile && !(targetTile.deadCharTileList.isEmpty()))
         {
-            sourceCharacter.revive(healAmount, targetTile.deadCharacter, lDungeon);
+            sourceCharacter.revive(healAmount, targetTile.deadCharTileList.get(0), lDungeon);
         }
         skillHelper(lDungeon, sourceCharacter);
-        
         
     }
     

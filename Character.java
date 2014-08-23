@@ -111,16 +111,16 @@ public abstract class Character extends Skills
         --dBuilder.firstInactiveChar;
     }
 
-    public void activateArea(DungeonMain lDungeon)
+    public void activateArea(DungeonBuilder dBuilder, int xVision, int yVision)
     {
         //Need to activate nearby enemies. Trying to do it in paintComponent breaks stuff :<. Not entirely sure about the incrementation.
-        for (int i = this.currentTile.x - lDungeon.numTilesX; i < this.currentTile.x + lDungeon.numTilesX; i++)
+        for (int i = this.currentTile.x - xVision; i < this.currentTile.x + xVision; i++)
         {
-            for (int j = this.currentTile.y - lDungeon.numTilesY; j < this.currentTile.y + lDungeon.numTilesY; j++)
+            for (int j = this.currentTile.y - yVision; j < this.currentTile.y + yVision; j++)
             {
-                if (i > 0 && i < DungeonBuilder.xLength && j > 0 && j < DungeonBuilder.yLength && lDungeon.dungeon.tileList[i][j] instanceof DungeonTile && lDungeon.dungeon.tileList[i][j].character instanceof Character && !lDungeon.dungeon.tileList[i][j].character.isActive)
+                if (i > 0 && i < DungeonBuilder.xLength && j > 0 && j < DungeonBuilder.yLength && dBuilder.tileList[i][j] instanceof DungeonTile && dBuilder.tileList[i][j].character instanceof Character && !(dBuilder.tileList[i][j].character.isActive))
                 {
-                    lDungeon.dungeon.tileList[i][j].character.activate(lDungeon.dungeon);
+                    dBuilder.tileList[i][j].character.activate(dBuilder);
                     //Start aim mode, preventing movement here.
                 }
             }
@@ -193,7 +193,7 @@ public abstract class Character extends Skills
     public void onDeath(DungeonMain lDungeon)
     {
         System.out.println(":<");
-        lDungeon.dungeon.tileList[this.currentTile.x][this.currentTile.y].deadCharacter = new DeadCharacter(this);
+        lDungeon.dungeon.tileList[this.currentTile.x][this.currentTile.y].deadCharTileList.add(0, new DeadCharacter(this));
         lDungeon.dungeon.tileList[this.currentTile.x][this.currentTile.y].character = null;
         deActivate(lDungeon.dungeon);
         lDungeon.recentDeadCharList.add(new DeadCharacter(this));
@@ -272,20 +272,20 @@ public abstract class Character extends Skills
     }
     /**
      * An overloaded method that is used in the reviver AI because storedTargetCharacter keeps track of the tile its on.
-     * Assumes valid DungeonTile with dead enemy on it.
+     * Assumes valid DungeonTile with dead enemy on it. Interesting quirk of reviving as a stack,, latest revived first.
      */
     public void revive(double healPercent, DungeonTile charTile, DungeonMain lDungeon)
     {
 
         //Get the dead deadChar and place it as a deadChar again. (Note still 0 health)
-        lDungeon.dungeon.tileList[charTile.x][charTile.y].character = lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharacter.prevCharacter;
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].character = lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharTileList.get(0).prevCharacter;
         //Replace health based on maxHealth
 
         lDungeon.dungeon.tileList[charTile.x][charTile.y].character.currentHealth = (int)(lDungeon.dungeon.tileList[charTile.x][charTile.y].character.maxHealth * healPercent);
         lDungeon.dungeon.tileList[charTile.x][charTile.y].character.isFriendly = this.isFriendly; //Attains faction of the reviver.
         lDungeon.dungeon.tileList[charTile.x][charTile.y].character.activate(lDungeon.dungeon);
-        lDungeon.deadCharList.remove(lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharacter);
-        lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharacter = null;
+        lDungeon.deadCharList.remove(lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharTileList.get(0));
+        lDungeon.dungeon.tileList[charTile.x][charTile.y].deadCharTileList.remove(0);
         //If this revived character is an enemy, we add it to the enemyList so, it can be checked for other applications 
         if(!this.isFriendly)
         {
@@ -650,11 +650,11 @@ public abstract class Character extends Skills
 
         if(this.pathFindingCooldown == 0 && !RunningPathFinder(lDungeon, scaryCharacter))
         {
-            //If the pathfinder doesn't find a path. Then dumb running. Unhappy, reflective.
+            //If the pathfinder doesn't find a path. Then dumb running. Unhappy, reflexive.
             double directionChoice = Math.random();
             int deltaX = 0;
             int deltaY = 0;
-            //Get closer in x axis.
+            //Get further in x axis.
             if(directionChoice < .50)
             {
                 int temp = storedTargetCharacter.currentTile.x - this.currentTile.x;
@@ -713,7 +713,7 @@ public abstract class Character extends Skills
                     }
                 }
             }
-
+            charMove(deltaX, deltaY, lDungeon.dungeon);
         }
     }
 
