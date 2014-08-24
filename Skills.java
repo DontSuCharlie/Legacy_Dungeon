@@ -113,7 +113,11 @@ public class Skills
         
     }
     
-    //All stuff to be run after using a skill
+    /**
+     * All stuff to be run after using a skill
+     * @param lDungeon
+     * @param sourceCharacter
+     */
     private void skillHelper(DungeonMain lDungeon, Character sourceCharacter)
     {
         //Is enemy turn is true when source is friendly. It is false when source is unfriendly.
@@ -148,7 +152,7 @@ public class Skills
         
         DungeonTile startTile = lDungeon.dungeon.tileList[sourceCharacter.currentTile.x][sourceCharacter.currentTile.y];
         
-        lDungeon.ProjectileList.add(new Projectile (5, sourceCharacter.direction, getSourceTile(lDungeon, sourceCharacter.direction, startTile), sourceCharacter));
+        lDungeon.ProjectileList.add(new Projectile (5, sourceCharacter.direction, startTile, sourceCharacter));
         
         skillHelper(lDungeon, sourceCharacter);
     }

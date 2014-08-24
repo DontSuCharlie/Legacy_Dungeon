@@ -33,7 +33,7 @@ public class DungeonMain extends JPanel implements Runnable
     BufferedImage greenBarLeft = imageLoader.loadImage("images/greenBarLeft.png");
     BufferedImage greenBarRight = imageLoader.loadImage("images/greenBarRight.png");
     BufferedImage greenBarMiddle = imageLoader.loadImage("images/greenBarMiddle.png");	
-    BufferedImage healthPot = imageLoader.loadImage("images/HealthPot.png");
+    BufferedImage healthPot = imageLoader.loadImage("images/healthPot.png");
 
     static BufferedImage[] slimeImages = new BufferedImage[10];
     static BufferedImage[] slimeImagesAlt = new BufferedImage[10];
@@ -64,12 +64,12 @@ public class DungeonMain extends JPanel implements Runnable
     BufferedImage[] numGr = new BufferedImage[10]; 
 
     BufferedImage[] tileImagesDefault = new BufferedImage[10];
-    BufferedImage plusG = imageLoader.loadImage("images/PlusG.png");
-    BufferedImage plusGr = imageLoader.loadImage("images/PlusGr.png");
-    BufferedImage plusR = imageLoader.loadImage("images/PlusR.png");
-    BufferedImage minus = imageLoader.loadImage("images/Minus.png");
-    BufferedImage minusR = imageLoader.loadImage("images/MinusR.png");
-    BufferedImage divide = imageLoader.loadImage("images/Slash.png");
+    BufferedImage plusG = imageLoader.loadImage("images/plusG.png");
+    BufferedImage plusGr = imageLoader.loadImage("images/plusGr.png");
+    BufferedImage plusR = imageLoader.loadImage("images/plusR.png");
+    BufferedImage minus = imageLoader.loadImage("images/minus.png");
+    BufferedImage minusR = imageLoader.loadImage("images/minusR.png");
+    BufferedImage divide = imageLoader.loadImage("images/slash.png");
     BufferedImage heart = imageLoader.loadImage("images/heart.png");
     public static boolean isEnemyTurn = false;
 
@@ -111,7 +111,7 @@ public class DungeonMain extends JPanel implements Runnable
         }
         for(int i = 0; i <= 2; i++)
         {
-            tileImagesDefault[i] = imageLoader.loadImage("images/DungeonTile" + i + ".png");
+            tileImagesDefault[i] = imageLoader.loadImage("images/dungeonTile" + i + ".png");
         }
         //Note change i+=2 back to i++ when diagonal sprites are added.
         for(int i = 1; i <= 9; i++)
@@ -254,9 +254,14 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 System.out.println("Starting over");
                 //Projectile movement and actions
-                for (Projectile i: ProjectileList)
+                for (int i = 0; i < ProjectileList.size(); ++i)
                 {
-                    i.act(this);
+                    boolean destroyed = ProjectileList.get(i).act(this);
+                    //If the projectile is destroyed, then the next one is pushed up to where i is.
+                    if (destroyed)
+                    {
+                    	--i;
+                    }
                 }
 
                 //Character actions
@@ -287,6 +292,10 @@ public class DungeonMain extends JPanel implements Runnable
         changeSpawnRates();
         dungeon.characterList = null;
         dungeon.tileList = null;
+        deadCharList = new ArrayList<DeadCharacter>();
+        recentDeadCharList = new ArrayList<DeadCharacter>();//list of dead characters that are undergoing death animation
+        NumberList = new ArrayList<Number>();//list of numbers
+        ProjectileList = new ArrayList<Projectile>();//list of projectiles
         dungeon = new DungeonBuilder(dungeon);
         //dungeon.tileList = DungeonBuilder.tileList;
     }
@@ -340,8 +349,27 @@ public class DungeonMain extends JPanel implements Runnable
         animator = new Thread(this);
         animator.start();
     }
-    //Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
-    //Calling game.repaint() will update what's in here.
+    /**
+     * This method will help animate movement between two tiles. It gets the coordinates on screen that should be displayerd.
+     * @param startTile
+     * @param endTile
+     * @param time
+     */
+    private coordinate animateMovement(DungeonTile startTile, DungeonTile endTile, int totalTime, int elapsedTime, int xPixels, int yPixels)
+    {
+    	
+    	//Start by getting the player's tile. This is the center of view.
+    	DungeonTile centerTile = dungeon.playerCharacter.currentTile;
+    	int xCoordinate = ((endTile.x - startTile.x) * elapsedTime / totalTime + startTile.x) * xPixels;
+    	int yCoordinate = ((endTile.y - startTile.y) * elapsedTime / totalTime + startTile.y) * yPixels;
+
+		return new coordinate(xCoordinate, yCoordinate);
+    }
+    
+    /**
+     * Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
+     * Calling game.repaint() will update what's in here.
+     */
     @Override
     public void paintComponent(Graphics g)
     {
@@ -388,7 +416,7 @@ public class DungeonMain extends JPanel implements Runnable
                 }
                 g.drawImage(image, i * tileLengthX + screenShakeX, j * tileLengthY + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, image.getWidth(null), image.getHeight(null), null);
 
-                //Draw bodies :<. Draws the oldest dead body. Meh, I should sort the list so that higher priority enemies are drawn first. Maybe later.
+                //Draw bodies :<. Draws the newest dead body. Meh, I should sort the list so that higher priority enemies are drawn first. Maybe later.
                 if (drawnTile instanceof DungeonTile && !drawnTile.deadCharTileList.isEmpty())
                 {
                     if (drawnTile.deadCharTileList.get(0).prevCharacter instanceof RandomJam)
@@ -396,20 +424,7 @@ public class DungeonMain extends JPanel implements Runnable
                         Image slimeImage = null;
 
                         slimeImage = DungeonMain.slimeImagesDead[drawnTile.deadCharTileList.get(0).prevCharacter.direction];
-
-                        /*
-						switch(drawnTile.deadCharacter.prevCharacter.direction)
-						{
-							case 0: slimeImage = slimeImageEastDead;
-							break;
-							case 1: slimeImage = slimeImageNorthDead;
-							break;
-							case 2: slimeImage = slimeImageWestDead;
-							break;
-							case 3: slimeImage = slimeImageSouthDead;
-							break;
-							default: slimeImage = slimeImageEastDead;
-						}*/
+                        
                         g.drawImage(slimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                     }
 
@@ -914,5 +929,20 @@ public class DungeonMain extends JPanel implements Runnable
         //Testing
         DungeonMain game = new DungeonMain();
         game.dungeonLoop();
+    }
+    
+    /**
+     * This class mostly just allows me to return x and y values.
+     */
+    private class coordinate
+    {
+    	int x;
+    	int y;
+    	
+    	public coordinate(int x, int y)
+    	{
+    		this.x = x;
+    		this.y = y;
+    	}
     }
 }

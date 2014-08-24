@@ -13,27 +13,33 @@ public class Projectile {
         damage = inputDamage;
         direction = inputDirection;
         movesLeft = speed;
-        currentTile = tile;
+        //BE CAREFUL WITH THIS TILE. ONLY USE THE X AND Y VALUES FROM THIS.
+        currentTile = new DungeonTile(tile.x, tile.y, 1);
         this.sourceCharacter = sourceCharacter;
     }
     
-    public void act(DungeonMain lDungeon)
+    /*
+     * Allows the projectile to move based on its speed. If the projectile is destroyed (hits a wall or character), this returns true.
+     * Otherwise, the it returns false. This allows for proper iteration of the projectileList.
+     */
+    public boolean act(DungeonMain lDungeon)
     {
         while (movesLeft > 0)
         {
             System.out.println("Projectile moving.");
             
-            if(currentTile instanceof DungeonTile)
+            if(lDungeon.dungeon.tileChecker(currentTile.x, currentTile.y, false))
             {
             
-                if(currentTile.character != null)
+            	//It hit some character. Currently allows no friendly fire. Will just pass through. Could add a version with it. 
+                if(lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character != null && lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.isFriendly != sourceCharacter.isFriendly)
                 {
-                    currentTile.character.dealDamage(damage, currentTile.x, currentTile.y, sourceCharacter, lDungeon);
-                    //Use deal damage method?
+                	lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.dealDamage(damage, currentTile.x, currentTile.y, sourceCharacter, lDungeon);
                     System.out.println("Shot");
                    
                     //Destroy this projectile.
                     lDungeon.ProjectileList.remove(this);
+                    return true;
                 }
             
                 if(this.direction == 6)
@@ -85,11 +91,13 @@ public class Projectile {
                 movesLeft--;
             }
             
+            //It hit a wall.
             else
             {
                 lDungeon.ProjectileList.remove(this);
+                return true;
             }
-            
         }
+        return false;
     }
 }

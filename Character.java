@@ -49,6 +49,7 @@ public abstract class Character extends Skills
     public Inventory charInventory = new Inventory(5);
 
     public boolean IS_RUNNING = false; //True for those characters that run when hit.
+    public boolean isMoving = false; //Used for animating movement between tiles.
     //Constructor
 
     /*
