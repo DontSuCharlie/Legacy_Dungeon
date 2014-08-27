@@ -89,7 +89,7 @@ public class DungeonMain extends JPanel implements Runnable
         {
             dungeon.build();
         }
-        
+
         //dungeon.playerCharacter.activateArea(dungeon, dungeon.playerCharacter.xVision, dungeon.playerCharacter.yVision);
 
         System.out.println("Loading Character images");
@@ -260,7 +260,7 @@ public class DungeonMain extends JPanel implements Runnable
                     //If the projectile is destroyed, then the next one is pushed up to where i is.
                     if (destroyed)
                     {
-                    	--i;
+                        --i;
                     }
                 }
 
@@ -350,22 +350,29 @@ public class DungeonMain extends JPanel implements Runnable
         animator.start();
     }
     /**
-     * This method will help animate movement between two tiles. It gets the coordinates on screen that should be displayerd.
+     * This method will help animate movement between two tiles. It gets the coordinates on screen that should be displayed.
      * @param startTile
      * @param endTile
      * @param time
      */
-    private coordinate animateMovement(DungeonTile startTile, DungeonTile endTile, int totalTime, int elapsedTime, int xPixels, int yPixels)
+    private Coordinate animateMovement(DungeonTile startTile, DungeonTile endTile, int totalTime, int elapsedTime, int xPixels, int yPixels)
     {
-    	
-    	//Start by getting the player's tile. This is the center of view.
-    	DungeonTile centerTile = dungeon.playerCharacter.currentTile;
-    	int xCoordinate = ((endTile.x - startTile.x) * elapsedTime / totalTime + startTile.x) * xPixels;
-    	int yCoordinate = ((endTile.y - startTile.y) * elapsedTime / totalTime + startTile.y) * yPixels;
+        //Start by getting the player's tile. This is the center of view.
+        DungeonTile centerTile = dungeon.playerCharacter.currentTile;
+        double xPos = ((endTile.x - startTile.x) * (double)elapsedTime / totalTime + startTile.x);// * xPixels; //Should be 0 to xLength. Initially at startTile then goes to endTile.
+        double yPos = ((endTile.y - startTile.y) * (double)elapsedTime / totalTime + startTile.y);// * yPixels; //Should be 0 to yLength
 
-		return new coordinate(xCoordinate, yCoordinate);
+        //From the tile position it's currently at, get which pixel it should be drawn at.
+        //int xCoordinate = (int) (xPixels * (xPos - (centerTile.x - dungeon.playerCharacter.xVision/2.0)));
+        //int yCoordinate = (int) (yPixels * (yPos - (centerTile.y - dungeon.playerCharacter.yVision/2.0)));
+
+        int xCoordinate = (int) (xPixels * Math.abs((centerTile.x - dungeon.playerCharacter.xVision/2.0) - xPos));
+        //Gotta be careful. Don't want player at tile 4.5. Thus using integer division.
+        int yCoordinate = (int) (yPixels * Math.abs((centerTile.y - dungeon.playerCharacter.yVision/2) - yPos));
+
+        return new Coordinate(xCoordinate, yCoordinate);
     }
-    
+
     /**
      * Method 1: According to java, we have to put everything we want to paint in this method. Making it visible, etc. will involve using ArrayLists. For example, if we have something we don't want to show until it spawns, then we have an ArrayList with a size of 0, and when we want it to spawn, we add 1 of the object to the ArrayList. 
      * Calling game.repaint() will update what's in here.
@@ -424,7 +431,7 @@ public class DungeonMain extends JPanel implements Runnable
                         Image slimeImage = null;
 
                         slimeImage = DungeonMain.slimeImagesDead[drawnTile.deadCharTileList.get(0).prevCharacter.direction];
-                        
+
                         g.drawImage(slimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
                     }
 
@@ -436,7 +443,7 @@ public class DungeonMain extends JPanel implements Runnable
                         g.drawImage(combatSlimeImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, combatSlimeImage.getWidth(null) + 50, combatSlimeImage.getHeight(null) + 100, null);
                     }
 
-                    
+
                     //Tiny ghost.
                     else if (drawnTile.deadCharTileList.get(0).prevCharacter instanceof Ghost)
                     {
@@ -445,7 +452,7 @@ public class DungeonMain extends JPanel implements Runnable
 
                         g.drawImage(ghostImage, i * tileLengthX + 25 + screenShakeX, j * tileLengthY + 25 + screenShakeY, (i+1) * tileLengthX + screenShakeX, (j+1) * tileLengthY + screenShakeY, 0, 0, ghostImage.getWidth(null) + 50, ghostImage.getHeight(null) + 100, null);
                     }
-                    
+
                     else
                     {
                         BufferedImage charImage = drawnTile.character.getImageDead();
@@ -474,52 +481,90 @@ public class DungeonMain extends JPanel implements Runnable
                     visibleCharacters.add(drawnTile.character);
                     //Note: should change source image to be good and then just use drawnTile.character.getImage() and display that normally.
 
-
-
-                    if (drawnTile.character instanceof Player)
+                    if (!drawnTile.character.isMoving)
                     {
-                        Image playerImage;
-                        playerImage = dungeon.playerCharacter.getImage();
-                        g.drawImage(playerImage, (int)((numTilesX/2 + .15) * tileLengthX), (int)((numTilesY/2 + .15) * tileLengthY), (int)((numTilesX/2 + .85) * tileLengthX), (int)((numTilesY/2 + .85) * tileLengthY), 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
-                    }
-                    //Draw RandomJam
-                    else if (drawnTile.character instanceof RandomJam)
-                    {
-                        BufferedImage slimeImage = ((RandomJam)drawnTile.character).getImage();
-                        g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+
+                        if (drawnTile.character instanceof Player)
+                        {
+                            Image playerImage;
+                            playerImage = dungeon.playerCharacter.getImage();
+                            g.drawImage(playerImage, (int)((numTilesX/2 + .15) * tileLengthX), (int)((numTilesY/2 + .15) * tileLengthY), (int)((numTilesX/2 + .85) * tileLengthX), (int)((numTilesY/2 + .85) * tileLengthY), 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
+                        }
+                        //Draw RandomJam
+                        else if (drawnTile.character instanceof RandomJam)
+                        {
+                            BufferedImage slimeImage = ((RandomJam)drawnTile.character).getImage();
+                            g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                            //g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null), slimeImage.getHeight(null), null);
+                        }
+
+                        //Draw CombatJam
+                        else if (drawnTile.character instanceof CombatJam)
+                        {
+                            BufferedImage slimeImage = ((CombatJam)drawnTile.character).getImage();
+                            g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                        }
+
+                        //Draw Everything else
+                        else
+                        {
+                            BufferedImage temp = drawnTile.character.getImage();
+                            g.drawImage(temp, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, temp.getWidth(null), temp.getHeight(null), null);
+                        }
+
+                        //Drawn above characters
+                        //if(drawnTile.character.status =! 0)
+                        {
+                            //Draw status effects.
+                        }
+
+                        /* The use of the next part is to draw a heart above friendly characters except the player.
+                         * Currently set to draw a heart as 1/4 a tile.
+                         * 
+                         */
+
+                        if(drawnTile.character.isFriendly && !(drawnTile.character instanceof Player))
+                        {
+                            g.drawImage(heart, (int)((i+.25)* tileLengthX + screenShakeX), (int)((j+.25) * tileLengthY + screenShakeY), (int)((i+.5) * tileLengthX + screenShakeX), (int)((j+.5) * tileLengthY + screenShakeY), 0, 0, image.getWidth(null), image.getHeight(null), null);
+                        }
+
                     }
 
-                    //Draw CombatJam
-                    else if (drawnTile.character instanceof CombatJam)
-                    {
-                        BufferedImage slimeImage = ((CombatJam)drawnTile.character).getImage();
-                        g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
-                    }
-
-                    //Draw Everything else
                     else
                     {
-                        BufferedImage temp = drawnTile.character.getImage();
-                        g.drawImage(temp, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, temp.getWidth(null), temp.getHeight(null), null);
+                        assert drawnTile.character.isMoving;
+                        Coordinate coordinate = animateMovement(drawnTile.character.prevTile, drawnTile.character.currentTile, drawnTile.character.moveTimer, drawnTile.character.currentMoveTimer, tileLengthX, tileLengthY);
+
+                        //Bah, really should fix sprites instead of doing this garbage.
+                        if (drawnTile.character instanceof Player)
+                        {
+                            Image playerImage;
+                            playerImage = dungeon.playerCharacter.getImage();
+                            g.drawImage(playerImage, (int)(.15 * tileLengthX + coordinate.x), (int)( .15 * tileLengthY + coordinate.y), (int)(.85 * tileLengthX + coordinate.x), (int)( .85 * tileLengthY + coordinate.y), 0, 0, playerImage.getWidth(null), playerImage.getHeight(null), null);
+                        }
+                        //Draw RandomJam
+                        else if (drawnTile.character instanceof RandomJam)
+                        {
+                            BufferedImage slimeImage = ((RandomJam)drawnTile.character).getImage();
+                            g.drawImage(slimeImage, coordinate.x + 25, coordinate.y + 25, coordinate.x + 1 * tileLengthX, coordinate.y + 1 * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                            //g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null), slimeImage.getHeight(null), null);
+                        }
+
+                        //Draw CombatJam
+                        else if (drawnTile.character instanceof CombatJam)
+                        {
+                            BufferedImage slimeImage = ((CombatJam)drawnTile.character).getImage();
+                            g.drawImage(slimeImage, coordinate.x + 25, coordinate.y + 25, coordinate.x + 1 * tileLengthX, coordinate.y + 1 * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                        }
+
+                        //Draw Everything else
+                        else
+                        {
+                            BufferedImage temp = drawnTile.character.getImage();
+                            g.drawImage(temp, coordinate.x, coordinate.y, 1* tileLengthX + coordinate.x, 1 * tileLengthY + coordinate.y, 0, 0, temp.getWidth(null), temp.getHeight(null), null);
+                        }
+                        //g.drawImage(drawnTile.character.getImage(), coordinate.x, coordinate.y, coordinate.x + tileLengthX, coordinate.y + tileLengthY, 0, 0, drawnTile.character.getImage().getWidth(null), drawnTile.character.getImage().getHeight(null), null);
                     }
-
-                    //Drawn above characters
-                    //if(drawnTile.character.status =! 0)
-                    {
-                        //Draw status effects.
-                    }
-
-                    /* The use of the next part is to draw a heart above friendly characters except the player.
-                     * Currently set to draw a heart as 1/4 a tile.
-                     * 
-                     */
-
-                    if(drawnTile.character.isFriendly && !(drawnTile.character instanceof Player))
-                    {
-                        g.drawImage(heart, (int)((i+.25)* tileLengthX + screenShakeX), (int)((j+.25) * tileLengthY + screenShakeY), (int)((i+.5) * tileLengthX + screenShakeX), (int)((j+.5) * tileLengthY + screenShakeY), 0, 0, image.getWidth(null), image.getHeight(null), null);
-                    }
-
-
                 }
 
                 if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)
@@ -700,12 +745,12 @@ public class DungeonMain extends JPanel implements Runnable
                 slimeImage = DungeonMain.slimeImagesHit[recentDeadCharList.get(i).prevCharacter.direction];
                 g.drawImage(slimeImage, recentDeadCharList.get(i).prevCharacter.currentTile.x * tileLengthX + 25, recentDeadCharList.get(i).prevCharacter.currentTile.y * tileLengthY + 25, (recentDeadCharList.get(i).prevCharacter.currentTile.x+1) * tileLengthX, (recentDeadCharList.get(i).prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null); 
             }
-*/
-            
+             */
+
             BufferedImage deadImage = recentDeadCharList.get(i).prevCharacter.getImageHit();
             g.drawImage(deadImage, recentDeadCharList.get(i).prevCharacter.currentTile.x * tileLengthX, recentDeadCharList.get(i).prevCharacter.currentTile.y * tileLengthY, (recentDeadCharList.get(i).prevCharacter.currentTile.x+1) * tileLengthX, (recentDeadCharList.get(i).prevCharacter.currentTile.y+1) * tileLengthY, 0, 0, deadImage.getWidth(null), deadImage.getHeight(null), null); 
 
-                    
+
             if (recentDeadCharList.get(i).deathTimer <= 0)
             {
                 recentDeadCharList.remove(i);
@@ -860,7 +905,7 @@ public class DungeonMain extends JPanel implements Runnable
     public void run()
     {
         long previousTime, sleepTime, timeDifference;
-        int counter = 0;
+        long counter = 0;
         previousTime = System.currentTimeMillis();
         while (true)
         {
@@ -905,6 +950,16 @@ public class DungeonMain extends JPanel implements Runnable
                         i.currentHitTime = i.hitTimer;
                     }
                 }
+
+                if (i.isMoving == true)
+                {
+                    i.currentMoveTimer++;
+                    if(i.currentMoveTimer >= i.moveTimer )
+                    {
+                        i.isMoving = false;
+                        i.currentMoveTimer = 0;
+                    }
+                }
             }
             //Complains about multiple modifications. Need to fix.
             if(recentDeadCharList.size() != 0)
@@ -930,19 +985,19 @@ public class DungeonMain extends JPanel implements Runnable
         DungeonMain game = new DungeonMain();
         game.dungeonLoop();
     }
-    
+
     /**
      * This class mostly just allows me to return x and y values.
      */
-    private class coordinate
+    private class Coordinate
     {
-    	int x;
-    	int y;
-    	
-    	public coordinate(int x, int y)
-    	{
-    		this.x = x;
-    		this.y = y;
-    	}
+        int x;
+        int y;
+
+        public Coordinate(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
     }
 }

@@ -34,8 +34,10 @@ public abstract class Character extends Skills
     public int imageID; //0 is first pose, 1 is alt., 2 is hit.
     public int direction; // Used for direction of sprite and attacks 6=east, 8=north, 4=west, 2=south, 9=NE, 7=NW, 3=SE, 1=SW
     public boolean isHit = false;
-    final int hitTimer = (int) (100/DungeonMain.DELAY); //Used for length of hit animation. Currently set to 250 ms delay.
+    final int hitTimer = (int) (100/DungeonMain.DELAY); //Used for length of hit animation. Currently set to 100 ms delay.
     int currentHitTime = hitTimer;
+    final int moveTimer = (int) (100/DungeonMain.DELAY); //Used for length of move animation. Currently set to 100 ms delay.
+    int currentMoveTimer = 0;
     public int dangerLevel = 1; //This is used to determine how abilities work with this character, ex. revives should not work on bosses.
     public boolean isFriendly; //Used to check attacks and determine which animating number to be shown.
     boolean getNewTarget = true;
@@ -47,6 +49,9 @@ public abstract class Character extends Skills
     private int maxPathFindingCooldown = 5;
     public boolean wasHit = false; //Used for enemies that run. 
     public Inventory charInventory = new Inventory(5);
+
+    //Find a better way to keep track of previous tile for animation if possible.
+    public DungeonTile prevTile;
 
     public boolean IS_RUNNING = false; //True for those characters that run when hit.
     public boolean isMoving = false; //Used for animating movement between tiles.
@@ -137,13 +142,13 @@ public abstract class Character extends Skills
         System.out.println("Error");
         return null;
     }
-    
+
     public BufferedImage getImageDead()
     {
         System.out.println("Error");
         return null;
     }
-    
+
     public BufferedImage getImageHit()
     {
         System.out.println("Error");
@@ -161,6 +166,8 @@ public abstract class Character extends Skills
         setDirection(this.currentTile.x+ deltaX, this.currentTile.y+deltaY);
         if (dungeonChar.tileChecker(this.currentTile.x + deltaX, this.currentTile.y + deltaY, true))       
         {
+            this.isMoving = true;
+            prevTile = this.currentTile;
             dungeonChar.tileList[this.currentTile.x] [this.currentTile.y].character = null;
             dungeonChar.tileList[this.currentTile.x + deltaX] [this.currentTile.y + deltaY].character = this;
             this.currentTile = dungeonChar.tileList[this.currentTile.x + deltaX] [this.currentTile.y + deltaY];
@@ -185,7 +192,8 @@ public abstract class Character extends Skills
     public void charMove(DungeonTile chosenTile, DungeonBuilder dungeonChar)
     {    
         setDirection(chosenTile.x, chosenTile.y);
-
+        this.isMoving = true;
+        prevTile = this.currentTile;
         dungeonChar.tileList[this.currentTile.x] [this.currentTile.y].character = null;
         chosenTile.character = this;
         this.currentTile = chosenTile;
@@ -266,7 +274,7 @@ public abstract class Character extends Skills
      * @param deadChar
      * @param lDungeon
      */
-    
+
     public void revive(double healPercent, DeadCharacter deadChar, DungeonMain lDungeon)
     {
         revive(healPercent, deadChar.prevCharacter.currentTile, lDungeon);
@@ -300,7 +308,7 @@ public abstract class Character extends Skills
         lDungeon.dungeon.tileList[charTile.x][charTile.y].number = temp;
     }
 
-    
+
     /**
      * Using A* pathing, we get beautiful paths. Diagonals suck though. There is no reason not to use diagonal movement when x and y coordinates differ. I have currently set it so that paths are found diagonals
      * Start by calculating the 
