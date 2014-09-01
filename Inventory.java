@@ -58,7 +58,7 @@ public class Inventory{
                 //Show item was received
                 HitNumber temp = new HitNumber(5, currentTile.x, currentTile.y, true);
                 currentTile.number = temp;
-                DungeonMain.NumberList.add(temp);
+                DungeonMain.numberList.add(temp);
             }
         }
         

@@ -223,7 +223,7 @@ public abstract class Character extends Skills
     {
         //Create a new damage number
         HitNumber temp = new HitNumber(damage, targetX, targetY, lDungeon.dungeon.tileList[targetX][targetY].character.isFriendly);
-        DungeonMain.NumberList.add(temp);
+        DungeonMain.numberList.add(temp);
         lDungeon.dungeon.tileList[targetX][targetY].number = temp;
         //Subtract health
         lDungeon.dungeon.tileList[targetX][targetY].character.currentHealth -= damage;
@@ -263,7 +263,7 @@ public abstract class Character extends Skills
             healedCharacter.currentHealth = (2 * healedCharacter.maxHealth);
         }
         HealNumber temp = new HealNumber(healAmount, healedCharacter.currentTile.x, healedCharacter.currentTile.y, healedCharacter.isFriendly);
-        DungeonMain.NumberList.add(temp);
+        DungeonMain.numberList.add(temp);
         lDungeon.dungeon.tileList[healedCharacter.currentTile.x][healedCharacter.currentTile.y].number = temp;
 
     }
@@ -304,7 +304,7 @@ public abstract class Character extends Skills
         //Add a new heal number to show what happened.
         //Perhaps add another fancy image to show the revival.
         HealNumber temp = new HealNumber(lDungeon.dungeon.tileList[charTile.x][charTile.y].character.currentHealth, charTile.x, charTile.y, lDungeon.dungeon.tileList[charTile.x][charTile.y].character.isFriendly);
-        DungeonMain.NumberList.add(temp);
+        DungeonMain.numberList.add(temp);
         lDungeon.dungeon.tileList[charTile.x][charTile.y].number = temp;
     }
 

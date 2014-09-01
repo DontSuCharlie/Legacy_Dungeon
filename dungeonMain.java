@@ -8,11 +8,12 @@ import java.io.File;
 import javax.swing.*;
 public class DungeonMain extends JPanel implements Runnable
 {
+    MusicPlayer musicPlayer = new MusicPlayer();
     ArrayList<Character> visibleCharacters = new ArrayList<Character>();//list of characters that are painted and animated.
     static ArrayList<DeadCharacter> recentDeadCharList = new ArrayList<DeadCharacter>();//list of dead characters that are undergoing death animation
     static ArrayList<DeadCharacter> deadCharList = new ArrayList<DeadCharacter>();//list of dead characters on floor. (Used for AI related to dead creatures (reviver, slime-eater)
-    static ArrayList<Number> NumberList = new ArrayList<Number>();//list of numbers
-    static ArrayList<Projectile> ProjectileList = new ArrayList<Projectile>();//list of projectiles
+    static ArrayList<Number>numberList = new ArrayList<Number>();//list of numbers
+    static ArrayList<Projectile> projectileList = new ArrayList<Projectile>();//list of projectiles
     static JFrame window;//to create new window
     DungeonBuilder dungeon;//to create dungeon tile
     static final int DELAY = 25; //sets fps to 55
@@ -34,6 +35,7 @@ public class DungeonMain extends JPanel implements Runnable
     BufferedImage greenBarRight = imageLoader.loadImage("images/greenBarRight.png");
     BufferedImage greenBarMiddle = imageLoader.loadImage("images/greenBarMiddle.png");	
     BufferedImage healthPot = imageLoader.loadImage("images/healthPot.png");
+    //BufferedImage fireball = imageLoader.loadImage("images/fireball.png");
 
     static BufferedImage[] slimeImages = new BufferedImage[10];
     static BufferedImage[] slimeImagesAlt = new BufferedImage[10];
@@ -53,6 +55,8 @@ public class DungeonMain extends JPanel implements Runnable
     static BufferedImage[] ghostImagesAlt = new BufferedImage[10];
     static BufferedImage[] ghostImagesHit = new BufferedImage[10];
     static BufferedImage[] ghostImagesDead = new BufferedImage[10];
+
+    static BufferedImage[] fireballImages = new BufferedImage[8];
 
     //White numbers
     BufferedImage[] num = new BufferedImage[10];
@@ -113,7 +117,6 @@ public class DungeonMain extends JPanel implements Runnable
         {
             tileImagesDefault[i] = imageLoader.loadImage("images/dungeonTile" + i + ".png");
         }
-        //Note change i+=2 back to i++ when diagonal sprites are added.
         for(int i = 1; i <= 9; i++)
         {
             //No sprite for center(5)
@@ -241,6 +244,10 @@ public class DungeonMain extends JPanel implements Runnable
             }
             ghostImagesDead[i] = imageLoader.loadImage("images/ghostDead" + i + ".png");
         }
+        for(int i = 0; i <= 7; i++)
+        {
+            fireballImages[i] = imageLoader.loadImage("images/fireball" + i + ".png");
+        }
     }
     //Basically runs the dungeonmain object. It goes into a loop
     public void dungeonLoop() throws InstantiationException, IllegalAccessException
@@ -248,20 +255,23 @@ public class DungeonMain extends JPanel implements Runnable
         Window.createWindow();//creates window
         Window.window.add(this);//adds game file to the window
         boolean inGame = true;
+        musicPlayer.playMusic("sounds/worldMap2.au");
         while (inGame)
         {
             while(!dungeon.playerCharacter.goingToNewFloor)
             {
                 System.out.println("Starting over");
                 //Projectile movement and actions
-                for (int i = 0; i < ProjectileList.size(); ++i)
+                for (int i = 0; i < projectileList.size() && !projectileList.get(i).isDestroyed; ++i)
                 {
-                    boolean destroyed = ProjectileList.get(i).act(this);
+                    /*
+                    boolean destroyed = projectileList.get(i).act(this);
                     //If the projectile is destroyed, then the next one is pushed up to where i is.
                     if (destroyed)
                     {
                         --i;
-                    }
+                    }*/
+                    projectileList.get(i).act(this);
                 }
 
                 //Character actions
@@ -294,8 +304,8 @@ public class DungeonMain extends JPanel implements Runnable
         dungeon.tileList = null;
         deadCharList = new ArrayList<DeadCharacter>();
         recentDeadCharList = new ArrayList<DeadCharacter>();//list of dead characters that are undergoing death animation
-        NumberList = new ArrayList<Number>();//list of numbers
-        ProjectileList = new ArrayList<Projectile>();//list of projectiles
+        numberList = new ArrayList<Number>();//list of numbers
+        projectileList = new ArrayList<Projectile>();//list of projectiles
         dungeon = new DungeonBuilder(dungeon);
         //dungeon.tileList = DungeonBuilder.tileList;
     }
@@ -366,8 +376,8 @@ public class DungeonMain extends JPanel implements Runnable
         //int xCoordinate = (int) (xPixels * (xPos - (centerTile.x - dungeon.playerCharacter.xVision/2.0)));
         //int yCoordinate = (int) (yPixels * (yPos - (centerTile.y - dungeon.playerCharacter.yVision/2.0)));
 
-        int xCoordinate = (int) (xPixels * Math.abs((centerTile.x - dungeon.playerCharacter.xVision/2.0) - xPos));
-        //Gotta be careful. Don't want player at tile 4.5. Thus using integer division.
+        int xCoordinate = (int) (xPixels * Math.abs((centerTile.x - dungeon.playerCharacter.xVision/2) - xPos));
+        //Got to be careful. Don't want player at tile 4.5. Thus using integer division.
         int yCoordinate = (int) (yPixels * Math.abs((centerTile.y - dungeon.playerCharacter.yVision/2) - yPos));
 
         return new Coordinate(xCoordinate, yCoordinate);
@@ -566,11 +576,36 @@ public class DungeonMain extends JPanel implements Runnable
                         //g.drawImage(drawnTile.character.getImage(), coordinate.x, coordinate.y, coordinate.x + tileLengthX, coordinate.y + tileLengthY, 0, 0, drawnTile.character.getImage().getWidth(null), drawnTile.character.getImage().getHeight(null), null);
                     }
                 }
-
-                if (drawnTile instanceof DungeonTile && drawnTile.projectile instanceof Projectile)
+                /*
+                //Draw Projectiles
+                if (drawnTile instanceof DungeonTile && !drawnTile.projectileList.isEmpty())
                 {
+                    for (int projectile = 0; i < drawnTile.projectileList.size(); i++)
+                    {
+                        if (!drawnTile.projectileList.get(projectile).isMoving)
+                        {
+                            image = drawnTile.projectileList.get(projectile).getImage(this);
+                            g.drawImage(image, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
 
+                            if (drawnTile.projectileList.get(projectile).isDestroyed)
+                            {
+                                projectileList.remove(this);
+                                drawnTile.projectileList.remove(projectile);
+                                projectile--;
+                            }
+                        }
+
+                        else
+                        {
+                            assert drawnTile.projectileList.get(projectile).isMoving;
+                            Coordinate coordinate = animateMovement(drawnTile.projectileList.get(projectile).prevTile, drawnTile.projectileList.get(projectile).currentTile, drawnTile.projectileList.get(projectile).moveTimer, drawnTile.projectileList.get(projectile).currentMoveTimer, tileLengthX, tileLengthY);
+
+                            image = drawnTile.projectileList.get(projectile).getImage(this);
+                            g.drawImage(image, coordinate.x, coordinate.y, 1* tileLengthX + coordinate.x, 1 * tileLengthY + coordinate.y, 0, 0, image.getWidth(null), image.getHeight(null), null);
+                        }
+                    }
                 }
+                 */
                 //Draw floating numbers.This will not shake to improve readability
                 if(drawnTile instanceof DungeonTile && drawnTile.number instanceof Number)
                 {
@@ -721,7 +756,7 @@ public class DungeonMain extends JPanel implements Runnable
                     if (drawnTile.number.timer <= 0)
                     {
                         drawnTile.number = null;
-                        NumberList.remove(drawnTile.number);
+                        numberList.remove(drawnTile.number);
                     }
 
                 }
@@ -757,6 +792,45 @@ public class DungeonMain extends JPanel implements Runnable
                 i--;
             }
         }
+
+
+        //Draw Projectiles
+        for (int i = 0; i < projectileList.size(); i++)
+        {
+            if (!projectileList.get(i).isMoving)
+            {
+                //Within view
+                if (Math.abs(projectileList.get(i).currentTile.x - dungeon.playerCharacter.currentTile.x ) < dungeon.playerCharacter.xVision && Math.abs(projectileList.get(i).currentTile.y - dungeon.playerCharacter.currentTile.y ) < dungeon.playerCharacter.yVision)
+                {
+                    image = projectileList.get(i).getImage(this);
+                    //Not actually animating here, just want to easily get drawing coordinates
+                    Coordinate coordinate = animateMovement(projectileList.get(i).currentTile, projectileList.get(i).currentTile, 1, 1, tileLengthX, tileLengthY);
+                    g.drawImage(image, coordinate.x, coordinate.y, coordinate.x + tileLengthX, coordinate.y +  tileLengthY, 0, 0, image.getWidth(null), image.getHeight(null), null);
+                    System.out.println("Stationary");
+                }
+                if (projectileList.get(i).isDestroyed)
+                {
+                    System.out.println("Projectile destroyed");
+                    projectileList.remove(i);
+                    //drawnTile.projectileList.remove(projectile);
+                    i--;
+                }
+            }
+
+            else
+            {
+                if (Math.abs(projectileList.get(i).currentTile.x - dungeon.playerCharacter.currentTile.x ) < dungeon.playerCharacter.xVision && Math.abs(projectileList.get(i).currentTile.y - dungeon.playerCharacter.currentTile.y ) < dungeon.playerCharacter.yVision || (Math.abs(projectileList.get(i).prevTile.x - dungeon.playerCharacter.currentTile.x ) < dungeon.playerCharacter.xVision && Math.abs(projectileList.get(i).prevTile.y - dungeon.playerCharacter.currentTile.y ) < dungeon.playerCharacter.yVision))
+                {
+                    System.out.println("Moving Projectile");
+                    assert projectileList.get(i).isMoving;
+                    Coordinate coordinate = animateMovement(projectileList.get(i).prevTile, projectileList.get(i).currentTile, projectileList.get(i).moveTimer, projectileList.get(i).currentMoveTimer, tileLengthX, tileLengthY);
+
+                    image = projectileList.get(i).getImage(this);
+                    g.drawImage(image, coordinate.x, coordinate.y, tileLengthX + coordinate.x, tileLengthY + coordinate.y, 0, 0, image.getWidth(null), image.getHeight(null), null);
+                }
+            }
+        }
+
         //UI is drawn last so it's on top of everything else.
         int floorNum = dungeon.currentFloor;
         int numCounter = 0;
@@ -961,6 +1035,26 @@ public class DungeonMain extends JPanel implements Runnable
                     }
                 }
             }
+
+            //Each projectile has an altTimer used for animations.
+            for (Projectile p : projectileList)
+            {
+                if (counter % p.altTimer == 0)
+                {
+                    p.animationCounter++;
+                }
+
+                //Keep track of movement.
+                if (p.isMoving)
+                {
+                    p.currentMoveTimer++;
+                    if(p.currentMoveTimer >= p.moveTimer)
+                    {
+                        p.isMoving = false;
+                        p.currentMoveTimer = 0;
+                    }
+                }
+            }
             //Complains about multiple modifications. Need to fix.
             if(recentDeadCharList.size() != 0)
             {
@@ -970,9 +1064,9 @@ public class DungeonMain extends JPanel implements Runnable
                     //Removal takes place in paint.
                 }
             }
-            if(NumberList.size() != 0)
+            if(numberList.size() != 0)
             {
-                for(Number j : NumberList)
+                for(Number j : numberList)
                 {
                     j.timer--;
                 }

@@ -152,7 +152,7 @@ public class Skills
         
         DungeonTile startTile = lDungeon.dungeon.tileList[sourceCharacter.currentTile.x][sourceCharacter.currentTile.y];
         
-        lDungeon.ProjectileList.add(new Projectile (5, sourceCharacter.direction, startTile, sourceCharacter));
+        lDungeon.projectileList.add(new Fireball (5, sourceCharacter.direction, 5, startTile, sourceCharacter));
         
         skillHelper(lDungeon, sourceCharacter);
     }
@@ -181,6 +181,11 @@ public class Skills
             sourceCharacter.revive(healAmount, targetTile.deadCharTileList.get(0), lDungeon);
         }
         skillHelper(lDungeon, sourceCharacter);
+        
+    }
+    
+    public void shortRangeTeleport(DungeonMain lDungeon, Character target)
+    {
         
     }
     

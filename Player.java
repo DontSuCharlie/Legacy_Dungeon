@@ -24,9 +24,9 @@ public class Player extends Character{
         charInventory = new Inventory(64);
         xVision = 16;
         yVision = 9;
-        
+
     }
-    
+
     /**
      * All of the player's actions
      * Moving
@@ -41,8 +41,14 @@ public class Player extends Character{
         //Loop while the player needs to act
         while (waitingForPlayer)
         {
-            //Uncomment this System.out for things to work, albeit laggily and broken :< Maybe problem with KeyboardInput?
-            System.out.println("Player");
+            //I don't know why but adding a sleep prevents the 2-step bug. Maybe problem with KeyboardInput?
+            try
+            {
+                Thread.sleep(1);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
             //Player actions
             //In move we use char move and then 
             if (KeyboardInput.boolIsMoving)
@@ -66,7 +72,7 @@ public class Player extends Character{
                 KeyboardInput.boolIs1 = false;
                 waitingForPlayer = false;
             }
-            
+
             else if(KeyboardInput.boolIs2)
             {
                 lDungeon.dungeon.playerCharacter.useSkill2(lDungeon);
@@ -86,89 +92,88 @@ public class Player extends Character{
                 KeyboardInput.boolIsHeal = false;
                 waitingForPlayer = false;
             }
-            
+
             else if(KeyboardInput.diagnostic)
             {
                 System.out.println("Diagnostic " +lDungeon.dungeon.playerCharacter.currentTile.x + " " + lDungeon.dungeon.playerCharacter.currentTile.y);
                 waitingForPlayer = false;
             }
         }
-        
+
         endTurn(lDungeon);
     }
-        
+
     public int playerMoveY()
     {
-       
-       if (KeyboardInput.boolIsUp == true && KeyboardInput.boolIsDown == true)
-       {
-           KeyboardInput.boolIsUp = false;
-           KeyboardInput.boolIsDown = false;
-          return 0;
-       }
-       
-       //PLEASE NOTE THAT UP HAS LOWER Y VALUE. DOWN HAS GREATER Y VALUE.
-       else if (KeyboardInput.boolIsUp == true)
-       {
-           KeyboardInput.boolIsUp = false;
-           return -1;        
-       }
-       
-       else if (KeyboardInput.boolIsDown == true)
-       {
-           KeyboardInput.boolIsDown = false;
-           return 1;         
-       }
-       
-       else 
-       {
-           return 0;
-       }
-       
+
+        if (KeyboardInput.boolIsUp == true && KeyboardInput.boolIsDown == true)
+        {
+            KeyboardInput.boolIsUp = false;
+            KeyboardInput.boolIsDown = false;
+            return 0;
+        }
+
+        //PLEASE NOTE THAT UP HAS LOWER Y VALUE. DOWN HAS GREATER Y VALUE.
+        else if (KeyboardInput.boolIsUp == true)
+        {
+            KeyboardInput.boolIsUp = false;
+            return -1;        
+        }
+
+        else if (KeyboardInput.boolIsDown == true)
+        {
+            KeyboardInput.boolIsDown = false;
+            return 1;         
+        }
+
+        else 
+        {
+            return 0;
+        }
+
     }
-    
+
     public int playerMoveX(){
-       
-       if (KeyboardInput.boolIsLeft == true && KeyboardInput.boolIsRight == true)
-       {
-           KeyboardInput.boolIsLeft = false;
-           KeyboardInput.boolIsRight = false;
-          return 0;         
-       }
-       
-       else if (KeyboardInput.boolIsLeft == true)
-       {
-           KeyboardInput.boolIsLeft = false;
-           return -1;
-          
-       }
-       
-       else if (KeyboardInput.boolIsRight == true)
-       {
-           KeyboardInput.boolIsRight = false;
-           return 1;        
-       }
-       else 
-       {
-          return 0;
-       }
-       
+
+        if (KeyboardInput.boolIsLeft == true && KeyboardInput.boolIsRight == true)
+        {
+            KeyboardInput.boolIsLeft = false;
+            KeyboardInput.boolIsRight = false;
+            return 0;         
+        }
+
+        else if (KeyboardInput.boolIsLeft == true)
+        {
+            KeyboardInput.boolIsLeft = false;
+            return -1;
+
+        }
+
+        else if (KeyboardInput.boolIsRight == true)
+        {
+            KeyboardInput.boolIsRight = false;
+            return 1;        
+        }
+        else 
+        {
+            return 0;
+        }
+
     }
-    
+
     public void aimMode()
     {
-        
-    
+
+
     }
-    
+
     public BufferedImage getImage()
     {
-            Image slimeImage = null;
-            if (this.imageID == 0 && this.isHit == false)
-            {
-                return DungeonMain.playerImages[direction];
+        if (this.imageID == 0 && this.isHit == false)
+        {
+            return DungeonMain.playerImages[direction];
 
-                /*
+            /*
                 switch(this.direction)
                 {
                 case 6: return DungeonMain.playerImageEast;
@@ -177,25 +182,25 @@ public class Player extends Character{
                 case 2: return DungeonMain.playerImageSouth;
                 default: return DungeonMain.playerImageEast;
                 }*/
-            }
-            //Jam alt. image
-            else if(this.imageID == 1 && this.isHit == false)
-            {
-                return DungeonMain.playerImagesAlt[direction];
+        }
+        //Jam alt. image
+        else if(this.imageID == 1 && this.isHit == false)
+        {
+            return DungeonMain.playerImagesAlt[direction];
 
-            }
-            
-            else if(this.isHit == true)
-            {
-                return DungeonMain.playerImagesHit[direction];
-            }
-            else 
-            {
-                System.out.println("Error, player image not found");
-                return DungeonMain.playerImages[6];
-            }
+        }
+
+        else if(this.isHit == true)
+        {
+            return DungeonMain.playerImagesHit[direction];
+        }
+        else 
+        {
+            System.out.println("Error, player image not found");
+            return DungeonMain.playerImages[6];
+        }
     }
-    
+
     public void attack(DungeonMain lDungeon)
     {
         KeyboardInput.boolIsAttack = false;
@@ -204,50 +209,50 @@ public class Player extends Character{
         int damage = (int) (2 * Math.random()) + 1;
         int targetTileX = lDungeon.dungeon.playerCharacter.currentTile.x;
         int targetTileY = lDungeon.dungeon.playerCharacter.currentTile.y;
-    
+
         switch(lDungeon.dungeon.playerCharacter.direction)
         {
-            case 6: targetTileX += 1;
-                break;
-            case 8: targetTileY -= 1;
-                break;
-            case 4: targetTileX -= 1;
-                break;
-            case 2: targetTileY += 1;
-                break;
-            default: targetTileX += 1;
+        case 6: targetTileX += 1;
+        break;
+        case 8: targetTileY -= 1;
+        break;
+        case 4: targetTileX -= 1;
+        break;
+        case 2: targetTileY += 1;
+        break;
+        default: targetTileX += 1;
         }
         if (targetTileX  >= 0 && targetTileX < DungeonBuilder.xLength && targetTileY >= 0 && targetTileY < DungeonBuilder.yLength && lDungeon.dungeon.tileList[targetTileX][targetTileY] instanceof DungeonTile && lDungeon.dungeon.tileList[targetTileX][targetTileY].character instanceof Character)
         {
             dealDamage(damage, targetTileX, targetTileY, this, lDungeon);
         }
     }
-    
+
     public void interact(DungeonMain lDungeon) throws InstantiationException, IllegalAccessException
     {
         if (lDungeon.dungeon.playerCharacter.currentTile.itemID != 0)
         {
             if (lDungeon.dungeon.playerCharacter.currentTile.itemID == 1)
             {
-                System.out.println("MOENEY");
+                System.out.println("MONEY");
                 lDungeon.dungeon.playerCharacter.goldAmount += lDungeon.dungeon.playerCharacter.currentTile.goldAmount;
                 //lDungeon.superPlayer.goldCount += lDungeon.dungeon.playerCharacter.currentTile.goldAmount;
                 //THIS LINE MUST CHANGE THE VALUE IN TILEARRAY FROM LDungeon. ACCESSING SAME MEMORY?
                 GoldNumber temp = new GoldNumber(lDungeon.dungeon.playerCharacter.currentTile.goldAmount, lDungeon.dungeon.playerCharacter.currentTile.x, lDungeon.dungeon.playerCharacter.currentTile.y);
-                lDungeon.NumberList.add(temp);
+                lDungeon.numberList.add(temp);
                 lDungeon.dungeon.tileList[lDungeon.dungeon.playerCharacter.currentTile.x][lDungeon.dungeon.playerCharacter.currentTile.y].number = temp;
                 lDungeon.dungeon.playerCharacter.currentTile.itemID = 0;
                 lDungeon.dungeon.tileList[lDungeon.dungeon.playerCharacter.currentTile.x][lDungeon.dungeon.playerCharacter.currentTile.y].itemID = 0;
             }
-            
+
             //Normal inventory item.
             if (lDungeon.dungeon.playerCharacter.currentTile.itemID == 2)
             {
                 charInventory.add(this.currentTile);
             }
-                //lDungeon.tileArray = DungeonBuilder.tileList;
+            //lDungeon.tileArray = DungeonBuilder.tileList;
         }
-        
+
         if(lDungeon.dungeon.playerCharacter.currentTile.tileID == 2)
         {
             goingToNewFloor = true;
@@ -257,7 +262,7 @@ public class Player extends Character{
         System.out.println("Interacting woah");
         KeyboardInput.boolIsInteracting = false; 
     }
-    
+
     /**
      * Simple single tile movement(supports diagonals). First take in input and store the values (1,-1, or 0). 
      * Then perform charMove().
@@ -271,7 +276,7 @@ public class Player extends Character{
         int x = lDungeon.dungeon.playerCharacter.playerMoveX();
         int y = lDungeon.dungeon.playerCharacter.playerMoveY();
         lDungeon.dungeon.playerCharacter.charMove(x, y, lDungeon.dungeon);
-        
+
         //Activate enemies to column left or right depending on player motion.
         if (x != 0)
         {
@@ -288,7 +293,7 @@ public class Player extends Character{
                 ++yPos;
             }
         }
-        
+
         if (y != 0)
         {
             //This picks the correct column to scan. If moving up, y is -1 and the above column is scanner.
@@ -317,42 +322,42 @@ public class Player extends Character{
                 }
             }
         }
-        */
+         */
         //lDungeon.activeCharacterList.addAll(bufferList);
         System.out.println(lDungeon.dungeon.playerCharacter.currentTile);
         KeyboardInput.boolIsMoving = false;
         lDungeon.isEnemyTurn = true;
     }
-    
+
     public void useSkill1(DungeonMain lDungeon)
     {
         Fireball(lDungeon, this);
     }
 
-    
+
     public void useSkill2(DungeonMain lDungeon)
     {
         Heal(lDungeon, this);
     }
-    
+
     public void useSkill3(DungeonMain lDungeon)
     {
         revive(lDungeon, this);
     }
-        
+
     public void itemHeal(DungeonMain lDungeon)
     {
         if(charInventory.itemList.size() > 0)
         {
             charInventory.itemList.get(0).use(this, lDungeon);
         }
-        
+
         else
         {
             System.out.println("No heal items");
         }
     }
-    
+
     /*
    static public void main(String[] args)
     {

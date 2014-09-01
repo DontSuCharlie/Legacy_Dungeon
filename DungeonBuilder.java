@@ -164,10 +164,10 @@ public class DungeonBuilder
         }
         spawnPlayer(1,1);
 
-        spawnIndividualCharacter(new CombatJam(), 4, 4);
+        //spawnIndividualCharacter(new CombatJam(), 4, 4);
         //spawnIndividualCharacter(new RandomJam(), 10, 10);
         //spawnIndividualCharacter(new RandomJam(), 9, 9);
-        spawnIndividualCharacter(new Ghost(), 8, 8);
+        //spawnIndividualCharacter(new Ghost(), 8, 8);
 
         spawnIndividualItem(new HealthPot(), 2,2);
         //spawnIndividualCharacter(new RandomJam(), 1, 10);

@@ -5,8 +5,6 @@
 //pack() = resize to smallest area for Window based on components' sizes
 import java.util.ArrayList;
 import java.awt.*;//This is the java toolkit, includes Color, Dimension, Graphics, etc.
-import java.awt.event.*;//Event Listeners
-import java.awt.image.*;//Image classes allow for storage/usage of image files
 import javax.swing.*;//Part of UI, includes JPanel
 import java.awt.Polygon;
 
@@ -83,7 +81,7 @@ createWorld(int turn), takes the current turn #, adjusts difficulty of newly gen
 /*////////////////////////////////////////////////////////Method 1: Loads menu screen*/
 	public static void loadMenu()
 	{
-		musicPlayer.playMusic("sounds/menu0.wav");
+		musicPlayer.playMusic("sounds/Worldmap1.wav");
 		menu = new Menu();
 		Window.window.add(menu.newGameButton);
 		Window.window.add(menu.loadGameButton);

@@ -16,7 +16,7 @@ public class DungeonTile implements Comparable<DungeonTile>
 	Character character;
 	//DeadCharacter deadCharacter;
 	ArrayList<DeadCharacter> deadCharTileList = new ArrayList<DeadCharacter>();
-	Projectile projectile;
+	//ArrayList<Projectile> projectileList = new ArrayList<Projectile>();
 	public BufferedImage tileImage;
 	public BufferedImage itemImage;
 	public BufferedImage charImage;
@@ -101,8 +101,6 @@ public class DungeonTile implements Comparable<DungeonTile>
         result = prime * result + goldAmount;
         result = prime * result + itemID;
         result = prime * result + ((number == null) ? 0 : number.hashCode());
-        result = prime * result
-                + ((projectile == null) ? 0 : projectile.hashCode());
         result = prime * result + tileID;
         result = prime * result
                 + ((tileImage == null) ? 0 : tileImage.hashCode());
@@ -146,17 +144,6 @@ public class DungeonTile implements Comparable<DungeonTile>
             }
         }
         else if (!number.equals(other.number))
-        {
-            return false;
-        }
-        if (projectile == null)
-        {
-            if (other.projectile != null)
-            {
-                return false;
-            }
-        }
-        else if (!projectile.equals(other.projectile))
         {
             return false;
         }

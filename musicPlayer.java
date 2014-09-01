@@ -32,7 +32,16 @@ public class MusicPlayer
 	{
 		try
 		{
-			audio = AudioSystem.getAudioInputStream(new File(songPath));
+		    //For jar and cmd.
+		    File file = new File(songPath);    
+		    //For eclipse because for some reason it checks one level higher.
+		    
+		    if (!file.exists())
+		    {
+		        file = new File("bin/" + songPath);
+		    }
+		    
+			audio = AudioSystem.getAudioInputStream(file);
 			clip = AudioSystem.getClip();
 			clip.open(audio);
 			clip.loop(0);
@@ -58,7 +67,16 @@ public class MusicPlayer
 	{
 		try
 		{
-			audio = AudioSystem.getAudioInputStream(new File(songPath));
+            //For jar and cmd.
+            File file = new File(songPath);    
+            //For eclipse because for some reason it checks one level higher.
+            
+            if (!file.exists())
+            {
+                file = new File("bin/" + songPath);
+            }
+		    
+			audio = AudioSystem.getAudioInputStream(file);
 			clip = AudioSystem.getClip();
 			clip.open(audio);
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
