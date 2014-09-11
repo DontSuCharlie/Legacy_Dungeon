@@ -73,6 +73,7 @@ public class MusicPlayer
             
             if (!file.exists())
             {
+                System.out.println(songPath + "Does not exist, trying in bin");
                 file = new File("bin/" + songPath);
             }
 		    

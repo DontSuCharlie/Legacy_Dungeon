@@ -57,6 +57,7 @@ public class DungeonMain extends JPanel implements Runnable
     static BufferedImage[] ghostImagesDead = new BufferedImage[10];
 
     static BufferedImage[] fireballImages = new BufferedImage[8];
+    static BufferedImage[] teleballImages = new BufferedImage[8];
 
     //White numbers
     BufferedImage[] num = new BufferedImage[10];
@@ -248,6 +249,10 @@ public class DungeonMain extends JPanel implements Runnable
         {
             fireballImages[i] = imageLoader.loadImage("images/fireball" + i + ".png");
         }
+        for(int i = 0; i <= 7; i++)
+        {
+            teleballImages[i] = imageLoader.loadImage("images/teleball" + i + ".png");
+        }
     }
     //Basically runs the dungeonmain object. It goes into a loop
     public void dungeonLoop() throws InstantiationException, IllegalAccessException
@@ -255,7 +260,7 @@ public class DungeonMain extends JPanel implements Runnable
         Window.createWindow();//creates window
         Window.window.add(this);//adds game file to the window
         boolean inGame = true;
-        musicPlayer.playMusic("sounds/worldMap2.au");
+        musicPlayer.playMusic("sounds/Worldmap2.au");
         while (inGame)
         {
             while(!dungeon.playerCharacter.goingToNewFloor)

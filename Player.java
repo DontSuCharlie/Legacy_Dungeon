@@ -85,6 +85,18 @@ public class Player extends Character{
                 KeyboardInput.boolIs3 = false;
                 waitingForPlayer = false;
             }
+            else if(KeyboardInput.boolIs4)
+            {
+                lDungeon.dungeon.playerCharacter.useSkill4(lDungeon);
+                KeyboardInput.boolIs4 = false;
+                waitingForPlayer = false;
+            }
+            else if(KeyboardInput.boolIs5)
+            {
+                lDungeon.dungeon.playerCharacter.useSkill5(lDungeon);
+                KeyboardInput.boolIs5 = false;
+                waitingForPlayer = false;
+            }
             else if(KeyboardInput.boolIsHeal)
             {
                 System.out.println("ItemHeal");
@@ -183,7 +195,7 @@ public class Player extends Character{
                 default: return DungeonMain.playerImageEast;
                 }*/
         }
-        //Jam alt. image
+		//Alt. image
         else if(this.imageID == 1 && this.isHit == false)
         {
             return DungeonMain.playerImagesAlt[direction];
@@ -343,6 +355,19 @@ public class Player extends Character{
     public void useSkill3(DungeonMain lDungeon)
     {
         revive(lDungeon, this);
+    }
+    
+    public void useSkill4(DungeonMain lDungeon)
+    {
+        int teleRange = 5;
+        randomTeleport(lDungeon, this, teleRange);
+    }
+    
+    public void useSkill5(DungeonMain lDungeon)
+    {
+        int teleRange = 5;
+        System.out.println("Making teleball");
+        Teleball(lDungeon, this, teleRange);
     }
 
     public void itemHeal(DungeonMain lDungeon)

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*
 Skills
 Attacks
@@ -184,9 +186,41 @@ public class Skills
         
     }
     
-    public void shortRangeTeleport(DungeonMain lDungeon, Character target)
+    public void randomTeleport(DungeonMain lDungeon, Character targetCharacter, int range)
     {
+        //Get an arraylist of the tiles within range of this characte.
+        int centerX = targetCharacter.currentTile.x;
+        int centerY = targetCharacter.currentTile.y;
+        ArrayList<DungeonTile> tempTileList = new ArrayList<DungeonTile>();
         
+        for (int i = centerX - range; i < centerX + range; i++)
+        {
+            for (int j = centerY - range; j < centerY + range; j++)
+            {
+                if (lDungeon.dungeon.tileChecker(i,j,true))
+                {
+                    tempTileList.add(lDungeon.dungeon.tileList[i][j]);
+                }
+            }
+        }
+        
+        DungeonTile chosen = tempTileList.get((int) (Math.random()*tempTileList.size()));
+        targetCharacter.charMove(chosen, lDungeon.dungeon);
+        targetCharacter.activateArea(lDungeon.dungeon, lDungeon.dungeon.playerCharacter.xVision, lDungeon.dungeon.playerCharacter.yVision);
+
+        skillHelper(lDungeon, targetCharacter);
+    }
+    
+    public void Teleball(DungeonMain lDungeon, Character sourceCharacter, int teleRange)
+    {
+        description = "Launches a slowmoving, transporting projectile. Useful for getting allies out of tough situations and moving enemies away for yourself.";
+        System.out.println("Boosh");
+        
+        DungeonTile startTile = lDungeon.dungeon.tileList[sourceCharacter.currentTile.x][sourceCharacter.currentTile.y];
+        
+        lDungeon.projectileList.add(new TeleBall (2, sourceCharacter.direction, 5, startTile, sourceCharacter, teleRange));
+        
+        skillHelper(lDungeon, sourceCharacter);
     }
     
 }

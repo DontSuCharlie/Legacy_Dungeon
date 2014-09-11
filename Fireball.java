@@ -1,12 +1,10 @@
 import java.awt.image.BufferedImage;
 
 /**
- * 
- */
-
-/**
  * @author Anikan
  * Having separate classes for each projectile type so that different things interact differently. Ex. fireballs would be stopped by water.
+ * The fireball is pretty simple: fast, powerful, and cheap.
+ * It animates through 8 images, rotating.
  */
 public class Fireball extends Projectile
 {
