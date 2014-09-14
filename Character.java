@@ -15,7 +15,7 @@ Character.java is the superclass of NPC.java, Player.java, and Enemy.java. All c
 6] Skills
  */
 //probably should not extend skills. Sloppy
-public abstract class Character extends Skills
+public abstract class Character //extends Skills
 {
     //Note to self: Remember to update public or not based on how you want other classes to access this file
     //Field

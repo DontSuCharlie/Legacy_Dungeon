@@ -45,13 +45,30 @@ Can be used as Trap?
 Different bosses have different "modes":
 Anais: Chess - game becomes turn based - every turn you roll to become a different piece. Anais is only damage-able when she becomes a Queen Piece.
 */
-public class Skills
+
+//All skills are their own class; when created they will run and then stop. Used so that they can be placed in an array of skills.
+public abstract class Skills
 {
     String description = "This is a skill";
     int damage = 0; //Negative for heals, positive for damage.
     
+    /*
+    public static void useSkill(String skillName)
+    {
+        if (skillName.equals("fireball"))
+        {
+            
+        }
+    }
+    */
+    
+    public void use(DungeonMain lDungeon, Character sourceCharacter)
+    {
+        System.out.println("Error");
+    }
+    
     //Gets the tile in front of the sourceCharacter.
-    public DungeonTile getSourceTile(DungeonMain lDungeon, int direction, DungeonTile tile)
+    public static DungeonTile getSourceTile(DungeonMain lDungeon, int direction, DungeonTile tile)
     {
       //If bash for direction
         int targetX = tile.x;
@@ -120,7 +137,7 @@ public class Skills
      * @param lDungeon
      * @param sourceCharacter
      */
-    private void skillHelper(DungeonMain lDungeon, Character sourceCharacter)
+    public static void skillHelper(DungeonMain lDungeon, Character sourceCharacter)
     {
         //Is enemy turn is true when source is friendly. It is false when source is unfriendly.
         lDungeon.isEnemyTurn = sourceCharacter.isFriendly;
@@ -129,8 +146,9 @@ public class Skills
         //Put this skill on cooldown.
         
     }
+}
     
-    /* Fun error: Moves you with projectile, killing things in way. Then softlocks
+    /* Fun error: Moves you with projectile, killing things in way. Then softlocks. Moves the tile coordinates as well
     public void QuadFireball(DungeonMain lDungeon, Character sourceCharacter)
     {
         description = "Launches 4 fireballs in an X pattern. More is better";
@@ -147,9 +165,11 @@ public class Skills
     }
     */
     
-    public void Fireball(DungeonMain lDungeon, Character sourceCharacter)
+class FireballCommand extends Skills
+{
+    String description = "Launches 4 fireballs in an X pattern. More is better";
+    public void use(DungeonMain lDungeon, Character sourceCharacter)
     {
-        description = "Launches 4 fireballs in an X pattern. More is better";
         System.out.println("Boosh");
         
         DungeonTile startTile = lDungeon.dungeon.tileList[sourceCharacter.currentTile.x][sourceCharacter.currentTile.y];
@@ -158,35 +178,56 @@ public class Skills
         
         skillHelper(lDungeon, sourceCharacter);
     }
-    
-    //Gives you health. Please make cooler. OVERHEAL.
-    public void Heal(DungeonMain lDungeon, Character sourceCharacter)
+}
+
+//Gives you health. OVERHEAL.
+class HealCommand extends Skills
+{
+    int healAmount;
+    public HealCommand(int healAmount)
     {
-        int healAmount = 30;
-        description = "Gives you " + healAmount +" health. If you heal above 100%, then the extra points will decay over turns." + lDungeon.OVERHEAL_DECAY_PERCENT + "& of max health per turn. Max overheal is 200%";
+        this.healAmount = healAmount;
+    }
+    String description = "Gives you some health. If you heal above 100%, then the extra points will decay over turns. 10% of max health per turn. Max overheal is 200%";
+    public void use(DungeonMain lDungeon, Character sourceCharacter)
+    {
         System.out.println("whoosh");
         sourceCharacter.heal(healAmount, sourceCharacter, lDungeon);
         
         skillHelper(lDungeon, sourceCharacter);
     }
+}
+
+class ReviveCommand extends Skills
+{
+    String description = "Revives a dead creature to fight for you";
+    double healPercent = 0;
     
-    
-    public void revive(DungeonMain lDungeon, Character sourceCharacter)
+    public ReviveCommand(double healPercent)
     {
-        double healAmount = .25;
+        this.healPercent = healPercent;
+    }
+    public void use(DungeonMain lDungeon, Character sourceCharacter)
+    { 
         System.out.println("pow");
-        description = "Revives a dead creature to fight for you";
         
         DungeonTile targetTile = getSourceTile(lDungeon, sourceCharacter.direction, sourceCharacter.currentTile);
         if (targetTile instanceof DungeonTile && !(targetTile.deadCharTileList.isEmpty()))
         {
-            sourceCharacter.revive(healAmount, targetTile.deadCharTileList.get(0), lDungeon);
+            sourceCharacter.revive(healPercent, targetTile.deadCharTileList.get(0), lDungeon);
         }
         skillHelper(lDungeon, sourceCharacter);
-        
     }
-    
-    public void randomTeleport(DungeonMain lDungeon, Character targetCharacter, int range)
+}
+
+class RandomTeleportCommand extends Skills
+{
+    int range;
+    public RandomTeleportCommand(int range)
+    {
+        this.range = range;
+    }
+    public void use(DungeonMain lDungeon, Character targetCharacter)
     {
         //Get an arraylist of the tiles within range of this characte.
         int centerX = targetCharacter.currentTile.x;
@@ -204,14 +245,24 @@ public class Skills
             }
         }
         
+        
         DungeonTile chosen = tempTileList.get((int) (Math.random()*tempTileList.size()));
         targetCharacter.charMove(chosen, lDungeon.dungeon);
         targetCharacter.activateArea(lDungeon.dungeon, lDungeon.dungeon.playerCharacter.xVision, lDungeon.dungeon.playerCharacter.yVision);
-
+    
         skillHelper(lDungeon, targetCharacter);
     }
+}
+
+class TeleballCommand extends Skills
+{
+    int teleRange = 0;
+    public TeleballCommand(int teleRange)
+    {
+        this.teleRange = teleRange;
+    }
     
-    public void Teleball(DungeonMain lDungeon, Character sourceCharacter, int teleRange)
+    public void use(DungeonMain lDungeon, Character sourceCharacter)
     {
         description = "Launches a slowmoving, transporting projectile. Useful for getting allies out of tough situations and moving enemies away for yourself.";
         System.out.println("Boosh");
@@ -222,5 +273,17 @@ public class Skills
         
         skillHelper(lDungeon, sourceCharacter);
     }
-    
+}
+
+class IcePathCommand extends Skills
+{
+    int range;
+    public IcePathCommand(int range)
+    {
+        this.range = range;
+    }
+    public void use(DungeonMain lDungeon, Character sourceCharacter)
+    {
+   
+    }
 }

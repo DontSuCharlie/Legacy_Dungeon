@@ -46,7 +46,8 @@ public class TeleBall extends Projectile
                     //Make sure character is still alive.
                     if (lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character instanceof Character)
                     {
-                        lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character.randomTeleport(lDungeon, lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character, teleRange);
+                        RandomTeleportCommand teleCommand = new RandomTeleportCommand(teleRange);
+                        teleCommand.use(lDungeon, lDungeon.dungeon.tileList[currentTile.x][currentTile.y].character);
                     }
                     System.out.println("Shot");
                    

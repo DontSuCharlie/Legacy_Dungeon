@@ -8,6 +8,7 @@ public class Player extends Character{
     boolean goingToNewFloor; //Turned true to start process of going to next floor.
     int xVision;
     int yVision;
+    Skills hotbarList[] = new Skills[10];
 
     public Player(int inputRiches)
     {
@@ -24,6 +25,13 @@ public class Player extends Character{
         charInventory = new Inventory(64);
         xVision = 16;
         yVision = 9;
+        hotbarList[0] = new FireballCommand();
+        //Currently manually inputing amounts, should recalculate whenever a stat changes ex. gaining level, equipping stuff.
+        hotbarList[1] = new HealCommand(30);
+        hotbarList[2] = new ReviveCommand(.25);
+        hotbarList[3] = new RandomTeleportCommand(5);
+        hotbarList[4] = new TeleballCommand(5);
+        
 
     }
 
@@ -195,7 +203,7 @@ public class Player extends Character{
                 default: return DungeonMain.playerImageEast;
                 }*/
         }
-		//Alt. image
+        //Alt. image
         else if(this.imageID == 1 && this.isHit == false)
         {
             return DungeonMain.playerImagesAlt[direction];
@@ -343,31 +351,29 @@ public class Player extends Character{
 
     public void useSkill1(DungeonMain lDungeon)
     {
-        Fireball(lDungeon, this);
+        hotbarList[0].use(lDungeon, this);
+        System.out.println("A");
     }
 
 
     public void useSkill2(DungeonMain lDungeon)
     {
-        Heal(lDungeon, this);
+        hotbarList[1].use(lDungeon, this);
     }
 
     public void useSkill3(DungeonMain lDungeon)
     {
-        revive(lDungeon, this);
+        hotbarList[2].use(lDungeon, this);
     }
     
     public void useSkill4(DungeonMain lDungeon)
     {
-        int teleRange = 5;
-        randomTeleport(lDungeon, this, teleRange);
+        hotbarList[3].use(lDungeon, this);
     }
     
     public void useSkill5(DungeonMain lDungeon)
     {
-        int teleRange = 5;
-        System.out.println("Making teleball");
-        Teleball(lDungeon, this, teleRange);
+        hotbarList[4].use(lDungeon, this);
     }
 
     public void itemHeal(DungeonMain lDungeon)
