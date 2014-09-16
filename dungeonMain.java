@@ -76,6 +76,10 @@ public class DungeonMain extends JPanel implements Runnable
     BufferedImage minusR = imageLoader.loadImage("images/minusR.png");
     BufferedImage divide = imageLoader.loadImage("images/slash.png");
     BufferedImage heart = imageLoader.loadImage("images/heart.png");
+    
+    BufferedImage ghostEyebrows = imageLoader.loadImage("images/ghostScaredEyebrows.png");
+    BufferedImage ghostHalo = imageLoader.loadImage("images/ghostHalo.png");
+
     public static boolean isEnemyTurn = false;
 
     public DungeonMain() throws InstantiationException, IllegalAccessException
@@ -518,6 +522,26 @@ public class DungeonMain extends JPanel implements Runnable
                         {
                             BufferedImage slimeImage = ((CombatJam)drawnTile.character).getImage();
                             g.drawImage(slimeImage, i * tileLengthX + 25, j * tileLengthY + 25, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, slimeImage.getWidth(null) + 50, slimeImage.getHeight(null) + 100, null);
+                        }
+                        
+                        //8 is the back one
+                        else if (drawnTile.character instanceof Ghost && drawnTile.character.direction != 8)
+                        {
+                            BufferedImage ghostImage = drawnTile.character.getImage();
+                            g.drawImage(ghostImage, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, ghostImage.getWidth(null), ghostImage.getHeight(null), null);
+                            
+                            //Running, draw the scared eyebrows.
+                            if (((Ghost) drawnTile.character).runTimer != 0)
+                            {
+                                g.drawImage(ghostEyebrows, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, ghostEyebrows.getWidth(null), ghostEyebrows.getHeight(null), null);
+                            }
+                            
+                            //Ready to heal, draw the halo.
+                            if (((Ghost) drawnTile.character).cooldownTimer1 == 0)
+                            {
+                                g.drawImage(ghostHalo, i * tileLengthX, j * tileLengthY, (i+1) * tileLengthX, (j+1) * tileLengthY, 0, 0, ghostHalo.getWidth(null), ghostHalo.getHeight(null), null);
+
+                            }
                         }
 
                         //Draw Everything else

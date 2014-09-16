@@ -260,11 +260,12 @@ class TeleballCommand extends Skills
     public TeleballCommand(int teleRange)
     {
         this.teleRange = teleRange;
+        description = "Launches a slowmoving, transporting projectile. Useful for getting allies out of tough situations and moving enemies away for yourself.";
+
     }
     
     public void use(DungeonMain lDungeon, Character sourceCharacter)
     {
-        description = "Launches a slowmoving, transporting projectile. Useful for getting allies out of tough situations and moving enemies away for yourself.";
         System.out.println("Boosh");
         
         DungeonTile startTile = lDungeon.dungeon.tileList[sourceCharacter.currentTile.x][sourceCharacter.currentTile.y];

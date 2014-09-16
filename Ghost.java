@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 
 public class Ghost extends Enemy{
 
-    private int runTimer = 0;
+    public int runTimer = 0;
     private int cooldownTimer1Max = 10; //Time to charge abilities. Reduced by one each turn.
     public int cooldownTimer1 = cooldownTimer1Max;//Deals with cooldowns for the first ability of this creature. 
 
@@ -65,7 +65,10 @@ public class Ghost extends Enemy{
     public void endTurn(DungeonMain lDungeon)
     {
         super.endTurn(lDungeon);
-        cooldownTimer1--;
+        if (cooldownTimer1 > 0)
+        {
+            cooldownTimer1--;
+        }
     }
 
     public void resetCooldown()

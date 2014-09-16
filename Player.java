@@ -352,7 +352,6 @@ public class Player extends Character{
     public void useSkill1(DungeonMain lDungeon)
     {
         hotbarList[0].use(lDungeon, this);
-        System.out.println("A");
     }
 
 
