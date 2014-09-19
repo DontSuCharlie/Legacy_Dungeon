@@ -13,7 +13,7 @@ import java.nio.*;//ByteBuffer for setIcon()
 public class LegacyLWJGL
 {
 	//Global variables here
-	static boolean inGame;
+	boolean inGame;
 	public static void main(String[] args)
 	{
 		/*read save file here*/
@@ -28,7 +28,7 @@ public class LegacyLWJGL
 		try
 		{
 			Display.setDisplayMode(display);
-			BufferedImage icon = imageLoader.loadImage("images/IconV0.png");
+			BufferedImage icon = imageLoader.loadImage("images/NewIcon.png");
 			ByteBuffer[] iconArray = {converter.imageToByteBuffer(icon, false, true, null)};
 			//Note: for set icon - Windows = 1 16x16; Linux = 1 32 x 32; Mac OSX = 1 128x128. If not satisfied icon will not load
 			Display.setIcon(iconArray);
@@ -50,7 +50,7 @@ public class LegacyLWJGL
 			//loadMenu();
 			while(inGame)
 			{
-				//loadDungeon(createWorld(turnCounter));
+				loadDungeon(createWorld(turnCounter));
 			}
 		}
 		Display.destroy();
