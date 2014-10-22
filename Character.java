@@ -413,7 +413,7 @@ public abstract class Character //extends Skills
         HashSet<PathTile> checkedTiles = new HashSet<PathTile>();
 
         //We only care about the minimum value so a priority queue is best for the job.
-        PriorityQueue<PathTile> potentialTileQueue = new PriorityQueue<PathTile>(PathTile.MAX_DISTANCE_ORDER);
+        PriorityQueue<PathTile> potentialTileQueue = new PriorityQueue<PathTile>(10, PathTile.MAX_DISTANCE_ORDER);
         potentialTileQueue.addAll(new PathTile(this.currentTile).getAdjacentTilesAndSetValues(lDungeon, new PathTile(this.currentTile), scaryCharacter.currentTile, this.closeToTarget));
 
         //If the queue is empty, then there's no possible way to reach the target. :< I also cause this to short circuit if it attempts to check more that 25 tiles. If it's that bad, then it's probably broken or impossible. Legitimately far away creatures on the other hand do nothing... Perhaps a separate 

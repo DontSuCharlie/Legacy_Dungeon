@@ -1,6 +1,14 @@
+//The story will be different each time it's run. An ID will be generated from branching off in different directions at the most significant events, resulting in a unique storyline.
+//The "seed" ID will then be saved and uploaded to the server, resulting in a collection of specific storylines.
+//Once every possibility (in the millions) have been fulfilled, we can celebrate
+//But then again...millions...will we ever get to that many??????
+//Maybe thousands?
+//idk
+//cryy
+
 LEGACY DUNGEON
 ================================
-A top-down 2-D dungeon crawler with randomly generated maps. The game is currently in pre-alpha stage.
+Legacy Dungeon is a top-down 2D dungeon crawler with randomly generated maps. The game is currently in pre-alpha stage.
 
 [0] {Inspiration Stage - Basic concepts and ideas for game are created. Programming commences!}
 [1] {Pre-Alpha Stage - Basic structures (window, image/sound loading, map generation, map management, world map, menu screen, GUI implementors, the blueprints for characters, monsters, NPC, items, tiles, and skills) are finished.}
@@ -12,30 +20,20 @@ A top-down 2-D dungeon crawler with randomly generated maps. The game is current
 [7] {Pre-Release - Begin getting information out there.}
 [8] {Release!}
 
-Inspiration Stage - This is the stage where we came up with the concepts and ideas for the game. Commence programming!
-Pre-Alpha Stage - This is the stage where we have already laid out the most basic structures of our game.
-Alpha Stage - This is the stage where we begin adding unique objects to the game along
-Pre-Beta Stage - This is the 
-Progress:
-
-Inspiration -> Pre-Alpha Stage ->
-
-
 Copyright 2014 Charlie Su, Anish Kannan
 
 ==============
 Authors: Charlie Su and Anish Kannan
 Mentors: David Ma
-Musicians: Alex Wu
 
 Table of Contents
 =================
-I. Game Content
+O. Game Content
+I. Description of Each File
 II. To-Do List
 III. Completed List
-IV. Activity Log
 
-I. GAME CONTENT
+O. GAME CONTENT
 ================
 a. What is this game you speak of?
 	In a dark, dark world, you are assigned the duty as guardian of the Great Spiral Tower - the main source of light to your world. A force is amassing armies to try to take over the Great Spiral Tower, so it is up to you to defend the tower, strengthen yourself, and make sure the enemy is eliminated so you can be at peace.
@@ -140,6 +138,27 @@ Play>>New Game/Load Save File
 Settings>>Graphics/Sound/Other Options
 Credits
 Exit
+
+I. Description of Each File
+===============
+a. Main Branch (currently maintained by Anish)
+b. LWJGL Branch (currently maintained by Charlie)
+c. Dusty Files (currently unmaintained, might be completed or abandoned)
+
+a. Main Branch
+
+SKILL RELATED
+==========
+TeleBall - Launches a projectile that teleports whatever Character it hits to a random coordinate on the map.
+FireBall - Launches a projectile that 
+
+Character - 
+b. LWJGL Branch
+LegacyLWJGL - This will be the main file of the game. It will be the one calling other files/ending their threads. At the moment, all it does is open a window for a few minutes then crashes.
+ImageToBytes - (currently not working) Attempts to convert image files to a ByteArray so LWJGL can use the image as an icon.
+
+c. Dusty Files
+
 
 II. To-Do List
 ===============
