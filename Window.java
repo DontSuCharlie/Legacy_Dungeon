@@ -25,7 +25,6 @@ public class Window extends JPanel
 	static int windowY;
 	static int windowXPos;
 	static int windowYPos;
-	static ImageLoader imageLoader;
 	/*
 	public Window()
 	{
@@ -52,7 +51,6 @@ public class Window extends JPanel
 	{
 	    window = new JFrame("Legacy Dungeon");
 		screenRes = Toolkit.getDefaultToolkit().getScreenSize();
-		imageLoader = new ImageLoader();
 		//Reads save file to see current resolution; otherwise goes to default size
 		//windowX = (int)(screenRes.getWidth()/2);
 		//windowY = (int)(screenRes.getWidth()/2.2);//set Y to width because I wanted a square
@@ -75,7 +73,7 @@ public class Window extends JPanel
 		else
 			window.setUndecorated(true);
 		window.setResizable(false);//too messy for now, will change to true later
-		window.setIconImage(imageLoader.loadImage("/images/icon.png"));//sets icon image
+		window.setIconImage(ImageLoader.loadImage("/images/icon.png"));//sets icon image
 		window.setLocation(windowXPos, windowYPos);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//closes program when "X" button is pressed
 		window.setVisible(true);

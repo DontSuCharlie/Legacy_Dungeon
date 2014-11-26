@@ -15,7 +15,6 @@ public class Button extends JComponent implements MouseListener
 	boolean clicked;
 	boolean entered;
 	boolean exited;
-	ImageLoader imageLoader = new ImageLoader();
 	int x;
 	int y;
 	int height;
@@ -26,9 +25,9 @@ public class Button extends JComponent implements MouseListener
 
 	public Button(String notPressedImage, String mouseOverImage, String pressedImage, int x, int y, int length, int height)
 	{
-		notPressed = imageLoader.loadImage(notPressedImage);
-		mouseOver = imageLoader.loadImage(mouseOverImage);
-		isPressed = imageLoader.loadImage(pressedImage);
+		notPressed = ImageLoader.loadImage(notPressedImage);
+		mouseOver = ImageLoader.loadImage(mouseOverImage);
+		isPressed = ImageLoader.loadImage(pressedImage);
 		currentImage = notPressed;
 		//this.text = text;
 		this.x = x;

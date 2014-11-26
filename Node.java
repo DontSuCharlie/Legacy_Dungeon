@@ -16,7 +16,6 @@ public class Node extends JComponent implements MouseListener
 	int theme;
 	static int difficulty;//Static because difficulty increases as game progresses
 	BufferedImage image;
-	ImageLoader imageLoader;
 	static int yLength = 10;//length of images of nodes
 	static int xLength = 10;//^
 	boolean inRange;
@@ -29,7 +28,6 @@ public class Node extends JComponent implements MouseListener
 		theme = inputTheme;
 		difficulty = 1;//defaults to 1, the starting difficulty
 		status = 0;//(int)(Math.random()*5);//defaults to 0 bc all nodes start out as dungeons
-		imageLoader = new ImageLoader();
 		image = loadNodeImage(status);
 		inRange = true;
 		mouse = new Mouse();
@@ -43,7 +41,7 @@ Method 0: .nodeImage loads BufferedImage of Node, depending on nodeStatus
 */
 	public BufferedImage loadNodeImage(int nodeStatus)
 	{
-		BufferedImage node = imageLoader.loadImage("images/Node" + nodeStatus + ".png");
+		BufferedImage node = ImageLoader.loadImage("images/Node" + nodeStatus + ".png");
 		return node;
 	}
 /*

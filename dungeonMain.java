@@ -20,22 +20,21 @@ public class DungeonMain extends JPanel implements Runnable
     final double OVERHEAL_DECAY_PERCENT = .1; //If a character is above this health, then this percent of health will be decayed over time.
     private Thread animator;//new thread
     boolean screenShakeOn;//if true, screen will be shaking; else, screen won't be shaking
-    static ImageLoader imageLoader = new ImageLoader();//in charge of loading images
     final int numTilesX = 16;
     final int numTilesY = 9;
     //static int firstInactiveChar = 0; //Sets up invariant of all active characters to left of this and all inactive characters to right and including this one.
     //Hashmap would be perfect for images. Will implement if have time.
-    //BufferedImage tileImage0 = imageLoader.loadImage("images/Wall.png");
+    //BufferedImage tileImage0 = ImageLoader.loadImage("images/Wall.png");
 
-    BufferedImage money = imageLoader.loadImage("images/coinGold.png");
-    BufferedImage redBarLeft = imageLoader.loadImage("images/redBarLeft.png");
-    BufferedImage redBarRight = imageLoader.loadImage("images/redBarRight.png");
-    BufferedImage redBarMiddle = imageLoader.loadImage("images/redBarMiddle.png");
-    BufferedImage greenBarLeft = imageLoader.loadImage("images/greenBarLeft.png");
-    BufferedImage greenBarRight = imageLoader.loadImage("images/greenBarRight.png");
-    BufferedImage greenBarMiddle = imageLoader.loadImage("images/greenBarMiddle.png");	
-    BufferedImage healthPot = imageLoader.loadImage("images/healthPot.png");
-    //BufferedImage fireball = imageLoader.loadImage("images/fireball.png");
+    BufferedImage money = ImageLoader.loadImage("images/coinGold.png");
+    BufferedImage redBarLeft = ImageLoader.loadImage("images/redBarLeft.png");
+    BufferedImage redBarRight = ImageLoader.loadImage("images/redBarRight.png");
+    BufferedImage redBarMiddle = ImageLoader.loadImage("images/redBarMiddle.png");
+    BufferedImage greenBarLeft = ImageLoader.loadImage("images/greenBarLeft.png");
+    BufferedImage greenBarRight = ImageLoader.loadImage("images/greenBarRight.png");
+    BufferedImage greenBarMiddle = ImageLoader.loadImage("images/greenBarMiddle.png");	
+    BufferedImage healthPot = ImageLoader.loadImage("images/healthPot.png");
+    //BufferedImage fireball = ImageLoader.loadImage("images/fireball.png");
 
     static BufferedImage[] slimeImages = new BufferedImage[10];
     static BufferedImage[] slimeImagesAlt = new BufferedImage[10];
@@ -69,16 +68,16 @@ public class DungeonMain extends JPanel implements Runnable
     BufferedImage[] numGr = new BufferedImage[10]; 
 
     BufferedImage[] tileImagesDefault = new BufferedImage[10];
-    BufferedImage plusG = imageLoader.loadImage("images/plusG.png");
-    BufferedImage plusGr = imageLoader.loadImage("images/plusGr.png");
-    BufferedImage plusR = imageLoader.loadImage("images/plusR.png");
-    BufferedImage minus = imageLoader.loadImage("images/minus.png");
-    BufferedImage minusR = imageLoader.loadImage("images/minusR.png");
-    BufferedImage divide = imageLoader.loadImage("images/slash.png");
-    BufferedImage heart = imageLoader.loadImage("images/heart.png");
+    BufferedImage plusG = ImageLoader.loadImage("images/plusG.png");
+    BufferedImage plusGr = ImageLoader.loadImage("images/plusGr.png");
+    BufferedImage plusR = ImageLoader.loadImage("images/plusR.png");
+    BufferedImage minus = ImageLoader.loadImage("images/minus.png");
+    BufferedImage minusR = ImageLoader.loadImage("images/minusR.png");
+    BufferedImage divide = ImageLoader.loadImage("images/slash.png");
+    BufferedImage heart = ImageLoader.loadImage("images/heart.png");
     
-    BufferedImage ghostEyebrows = imageLoader.loadImage("images/ghostScaredEyebrows.png");
-    BufferedImage ghostHalo = imageLoader.loadImage("images/ghostHalo.png");
+    BufferedImage ghostEyebrows = ImageLoader.loadImage("images/ghostScaredEyebrows.png");
+    BufferedImage ghostHalo = ImageLoader.loadImage("images/ghostHalo.png");
 
     public static boolean isEnemyTurn = false;
 
@@ -104,23 +103,23 @@ public class DungeonMain extends JPanel implements Runnable
         System.out.println("Loading Character images");
         for(int i = 0; i <= 9; i++)
         {
-            num[i] = imageLoader.loadImage("images/" + i + ".png");
+            num[i] = ImageLoader.loadImage("images/" + i + ".png");
         }
         for(int i = 0; i <= 9; i++)
         {
-            numR[i] = imageLoader.loadImage("images/" + i + "R.png");
+            numR[i] = ImageLoader.loadImage("images/" + i + "R.png");
         }
         for(int i = 0; i <= 9; i++)
         {
-            numG[i] = imageLoader.loadImage("images/" + i + "G.png");
+            numG[i] = ImageLoader.loadImage("images/" + i + "G.png");
         }
         for(int i = 0; i <= 9; i++)
         {
-            numGr[i] = imageLoader.loadImage("images/" + i + "Gr.png");
+            numGr[i] = ImageLoader.loadImage("images/" + i + "Gr.png");
         }
         for(int i = 0; i <= 2; i++)
         {
-            tileImagesDefault[i] = imageLoader.loadImage("images/dungeonTile" + i + ".png");
+            tileImagesDefault[i] = ImageLoader.loadImage("images/dungeonTile" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -129,7 +128,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            slimeImages[i] = imageLoader.loadImage("images/slime" + i + ".png");
+            slimeImages[i] = ImageLoader.loadImage("images/slime" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -138,7 +137,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            slimeImagesAlt[i] = imageLoader.loadImage("images/slimeAlt" + i + ".png");
+            slimeImagesAlt[i] = ImageLoader.loadImage("images/slimeAlt" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -147,7 +146,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            slimeImagesHit[i] = imageLoader.loadImage("images/slimeHit" + i + ".png");
+            slimeImagesHit[i] = ImageLoader.loadImage("images/slimeHit" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -156,7 +155,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            slimeImagesDead[i] = imageLoader.loadImage("images/slimeDead" + i + ".png");
+            slimeImagesDead[i] = ImageLoader.loadImage("images/slimeDead" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -165,7 +164,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            combatSlimeImages[i] = imageLoader.loadImage("images/combatSlime" + i + ".png");
+            combatSlimeImages[i] = ImageLoader.loadImage("images/combatSlime" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -174,7 +173,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            combatSlimeImagesAlt[i] = imageLoader.loadImage("images/combatSlimeAlt" + i + ".png");
+            combatSlimeImagesAlt[i] = ImageLoader.loadImage("images/combatSlimeAlt" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -183,7 +182,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            combatSlimeImagesDead[i] = imageLoader.loadImage("images/combatSlimeDead" + i + ".png");
+            combatSlimeImagesDead[i] = ImageLoader.loadImage("images/combatSlimeDead" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -192,7 +191,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            playerImages[i] = imageLoader.loadImage("images/player" + i + ".png");
+            playerImages[i] = ImageLoader.loadImage("images/player" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -201,7 +200,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            playerImagesAlt[i] = imageLoader.loadImage("images/playerAlt" + i + ".png");
+            playerImagesAlt[i] = ImageLoader.loadImage("images/playerAlt" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -210,12 +209,12 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            playerImagesHit[i] = imageLoader.loadImage("images/playerHit" + i + ".png");
+            playerImagesHit[i] = ImageLoader.loadImage("images/playerHit" + i + ".png");
         }
         /*
         for(int i = 2; i <= 9; i+=2)
         {
-            playerImagesDead[i] = imageLoader.loadImage("images/playerDead" + i + ".png");
+            playerImagesDead[i] = ImageLoader.loadImage("images/playerDead" + i + ".png");
         }
          */
 
@@ -225,7 +224,7 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            ghostImages[i] = imageLoader.loadImage("images/ghost" + i + ".png");
+            ghostImages[i] = ImageLoader.loadImage("images/ghost" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
@@ -233,12 +232,12 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            ghostImagesAlt[i] = imageLoader.loadImage("images/ghostAlt" + i + ".png");
+            ghostImagesAlt[i] = ImageLoader.loadImage("images/ghostAlt" + i + ".png");
         }
         for(int i = 1; i <= 9; i++)
         {
             //Using same image for all hit animations
-            BufferedImage temp = imageLoader.loadImage("images/ghostHit.png");
+            BufferedImage temp = ImageLoader.loadImage("images/ghostHit.png");
             ghostImagesHit[i] = temp;
         }
         for(int i = 1; i <= 9; i++)
@@ -247,15 +246,15 @@ public class DungeonMain extends JPanel implements Runnable
             {
                 i = 6;
             }
-            ghostImagesDead[i] = imageLoader.loadImage("images/ghostDead" + i + ".png");
+            ghostImagesDead[i] = ImageLoader.loadImage("images/ghostDead" + i + ".png");
         }
         for(int i = 0; i <= 7; i++)
         {
-            fireballImages[i] = imageLoader.loadImage("images/fireball" + i + ".png");
+            fireballImages[i] = ImageLoader.loadImage("images/fireball" + i + ".png");
         }
         for(int i = 0; i <= 7; i++)
         {
-            teleballImages[i] = imageLoader.loadImage("images/teleball" + i + ".png");
+            teleballImages[i] = ImageLoader.loadImage("images/teleball" + i + ".png");
         }
     }
     //Basically runs the dungeonmain object. It goes into a loop

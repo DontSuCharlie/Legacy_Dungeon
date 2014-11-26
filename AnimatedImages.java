@@ -44,12 +44,11 @@ public class AnimatedImages extends JComponent implements Runnable
 	static int defaultFrameY = 1000;//default frame height
 	int frameX;//object specific frame width
 	int frameY;//object specific frame height
-	ImageLoader imageLoader = new ImageLoader();//you need ImageLoader.java to use this, btw
 	BufferedImage spriteSheet;
 	int numFrames;
 	public AnimatedImages(String directory, int numFrames)
 	{
-		spriteSheet = imageLoader.loadImage(directory);//loads sprite sheet
+		spriteSheet = ImageLoader.loadImage(directory);//loads sprite sheet
 		this.numFrames = numFrames;
 		frameX = defaultFrameX; //sets frameX to default
 		frameY = defaultFrameY; //sets frameY to default

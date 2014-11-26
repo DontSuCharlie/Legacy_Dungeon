@@ -16,7 +16,6 @@ public class Menu
 	//BACKGROUND
 	static BufferedImage background;
 	static BufferedImage message1;
-	ImageLoader imageLoader = new ImageLoader();
 	public Menu()
 	{
 		int xAlign = Window.windowX/2 - 400;
@@ -32,7 +31,7 @@ public class Menu
 		settingsButton = new Button("/images/SettingsOrig.png","/images/SettingsMoused.png","/images/SettingsClicked.png",xAlign, yAlign,400, 100);
 		yAlign+=120;
 		creditsButton = new Button("/images/CreditsOrig.png", "/images/CreditsMoused.png", "/images/CreditsClicked.png", xAlign, yAlign, 400, 100);
-		background = imageLoader.loadImage("/images/menu.png");
-		message1 = imageLoader.loadImage("/images/message1.png");
+		background = ImageLoader.loadImage("/images/menu.png");
+		message1 = ImageLoader.loadImage("/images/message1.png");
 	}
 }

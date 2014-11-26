@@ -9,7 +9,6 @@ import java.nio.ByteBuffer;
 
 public class ImageLoader
 {    
-
 	public static BufferedImage loadImage(String fileDirectory)
 	{
 		try{
