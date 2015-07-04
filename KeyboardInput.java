@@ -53,7 +53,7 @@ public class KeyboardInput implements KeyListener
 	public static void main(String[] args)
 	{
 		Window window = new Window();
-		Window.createWindow();
+		window.createWindow(false);
 		Window.window.addKeyListener(new KeyboardInput());
 	}
 	

@@ -40,7 +40,7 @@ Can be used as Trap?
 28: Bomb Rock: Throws a rock at one tile, runs away, explode
 29: Phasor: Walk through walls and other solid objects
 30: Ghost Transform: Possess monsters and use their HP as yours. You also gain their skills (if any)
-31: 
+31: Force Field: Generates a bubble that pushes out all terrain (ie: water) effects, and protects you from damage. The HP Bar of the bubble decreases over time, and damage acts as more time. If the shield is broken (as in damage, not time, causes the shield's HP to be 0), you will receive the leftover damage, but everyone around you will also receive leftover damage. because it shatters
 
 Different bosses have different "modes":
 Anais: Chess - game becomes turn based - every turn you roll to become a different piece. Anais is only damage-able when she becomes a Queen Piece.

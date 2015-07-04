@@ -22,7 +22,7 @@ public class Window extends JPanel
 	}*/
 	public static void main(String[] args)
 	{
-		Window.createWindow();
+		window.createWindow(false);
 		//window.addMouseListener();
 	}
 	public static void coord(int x, int y)

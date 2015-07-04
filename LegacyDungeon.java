@@ -1,4 +1,4 @@
-//Should make a website that updates # of species documented and still existing/# of species documented
+// Should make a website that updates # of species documented and still existing/# of species documented
 //Ecological Chain Reaction - upload ALL data (causes of kill, what it feeds on, what it feeds, etc.), and see what happens if you remove 1 (ie: remove mosquitoes, stops killing humans, but starves this animal, which starves another animal, and so on)
 //Stirling's Approximation = n! = sqrt(2*PI*n)*(n/e)^n = Big O better than linear
 //Notes: If we ever have a loading screen, I want to use the blue screen of death!
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.awt.*;//This is the java toolkit, includes Color, Dimension, Graphics, etc.
 import javax.swing.*;//Part of UI, includes JPanel
 import java.awt.Polygon;
+
+//How to multithread?
 
 public class LegacyDungeon extends JPanel
 {
@@ -52,7 +54,7 @@ public class LegacyDungeon extends JPanel
 	{
 		running = true;//means the game is running
 		game = new LegacyDungeon();
-		Window.createWindow();//creates window
+		Window.createWindow(false);//creates window
 		Window.window.add(game);//adds game file to the window
 		while(running)
 		{

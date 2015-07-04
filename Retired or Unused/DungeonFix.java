@@ -132,7 +132,7 @@ public class DungeonFix extends JPanel implements Runnable
     public void dungeonLoop() throws InstantiationException, IllegalAccessException
     {
         Window window = new Window();
-        Window.createWindow();//creates window
+        window.createWindow(false);//creates window
         Window.window.add(this);//adds game file to the window
         boolean inGame = true;
                
