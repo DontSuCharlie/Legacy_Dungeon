@@ -13,6 +13,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class LegacyDungeon
 {
+	private static boolean isRunning = true;
 	private static long window;//the reference to the actual window
 	private static void init()
 	{//initialize everything
@@ -34,6 +35,7 @@ public class LegacyDungeon
 		glfwSetWindowCloseCallback(window,new GLFWWindowCloseCallback(){
 			public void invoke(long callBack)
 			{
+				isRunning = false;
 				term();
 			}
 		});
@@ -75,7 +77,7 @@ public class LegacyDungeon
 		*/
 		GLContext.createFromCurrent();
 		glClearColor(1,1,1,1);
-		while(true)
+		while(isRunning)
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glfwSwapBuffers(window);
