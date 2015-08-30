@@ -9,23 +9,22 @@ import java.nio.ByteBuffer;
 
 public class ImageLoader
 {    
-	public BufferedImage loadImage(String fileDirectory)
+	public static BufferedImage loadImage(String fileDirectory)
 	{
-		try 
-		{
+		try{
 			return ImageIO.read(getClass().getResource(fileDirectory));
-		} 
-		catch (IOException e) 
+		}
+		catch (IOException e)
 		{
-			System.out.println("I cannot find the following Image file:\"" + fileDirectory + "\" :( ");
-			e.printStackTrace();
+			e.getMessage();
 		}
 		return null;
 	}
-	//imageLoader.convertToBuffer(imageLoader.loadImage);
 
 }
 /*
+HOW TO USE IN 1 EASY STEP!
+Image myImage = ImageLoader.loadImage("imageName.jpg");
 HOW TO USE IN 3 EASY STEPS!:
 Create ImageLoader object
 Create an Image or BufferedImage variable

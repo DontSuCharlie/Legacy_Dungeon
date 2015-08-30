@@ -260,7 +260,7 @@ public class DungeonMain extends JPanel implements Runnable
     //Basically runs the dungeonmain object. It goes into a loop
     public void dungeonLoop() throws InstantiationException, IllegalAccessException
     {
-        window.createWindow(false);//creates window
+        Window.createWindow();//creates window
         Window.window.add(this);//adds game file to the window
         boolean inGame = true;
         musicPlayer.playMusic("sounds/Worldmap2.au");

@@ -20,7 +20,6 @@ public class DungeonTile implements Comparable<DungeonTile>
 	public BufferedImage tileImage;
 	public BufferedImage itemImage;
 	public BufferedImage charImage;
-	ImageLoader imageLoader = new ImageLoader();
 	Number number = null;
 
 	public DungeonTile(int xPos, int yPos, int inputTileID)
@@ -29,7 +28,7 @@ public class DungeonTile implements Comparable<DungeonTile>
 		y = yPos;
 		tileID = inputTileID;
 		//if(inputTileID == 1 || inputTileID == 2)
-		//	tileImage = imageLoader.loadImage("images/DungeonTile" + inputTileID + ".png");
+		//	tileImage = ImageLoader.loadImage("images/DungeonTile" + inputTileID + ".png");
 		connectionCap = 2;
 		itemID = 0;
 		//characterID = 0;

@@ -6,8 +6,7 @@ import javax.swing.*;
 public class WorldMap extends JPanel
 {
     Character0 character;
-	ImageLoader imageLoader = new ImageLoader();
-	BufferedImage map = imageLoader.loadImage("images/map.png");
+	BufferedImage map = ImageLoader.loadImage("images/map.png");
 	BufferedImage[] numImage = new BufferedImage[10];
 	String[] imageDirectory = {"images/0.png", "images/1.png", "images/2.png", "images/3.png", "images/4.png", "images/5.png", "images/6.png", "images/7.png", "images/8.png", "images/9.png"}; 
 	static ArrayList<Node> nodeList = new ArrayList<Node>();//array list of nodes
@@ -22,10 +21,10 @@ public class WorldMap extends JPanel
 		character = new Character0();
 		numNodes = (int) (Math.random() * 20) + 10;//generates a random # of nodes (10-30)
 		//imageLoader = new ImageLoader();
-		//map = imageLoader.loadImage("TempWorldMap.jpg");
+		//map = ImageLoader.loadImage("TempWorldMap.jpg");
 		for(int i = 0; i < 10; i++)
 		{
-			numImage[i] = imageLoader.loadImage(imageDirectory[i]);
+			numImage[i] = ImageLoader.loadImage(imageDirectory[i]);
 		}
 		concentrateNodes = true;
 		if(concentrateNodes)//I can turn concentration of nodes at center on and off for testing purposes. See which one's more balanced/fun

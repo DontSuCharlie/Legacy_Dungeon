@@ -1,4 +1,6 @@
 /*
+
+The gravity of time: Om tje 4th dimension, there exists a time's version of gravity, where up is the past and down is the future. E
 Window.java is in charge of everything related to Windows, window resolution, window sizes, etc.
 */
 //package LegacyDungeon;
@@ -6,6 +8,14 @@ import java.awt.*;//includes Color, Dimension, Graphics, etc.
 import java.awt.image.*;
 import javax.swing.*;
 import java.awt.event.*;
+
+/*
+	1. Loading Window Opens - SwingWorker in background initializes every single variable along with checking for save file
+	2. Menu opens
+		a. Play game
+	3. Make window invisible, close threads, update save file
+		a. If an error appears - create a new JFrame that tells the user about the issue
+*/
 
 public class Window extends JPanel
 {
@@ -15,7 +25,6 @@ public class Window extends JPanel
 	static int windowY;
 	static int windowXPos;
 	static int windowYPos;
-	static ImageLoader imageLoader;
 	/*
 	public Window()
 	{
@@ -38,11 +47,10 @@ public class Window extends JPanel
 	public static void createFullScreen()
 	{
 	}
-	public static void createWindow()
+	public static void createWindow(boolean decorated)
 	{
 	    window = new JFrame("Legacy Dungeon");
 		screenRes = Toolkit.getDefaultToolkit().getScreenSize();
-		imageLoader = new ImageLoader();
 		//Reads save file to see current resolution; otherwise goes to default size
 		//windowX = (int)(screenRes.getWidth()/2);
 		//windowY = (int)(screenRes.getWidth()/2.2);//set Y to width because I wanted a square
@@ -56,13 +64,18 @@ public class Window extends JPanel
 		windowYPos = (int)(screenRes.getHeight() - windowY)/2;
 		
 		//gets window operational
-		JFrame.setDefaultLookAndFeelDecorated(true);//wtf, why would Java have this? This makes it so we can customize stuff. Why would you make it false at any time????
+		if(decorated)
+		{
+			JFrame.setDefaultLookAndFeelDecorated(true);//wtf, why would Java have this? This makes it so we can customize stuff. Why would you make it false at any time????
+			KeyboardInput input = new KeyboardInput(); //Used for keyboard input
+			window.addKeyListener(input);
+		}		
+		else
+			window.setUndecorated(true);
 		window.setResizable(false);//too messy for now, will change to true later
-		window.setIconImage(imageLoader.loadImage("/images/icon.png"));//sets icon image
+		window.setIconImage(ImageLoader.loadImage("/images/icon.png"));//sets icon image
 		window.setLocation(windowXPos, windowYPos);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//closes program when "X" button is pressed
 		window.setVisible(true);
-	    KeyboardInput input = new KeyboardInput(); //Used for keyboard input
-	    window.addKeyListener(input);
     }
 }
