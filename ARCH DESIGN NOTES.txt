@@ -1,0 +1,29 @@
+In a game, from initializing there is:
+
+#During Initialization
+1] Create the window
+2] Read save file
+3] Load assets
+
+Create Window -> Load Intro Animation Screen -> Menu -> Play
+Load Intro Animation Assets -> Read Save File -> Load Rest of Assets -> Write to Save File should be ready before the player hits play (meaning we'll delay it if Write to Save File is not ready)
+
+##Loading Assets
+1. How do we read SVG files? (SVG is literally XML that describes vectors and colors) -make your own SVG Parser (How do we parse efficiently?)
+2. How do we load images and objects into OpenGL?
+3. 
+
+#Drawing
+There should be a callback function that tells OpenGL "hey it changed, redraw it", but otherwise keeps everything un-updated.
+
+I'm not sure what problems might arise from doing this:
+1. What happens when EVERY pixel needed to be updated? Would callback functions be as efficient as a normal while loop or are we saving refreshes only to be more inefficient in that scenario? (E.g. making the map move)
+2. I've heard of bugs happening where the pixel does not update. We have to keep that in mind when programming.
+
+How do we keep the main character centered but make the map move efficiently?
+
+Watch out for:
+Screen Tearing: When screen updates are out of sync with buffer switches https://en.wikipedia.org/wiki/Screen_tearing
+
+#AI
+

@@ -39,8 +39,13 @@ public class LegacyDungeon
 		});
 		glfwShowWindow(window);
 		KeyboardInput key = new KeyboardInput();
+		MouseLocation pos = new MouseLocation();
+		MouseScroll mouseScroll = new MouseScroll();
+		MouseButton mouseClick = new MouseButton();
 		glfwSetKeyCallback(window, key);
-		
+		glfwSetCursorPosCallback(window, pos);
+		glfwSetMouseButtonCallback(window, mouseClick);
+		glfwSetScrollCallback(window, mouseScroll);
 	}
 	/*
 	These two methods (createWindow and loadSaveFile) will be called concurrently from init().
