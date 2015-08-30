@@ -31,6 +31,12 @@ public class LegacyDungeon
 		glfwSetWindowPos(window,(GLFWvidmode.width(vidmode)-width)/2,(GLFWvidmode.height(vidmode)-height)/2);
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
+		glfwSetWindowCloseCallback(window,new GLFWWindowCloseCallback(){
+			public void invoke(long callBack)
+			{
+				term();
+			}
+		});
 		glfwShowWindow(window);
 	}
 	private static void loop()
@@ -41,6 +47,7 @@ public class LegacyDungeon
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glfwSwapBuffers(window);
+			glfwPollEvents();//polls events
 		}
 	}
 	private static void term()
