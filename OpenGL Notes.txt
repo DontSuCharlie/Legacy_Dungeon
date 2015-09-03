@@ -1,0 +1,118 @@
+OpenGL is a standard defined by some organization that everyone follows. Implementations of the OpenGL standard vary from language to language, operating system to operating system, and so on.
+
+There is really no fucking documentation on how to run OpenGL in LWJGL 3.0 for some god damn reason.
+
+#Definitions
+Orthographic Projection: A fucking fancy way of saving you look straight into the face of a 3D object. Imagine a cube. Orthographic Projection is staring at the front of the cube so it looks 2D from your perspective.
+
+Shader: Any program that does shading.
+    Shading: Changing an image's color's to make it look like it has shadows, giving a sense of depth.
+Questions: What languages are shaders usually written in? Where are they loaded/run in a program/computer? What do people generally mean or imply when saying shader?
+
+
+GPU (Graphics Processor Unit): A chip designed to run graphics. It's optimized for concurrency, but is slow at doing complicated individual work/decisions. (more on that: superuser.com/why cpu instead of gpu)
+
+Bitmap: A map from an image (e.g. each pixels' colors and position) into a bunch of bits.
+    Map/Mapping: Literally anything that takes in a value and outputs to a different value. It acts as a "map" for the input to find the output. (you can think of it as like a normal function you see in high school math)
+
+Textures: 2D images (usually in the context of 3D graphics)
+
+Raster Graphics: Any image made of pixels. More formally, an images that is in the form of a dot matrix (dot = dots on the screen; matrix = like a table). Also known as contones ("continous tones"). The opposite of Raster Graphics is Vector Graphics (also known as "line work").
+
+Rasterization: Converting vectors (information about how it should be drawn) into actual pixels on the screen.
+
+Smooth Animation: A core concept in animation - basically a bunch of unique still images, if moved quickly enough, can trick our mind into believing it's smooth and actually moving. Also called "Persistence of Vision".
+
+Viewport: the "virtual camera". It's the thing you see from your computer screen, from your perspective.
+
+Image Plane: the plane the viewport is on
+
+Ray Tracing: Generates images by tracing the path of light and simulating physical light stuff (like reflection, refraction, scattering, etc.). Often is very computationally intensive but extreeemely realistic. Currently ideal for movies or photos, but not ideal for real time stuff like video games
+//perform ray tracing on video game recorded information in Kerbal Space Program to make scenes look cool and upload onto Youtube
+
+GLSL (OpenGL Shading Language): A C-like language that allows programmers to program fragment and vertex shaders into graphics cards for optimization and customization. The standard defined is that the graphics cards have their own GLSL compilers, and take in Strings as input, explaining why when writing shaders, we write Strings
+
+Buffer: Memory reserved as the transition between input/output between two things. Usually implemented as a queue.
+
+Depth Testing: Running an algorithm that tests whether or not an object is in front of another. If it is, it effectively just doesn't include it in the final render.
+
+Stencil Testing: Running an algorithm that tests whether or not an object is within a defined 2D boundary. If it is not, it does not include it in the final render (e.g. acts like a "stencil").
+
+Triangle Strip: When constructing triangles from vertices, it reuses the two last vertices as the first two vertices for the next triangle (so if you go on and on, it creates a strip of triangles). Very useful for memory optimization if your drawings allow for it.
+
+Triangle Fan: When constructing triangles from vertices, uses the first point as the center of a fan, and everything else to draw triangles around the origin (creates a triangle fan). Very useful for memory optimization if your drawings allow for it.
+
+Pipeline: The steps that an input goes through to get to the output. (like an actual pipe.)
+
+Luma: In video, it represents the brightness of the image (aka a figures shape).
+
+Chrominance: In video, it represents the color of the image. Research in human vision have discovered that humans are more sensitive to luminence than chrominance, meaning for memory saving purposes, chrominance is often set to a lower resolution.
+
+Channel: Apparently images are actually 3 sets of 2D arrays, each set holding information about the R,G,B color value that the image is. When the 3 Channels are combined, we see the image that we normally see. In the current industry standard, each channel is 8 bits long for each pixel (meaning 2^8 = 256 = range of 0-255), explaining RGB's default values. Research has shown; however, that human eyes are more receptive to Red>Green>Blue, meaning some people put more emphasis (more bits) on Red>Green>Blue.
+
+Pixel: the smallest controllable element in an image. A pixel usually has two things that describe it: position and color.
+
+Sample: the set of bits that describe a pixel's color. (what does the verb mean?)
+
+Texture: (usually a raster) 2D image that is mapped to the surface of a 3D object
+
+Uniform (variable type in OpenGL Shading Language): (works the same way as the keywords final or static in Java, but its functionality is) makes the variable global to (the GPU?). Also guarantees that this variable cannot be changed (as in a compiler error will return if you try to change a vaiable that has been declared Uniform). The most common variables that are uniform are textures, precalculated functions, or datasets.
+
+"Uniforms are intended to be set by the user. However, you can initialize them to a default value using standard GLSL initalizer syntax:
+
+uniform vec3 initialUniform = vec3(1.0, 0.0, 0.0);
+This will cause the uniform to have this vector as its value, until the user changes it." (so can you change it or not? Or is it that you just can't change it in a shader?)
+
+Varying Values: Literally just the fucking output of a fucking shader jesus christ you don't need a new term for everything.
+
+Rasterization: Converting vector graphics to a raster image
+
+Interpolation: Estimation (basically predicting what the value will be at a different input value given a set of points)
+
+Fragment: a piece of data containing all the information needed to draw a pixel
+
+Clipping: Selectively enable/disable rendering operations within a defined region of interest. When done well can reallly optimize your speed.
+
+Color Buffer: A buffer that holds the color information on the screen
+
+#Programmable Graphics Pipeline:
+Step 1: Defining the vertex of your polygon
+
+You create a VERTEX ARRAY. It's basically an array in which each element holds information about each vertex. The elements in the array are called VERTEX BUFFERS.
+
+In the VERTEX ARRAY, these VERTEX BUFFERS themselves are an array of VERTEX ATTRIBUTES. Each VERTEX ATTRIBUTE says something about the vertex you're defining. (e.g. coordinate location, texture coordinates?, ???)
+
+The VERTEX ARRAY itself has an ELEMENT ARRAY. The ELEMENT ARRAY is filled with the ID of each VERTEX BUFFER. The order of the VERTEX BUFFER defines how the vertices will be used to draw triangles (different orders = different paths of drawing).
+
+Step 2: Defining and running the Vertex Shader
+The GPU compiles your shader, then begins to read the input you feed it. The purpose of the Vertex Shader is to calculate the projected position of the vertex into the 2D plane of the screen. You can also do other stuff in the Vertex Shader if you want (not sure why and what are its pros/cons compared to in the main program/Fragment Shader). You can include color and texture coordinates.
+
+Step 3: Triangle Assembly
+The GPU then connects the projected vertices (the output of the vertex shader? do we have to define a shader here? wat?) and groups them into groups of 3, either making the triangle independent (each triangle gets 3 points), triangle strips, or triangle fans.
+
+Step 4: Rasterizing
+The rasterizer takes the triangles, clips it (discarding the parts no longer on the screen), and breaks the remaining visible parts into "fragments", a fancy term to describe a pixel that isn't a pixel yet. If there is color or texture data, the rasterizer will try to blend the data from each vertex with the other vertices, creating a sort of gradient (why? I think it is because it takes less memory to have 3 points describe color. Also, they could run algorithms that help calculate shading and stuff, meaning no need to keep so much data man).
+
+Step 5: Defining and running the Fragment Shader
+The last shader that your data goes through. It takes the output of the rasterizer as input, and outputs COLOR and DEPTH values. With the rasterized thing and the new COLOR and DEPTH values, it finally draws to the framebuffer. The Fragment Shader usually runs the steps necessary for texture mapping (pasting the textures onto 3D surfaces) and lighting. The fragment shader runs the code for EACH FUCKING PIXEL (meaning if you've got a good algorithm that can assign a color/depth value based on the inputs, you are golden), meaning you can generate very nice special effects, BUT it is also the most performance sensitive part of the pipeline.
+
+Step 6: Framebuffers, "testing", and blending
+The final step. After the Fragment Shader you can still opt to do depth testing (tests for if an object is behind another, then doesn't render that), stencil testing, and alpha blending (for translucent objects).
+
+ALL OF THIS HAPPENS EVERY FRAME YOU WANT TO RUN (AKA USUALLY 60FPS)
+
+
+Unknown:
+R* Trees
+Octrees
+Texture Mapping Unit
+Height Mapping
+Bump Mapping
+Normal Mapping
+Displacement Mapping
+Reflection Mapping
+Mipmaps
+Occlusion Mapping
+Antialiasing
+Dithering
+Moire Pattern

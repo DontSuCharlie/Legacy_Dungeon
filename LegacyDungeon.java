@@ -8,7 +8,11 @@ import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.*;//contains some core functions we need
+import static org.lwjgl.opengl.GL15.*;//contains glgen() and glbind() functions, which is needed to allow OpenGL to manipulate objects from the GPU
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL32.*;
+
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class LegacyDungeon
@@ -39,7 +43,6 @@ public class LegacyDungeon
 				term();
 			}
 		});
-		glfwShowWindow(window);
 		KeyboardInput key = new KeyboardInput();
 		MouseLocation pos = new MouseLocation();
 		MouseScroll mouseScroll = new MouseScroll();
@@ -48,6 +51,7 @@ public class LegacyDungeon
 		glfwSetCursorPosCallback(window, pos);
 		glfwSetMouseButtonCallback(window, mouseClick);
 		glfwSetScrollCallback(window, mouseScroll);
+		glfwShowWindow(window);
 	}
 	/*
 	These two methods (createWindow and loadSaveFile) will be called concurrently from init().
@@ -77,6 +81,59 @@ public class LegacyDungeon
 		*/
 		GLContext.createFromCurrent();
 		glClearColor(1,1,1,1);
+
+		//Step 1: defining vertices
+		float[] vertexBufferData = {
+			-1.0f, -1.0f,
+			1.0f, -1.0f,
+			-1.0f, 1.0f,
+			1.0f, 1.0f
+		}
+
+		//Drawing
+		float[] bullshit = {
+			-0.5f, -0.5f,
+			-0.5f, 0.5f,
+			0.5f, -0.5f,
+			0.5f, 0.5f,
+			-0.5f, 0.5f,
+			0.5f, -0.5f,
+		};//it looks like a 2x6 Matrix. I'm not sure whether we're going to go by columns or rows
+		//Also I have no idea what this 2x6 Matrix is supposed to draw. I THINK it's 6 2D points...maybe a hexagon?
+		//Also, should we use a math library? It might be more efficient?
+		//Also why are we using Java
+
+		//An explanation of OpenGL's coordinate system according to static void games
+
+		//The origin (0,0) is at the center of the window
+		//y is vertical, with +y = up; -y = down
+		//x is horizontal, with +x = right; -x = left
+		//the possible values of x include -1<=x<=1, with -1 being the left edge, 1 being the right edge
+		//the possible values of y are the same (with -1 being the bottom edge, 1 being the top edge)
+		//it looks like, we are indeed drawing 6 points. We're drawing 2 triangles that touch each other, creating a square
+		//I'm THINKING that the left is x, right is y, and it draws lines from coordinate point to coordinate point
+		//How does OpenGL determine that a set of vertices is indeed a closed polygon?
+
+		//In OpenGL 3+, rendering is done through SHADERS
+		//There are 2 types of primary shaders: the vertex shader () and the fragment shader (???)
+		//Shaders are programs
+		//The GLSL standard says that GPU's have compilers that accept String input, meaning to make a shader program, we'll have to create String variables
+		//What is the purpose of shaders? What exactly do they manipulate and how do they mnaipulate it?
+
+
+		String vertexShader = "#version 330\n" + 
+			"in vec2 position;\n" +
+			"void main(){\n"+
+			"	gl_Position=vec4(position,0,1);\n"+
+			"}\n";
+		String fragmentShader = "#version 330\n"+
+			"out vec4 out_color;\n"+
+			"void main(){\n"+
+			"	out_color=vec4(0f,1f,1f,1f);\n"+
+			"}\n";
+		//memAllocFloat();//malloc float
+
+
 		while(isRunning)
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -97,7 +154,7 @@ public class LegacyDungeon
 	}
 
 	//Global variables here
-	private boolean inGame;
+	private static boolean inGame;
 	public static void main(String[] args)
 	{
 		/*read save file here*/
