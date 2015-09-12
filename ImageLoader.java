@@ -12,7 +12,8 @@ public class ImageLoader
 	public static BufferedImage loadImage(String fileDirectory)
 	{
 		try{
-			return ImageIO.read(getClass().getResource(fileDirectory));
+			ImageLoader imageLoader = new ImageLoader();
+			return ImageIO.read(imageLoader.getClass().getResource(fileDirectory));
 		}
 		catch (IOException e)
 		{

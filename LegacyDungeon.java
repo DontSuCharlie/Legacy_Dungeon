@@ -52,7 +52,7 @@ public class LegacyDungeon extends JPanel
 	{
 		running = true;//means the game is running
 		game = new LegacyDungeon();
-		Window.createWindow();//creates window
+		Window.createWindow(true);//creates window
 		Window.window.add(game);//adds game file to the window
 		while(running)
 		{
