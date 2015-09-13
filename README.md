@@ -2,6 +2,9 @@
 ![In-game image](https://raw.githubusercontent.com/DontSuCharlie/LegacyDungeon/master/images/CoverImage.png)
 Legacy Dungeon is a top-down 2D dungeon crawler with randomly generated maps.The game's development process is currently on hold as we're moving from using Javax.swing libraries for rendering graphics to the Light Weight Java Game Library (LWJGL). On our master branch, you can still see the latest version of the game running on Swing. On our "experimental" branch, you can see our progress in migrating to LWJGL.
 
+###Compiling/Running the Game
+You need Java installed on your computer in order to compile/run it. Included in this repository is a batch file (for Windows) and a shell script (Linux/Mac) that compiles and runs the game for you. Just click on run.bat or run.sh.
+
 ==============
 *Authors*: Charlie Su ([@DontSuCharlie](http://github.com/DontSuCharlie)) and Anish Kannan ([@anikan](http://github.com/anikan))
 
